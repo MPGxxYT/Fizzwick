@@ -1,0 +1,387 @@
+/* Step mode: one screen at a time over the Drink page, in the same purple.
+   Doubled up to win over .dp, which loads later. */
+.dp.sm {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.sm-bar,
+.sm-progress,
+.sm-stage,
+.sm-nav {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 34rem;
+  margin: 0 auto;
+}
+
+.sm-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem 0.75rem;
+}
+
+.sm-leave {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: -0.35rem;
+  padding: 0.35rem 0.5rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: none;
+  color: var(--dp-ink);
+  font: 600 1rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
+
+.sm-leave svg,
+.sm-back svg,
+.sm-next svg,
+.sm-clock-start svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sm-counter {
+  margin: 0 0 0 auto;
+  color: var(--dp-soft);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* A running timer on another step: tap to go back to it. */
+.sm-timer-pill {
+  padding: 0.3rem 0.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: #7fe3c6;
+  color: var(--dp-paper);
+  font: 700 0.95rem 'Figtree', sans-serif;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.sm-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* One segment per step, filled up to the current one. */
+.sm-progress {
+  display: flex;
+  gap: 0.3rem;
+  padding: 0 1.25rem;
+}
+
+.sm-progress span {
+  flex: 1;
+  height: 0.25rem;
+  border-radius: 999px;
+  background: rgba(191, 174, 220, 0.22);
+  transition: background-color 0.3s ease;
+}
+
+.sm-progress span.is-done {
+  background: var(--dp-cherry);
+}
+
+/* The screen itself: taps on the left go back, the rest go forward, and
+   sideways swipes go either way. Vertical scrolling still works. */
+.sm-stage {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  touch-action: pan-y;
+  cursor: pointer;
+  user-select: none;
+}
+
+.sm-screen {
+  min-height: 100%;
+  padding: 1.5rem 1.25rem 2rem;
+  animation: sm-in 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.sm-screen[data-direction='back'] {
+  --from: -2.5rem;
+}
+
+@keyframes sm-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--from, 2.5rem));
+  }
+}
+
+/* Mise en Place */
+.sm-mise h2,
+.sm-mise h3 {
+  margin: 0;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+}
+
+.sm-mise h2 {
+  font-weight: 800;
+  font-size: clamp(2.4rem, 11vw, 3.25rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--dp-cherry);
+}
+
+.sm-mise h3 {
+  margin-top: 1.5rem;
+  font-size: 1.2rem;
+}
+
+.sm-lead {
+  margin: 0.5rem 0 0;
+  color: var(--dp-soft);
+}
+
+.sm-glass {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.sm-glass .dp-glass-sketch {
+  width: 4.5rem;
+}
+
+.sm-glass p {
+  margin: 0;
+}
+
+.sm-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sm-tools li {
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  background: var(--dp-mint);
+  font-weight: 600;
+}
+
+.sm-ingredients {
+  margin: 0.5rem 0 1.5rem;
+}
+
+/* A step: big number, big words. */
+.sm-step {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.sm-number {
+  margin: 0;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-weight: 800;
+  font-size: 5rem;
+  line-height: 0.9;
+  color: var(--dp-cherry);
+}
+
+.sm-text {
+  margin: 0.75rem 0 0;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-weight: 500;
+  font-size: clamp(1.7rem, 7.5vw, 2.3rem);
+  line-height: 1.25;
+  user-select: text;
+}
+
+.sm-step-tools {
+  margin: 1rem 0 0;
+  color: var(--dp-soft);
+  font-weight: 600;
+}
+
+/* The timer for a step with a duration. */
+.sm-clock {
+  margin-top: 2rem;
+  cursor: default;
+}
+
+.sm-clock-start {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 3.25rem;
+  padding: 0 1.25rem;
+  border: 2px solid #7fe3c6;
+  border-radius: 999px;
+  background: none;
+  color: #7fe3c6;
+  font: 700 1.1rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
+
+.sm-clock-note {
+  margin: 0.5rem 0 0;
+  color: var(--dp-soft);
+  font-size: 0.9rem;
+}
+
+.sm-clock-time {
+  margin: 0;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-weight: 800;
+  font-size: 4rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: #7fe3c6;
+}
+
+.sm-clock.is-done .sm-clock-time {
+  color: var(--dp-cherry);
+  animation: sm-ring 0.5s ease-in-out 4 alternate;
+}
+
+@keyframes sm-ring {
+  to {
+    transform: scale(1.06);
+  }
+}
+
+/* How much time is left, as a bar that drains. */
+.sm-clock-bar {
+  height: 0.4rem;
+  margin-top: 0.75rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7fe3c6 calc(var(--left) * 100%), rgba(191, 174, 220, 0.22) 0);
+}
+
+.sm-clock-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.sm-clock-actions button {
+  min-height: 2.75rem;
+  padding: 0 1.1rem;
+  border: 1px solid rgba(191, 174, 220, 0.45);
+  border-radius: 999px;
+  background: none;
+  color: var(--dp-ink);
+  font: 600 1rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
+
+.sm-clock-actions button:first-child {
+  border-color: #7fe3c6;
+  background: #7fe3c6;
+  color: var(--dp-paper);
+}
+
+/* Back and forward, within thumb reach. */
+.sm-nav {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem calc(1rem + env(safe-area-inset-bottom));
+}
+
+.sm-back,
+.sm-next {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 3.5rem;
+  border-radius: 999px;
+  font: 700 1.15rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
+
+.sm-back {
+  width: 3.5rem;
+  flex: none;
+  border: 1px solid rgba(191, 174, 220, 0.45);
+  background: var(--dp-paper);
+  color: var(--dp-ink);
+}
+
+.sm-next {
+  flex: 1;
+  border: 0;
+  background: #7fe3c6;
+  color: var(--dp-paper);
+}
+
+.sm button:focus-visible {
+  outline: 2px solid #7fe3c6;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sm-screen,
+  .sm-clock.is-done .sm-clock-time {
+    animation: none;
+  }
+
+  .sm-progress span {
+    transition: none;
+  }
+}
+
+/* The Make button on the Drink page, pinned to the bottom of the screen. */
+.dp-make {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  padding: 0.75rem 1.25rem calc(1rem + env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+
+.dp-make button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 31.5rem;
+  min-height: 3.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: #7fe3c6;
+  color: var(--dp-paper);
+  font: 700 1.15rem 'Figtree', sans-serif;
+  box-shadow: 0 0.5rem 1.5rem rgba(12, 6, 24, 0.45);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.dp-make svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: currentColor;
+}

@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
-import { Link, useLocation, useParams } from 'react-router'
+import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import type { ListState } from '../drink-list/DrinkList'
 import { findHouseDrink } from '../house-drinks/catalog'
 import { GLASS_SIZES_OZ, resolveRiff, type Drink, type Picks } from '../riff-engine'
 import { NotFound } from '../NotFound'
+import { StepMode } from '../step-mode/StepMode'
 import { Bubbles, ColorSpots, IceCubes } from './Ambience'
 import { hasIceInGlass, isFizzy } from './ambience-for'
 import { glassInSentence, GLASS_NAMES, METHOD_NAMES } from './format'
@@ -34,9 +35,28 @@ function DrinkView({ drink }: { drink: Drink }) {
     [drink, picks, servings, customOz],
   )
 
+  const location = useLocation()
+  const navigate = useNavigate()
+  const pageState = location.state as (Partial<ListState> & { making?: boolean }) | null
+
   // Back to the list as it was: same search and filters, if we came from it.
-  const listSearch = (useLocation().state as Partial<ListState> | null)?.listSearch
+  const listSearch = pageState?.listSearch
   const backToList = listSearch ? `/?${listSearch}` : '/'
+
+  // Step mode is its own history entry, so the back gesture leaves it. After
+  // a reload the Riff is gone, so a leftover entry shows the Drink page, and
+  // the next Make reuses that entry instead of stacking another.
+  const [makingEntry, setMakingEntry] = useState<'pushed' | 'replaced' | null>(null)
+  const making = pageState?.making === true && makingEntry !== null
+  const startMaking = () => {
+    const leftover = pageState?.making === true
+    setMakingEntry(leftover ? 'replaced' : 'pushed')
+    navigate(location, { state: { ...pageState, making: true }, replace: leftover })
+  }
+  const stopMaking = () => {
+    if (makingEntry === 'pushed') navigate(-1)
+    else navigate(location, { state: { ...pageState, making: false }, replace: true })
+  }
 
   const pick = (slotId: string, optionId: string | null) => {
     setPicks({ ...riff.picks, [slotId]: optionId })
@@ -48,7 +68,7 @@ function DrinkView({ drink }: { drink: Drink }) {
       <ColorSpots drink={drink} picks={riff.picks} />
       {isFizzy(riff) && <Bubbles />}
       {hasIceInGlass(riff) && <IceCubes />}
-      <main className="dp-page">
+      <main className="dp-page" inert={making}>
         <Link to={backToList} className="dp-back">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M15 5l-7 7 7 7" />
@@ -90,6 +110,18 @@ function DrinkView({ drink }: { drink: Drink }) {
 
         <RecipeCard riff={riff} onServings={setServings} />
       </main>
+
+      {!making && (
+        <div className="dp-make">
+          <button type="button" onClick={startMaking}>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 5.5v13a1 1 0 0 0 1.5.9l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 8 5.5z" />
+            </svg>
+            Make it
+          </button>
+        </div>
+      )}
+      {making && <StepMode drink={drink} riff={riff} onLeave={stopMaking} />}
 
       {glassOpen && (
         <GlassSheet
