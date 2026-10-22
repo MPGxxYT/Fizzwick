@@ -1,0 +1,163 @@
+{
+  "formatVersion": 1,
+  "id": "cherry-limeade",
+  "name": "Cherry Limeade",
+  "glass": "collins",
+  "method": "build",
+  "flavorTags": ["citrus", "fruity"],
+  "photo": "photos/cherry-limeade.jpg",
+  "ingredients": [
+    { "name": "ice", "unit": "fill" },
+    { "name": "fresh lime juice", "amount": 0.75, "unit": "oz" }
+  ],
+  "slots": [
+    {
+      "id": "cherry",
+      "label": "Cherry",
+      "options": [
+        {
+          "id": "cherry-syrup",
+          "label": "Cherry syrup",
+          "phrase": "cherry syrup",
+          "ingredients": [{ "name": "cherry syrup", "amount": 0.75, "unit": "oz" }],
+          "color": "#b3123a"
+        },
+        {
+          "id": "muddled-cherries",
+          "label": "Muddled fresh cherries",
+          "phrase": "cherries",
+          "ingredients": [{ "name": "fresh cherries, pitted", "amount": 5, "unit": "count" }],
+          "removeSteps": ["add-base"],
+          "addSteps": [
+            {
+              "step": {
+                "id": "muddle-cherries",
+                "text": "Muddle the {cherry} with the lime juice in a shaker tin.",
+                "tools": ["muddler", "shaker", "jigger"]
+              }
+            },
+            {
+              "after": "fill-glass",
+              "step": {
+                "id": "strain-cherries",
+                "text": "Fine strain the muddled cherries and lime over the ice.",
+                "tools": ["strainer", "fine-strainer"]
+              }
+            }
+          ],
+          "color": "#9f1239"
+        },
+        {
+          "id": "tart-cherry-juice",
+          "label": "Tart cherry juice",
+          "phrase": "tart cherry juice",
+          "ingredients": [{ "name": "tart cherry juice", "amount": 1.5, "unit": "oz" }],
+          "color": "#7f1d1d"
+        }
+      ]
+    },
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "optional": true,
+      "options": [
+        {
+          "id": "simple-syrup",
+          "label": "Simple syrup",
+          "phrase": "simple syrup",
+          "ingredients": [{ "name": "simple syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#f5f5f4"
+        },
+        {
+          "id": "agave",
+          "label": "Agave",
+          "phrase": "agave",
+          "ingredients": [{ "name": "agave", "amount": 0.5, "unit": "oz" }],
+          "color": "#d6a84a"
+        }
+      ]
+    },
+    {
+      "id": "fizz",
+      "label": "Fizz",
+      "options": [
+        {
+          "id": "lemon-lime-soda",
+          "label": "Lemon-lime soda",
+          "phrase": "lemon-lime soda",
+          "ingredients": [{ "name": "lemon-lime soda", "unit": "top" }],
+          "color": "#e7f5c4"
+        },
+        {
+          "id": "soda-water",
+          "label": "Soda water",
+          "phrase": "soda water",
+          "ingredients": [{ "name": "soda water", "unit": "top" }],
+          "color": "#e0f2fe"
+        },
+        {
+          "id": "sparkling-limeade",
+          "label": "Sparkling limeade",
+          "phrase": "sparkling limeade",
+          "ingredients": [{ "name": "sparkling limeade", "unit": "top" }],
+          "color": "#d9f99d"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "lime-wheel-and-cherry",
+          "label": "Lime wheel and cherry",
+          "phrase": "lime wheel and a cherry",
+          "ingredients": [
+            { "name": "lime wheel", "amount": 1, "unit": "count" },
+            { "name": "cherry", "amount": 1, "unit": "count" }
+          ],
+          "color": "#84cc16"
+        },
+        {
+          "id": "lime-wheel",
+          "label": "Lime wheel only",
+          "phrase": "lime wheel",
+          "ingredients": [{ "name": "lime wheel", "amount": 1, "unit": "count" }],
+          "color": "#a3e635"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    { "id": "fill-glass", "text": "Fill a Collins glass with ice." },
+    {
+      "id": "add-base",
+      "text": "Pour the lime juice and {cherry} over the ice.",
+      "tools": ["jigger"]
+    },
+    {
+      "id": "add-sweetener",
+      "text": "Add the {sweetener}.",
+      "tools": ["jigger"],
+      "when": { "slot": "sweetener" }
+    },
+    { "id": "top", "text": "Top with {fizz}." },
+    {
+      "id": "stir",
+      "text": "Stir gently with a barspoon, just enough to mix without losing the fizz.",
+      "tools": ["barspoon"]
+    },
+    {
+      "id": "garnish",
+      "text": "Garnish with a {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "cherry": "cherry-syrup",
+    "sweetener": null,
+    "fizz": "lemon-lime-soda",
+    "garnish": "lime-wheel-and-cherry"
+  }
+}
