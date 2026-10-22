@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link, useLocation, useParams } from 'react-router'
+import type { ListState } from '../drink-list/DrinkList'
 import { findHouseDrink } from '../house-drinks/catalog'
 import { GLASS_SIZES_OZ, resolveRiff, type Drink, type Picks } from '../riff-engine'
 import { NotFound } from '../NotFound'
@@ -32,6 +33,10 @@ function DrinkView({ drink }: { drink: Drink }) {
     [drink, picks, servings, customOz],
   )
 
+  // Back to the list as it was: same search and filters, if we came from it.
+  const listSearch = (useLocation().state as Partial<ListState> | null)?.listSearch
+  const backToList = listSearch ? `/?${listSearch}` : '/'
+
   const pick = (slotId: string, optionId: string | null) => {
     setPicks({ ...riff.picks, [slotId]: optionId })
     setJustPicked(slotId)
@@ -42,7 +47,7 @@ function DrinkView({ drink }: { drink: Drink }) {
       <ColorSpots drink={drink} picks={riff.picks} />
       <Bubbles />
       <main className="dp-page">
-        <Link to="/" className="dp-back">
+        <Link to={backToList} className="dp-back">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M15 5l-7 7 7 7" />
           </svg>

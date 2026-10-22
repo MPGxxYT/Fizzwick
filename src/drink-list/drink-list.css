@@ -1,0 +1,203 @@
+/* Home: the Drink list, in the same midnight purple as the Drink page. */
+.dl {
+  position: relative;
+  min-height: 100vh;
+}
+
+.dl-page {
+  position: relative;
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+.dl-head {
+  text-align: center;
+}
+
+.dl-head h1 {
+  margin: 0;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.5rem, 12vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+}
+
+.dl-head p {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+}
+
+.dl-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.dl-search {
+  position: relative;
+  margin-top: 1.75rem;
+}
+
+.dl-search svg {
+  position: absolute;
+  left: 0.9rem;
+  top: 50%;
+  width: 1.2rem;
+  height: 1.2rem;
+  transform: translateY(-50%);
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.dl-search input {
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0 1rem 0 2.75rem;
+  border: 1px solid rgba(191, 174, 220, 0.3);
+  border-radius: 999px;
+  background: #2e2049;
+  color: var(--text);
+  font: 500 1.05rem 'Figtree', sans-serif;
+}
+
+.dl-search input::placeholder {
+  color: var(--muted);
+}
+
+.dl-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.dl-filter-label {
+  min-width: 3.75rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.dl-filter button {
+  min-height: 2.5rem;
+  padding: 0 0.95rem;
+  border: 1px solid rgba(191, 174, 220, 0.35);
+  border-radius: 999px;
+  background: none;
+  color: var(--text);
+  font: 500 0.95rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
+
+.dl-filter button[aria-pressed='true'] {
+  border-color: var(--link);
+  background: var(--link);
+  color: var(--bg);
+  font-weight: 600;
+}
+
+.dl-count {
+  margin: 1.5rem 0 0.5rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.dl-drinks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dl-drinks li + li {
+  margin-top: 0.75rem;
+}
+
+.dl-card {
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 1.25rem;
+  background: #2e2049;
+  box-shadow: 0 0 0 1px rgba(191, 174, 220, 0.25);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.dl-card-art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 6rem;
+}
+
+.dl-card-art img {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.75rem;
+  object-fit: cover;
+}
+
+.dl-card-sketch {
+  height: 100%;
+  width: auto;
+}
+
+.dl-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.dl-card-name {
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-weight: 800;
+  font-size: 1.6rem;
+  line-height: 1.1;
+}
+
+.dl-card-meta {
+  color: var(--muted);
+}
+
+.dl-card-tags {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.dl-empty {
+  padding: 1.5rem 0;
+}
+
+.dl-empty p {
+  margin: 0;
+}
+
+.dl-empty button {
+  margin-top: 1rem;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  border: 1px solid rgba(191, 174, 220, 0.45);
+  border-radius: 999px;
+  background: none;
+  color: var(--text);
+  font: 600 0.95rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
+
+.dl a:focus-visible,
+.dl button:focus-visible,
+.dl input:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 3px;
+}
