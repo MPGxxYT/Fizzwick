@@ -110,6 +110,70 @@ export function Bubbles() {
   )
 }
 
+// A pile of ice cubes at the bottom of the page: a back row, higher and
+// fainter, and a front row cut off by the page's edge. Fixed spots, like
+// the bubbles.
+const CUBES = Array.from({ length: 13 }, (_, i) => {
+  const r = (n: number) => (Math.sin(i * 61.7 + n * 17.9) + 1) / 2 // 0..1, repeatable
+  const back = i % 2 === 1
+  return {
+    back,
+    left: `${Math.round((i / 12) * 100 - 6 + r(1) * 8)}%`,
+    bottom: `${(back ? 1.2 : -2) + r(2) * 1.4}rem`,
+    size: `${((back ? 3.4 : 4.4) + r(3) * 1.3).toFixed(2)}rem`,
+    rot: `${Math.round((r(4) - 0.5) * 50)}deg`,
+    // Each cube jiggles on its own clock and in its own direction.
+    shake: `${(0.16 + r(5) * 0.1).toFixed(2)}s`,
+    dx: `${(r(6) - 0.5) * 6}px`,
+    tilt: `${(2 + r(7) * 3).toFixed(1)}deg`,
+  }
+})
+
+// How long the cubes keep jiggling after the last scroll.
+const SETTLE_MS = 220
+
+export function IceCubes() {
+  const [shaking, setShaking] = useState(false)
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    let settle: number | undefined
+    const onScroll = () => {
+      setShaking(true)
+      window.clearTimeout(settle)
+      settle = window.setTimeout(() => setShaking(false), SETTLE_MS)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.clearTimeout(settle)
+    }
+  }, [])
+
+  return (
+    <div className={`dp-ice${shaking ? ' is-shaking' : ''}`} aria-hidden="true">
+      {CUBES.map((cube, i) => (
+        <span
+          key={i}
+          className={cube.back ? 'is-back' : undefined}
+          style={
+            {
+              left: cube.left,
+              bottom: cube.bottom,
+              width: cube.size,
+              height: cube.size,
+              '--rot': cube.rot,
+              '--shake': cube.shake,
+              '--dx': cube.dx,
+              '--tilt': cube.tilt,
+            } as React.CSSProperties
+          }
+        />
+      ))}
+    </div>
+  )
+}
+
 // One soft color spot per Slot, each in its own place on the screen, slowly
 // breathing. A swap fades the spot to the new Option's color. An empty Slot
 // fades its spot out in its last color rather than through grey.

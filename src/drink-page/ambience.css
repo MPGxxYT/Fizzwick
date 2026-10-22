@@ -142,3 +142,59 @@
     opacity: var(--alpha);
   }
 }
+
+/* Ice cubes piled at the very bottom of the page for rocks drinks on ice,
+   like the bottom of the glass. They stay put while the page scrolls, and
+   sit in the page's bottom padding. Clear, so any text still reads through
+   them, and taps go straight through. Scrolling jiggles them, as if the
+   glass was nudged. */
+.dp-ice {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 1;
+  height: 9rem;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.dp-ice span {
+  position: absolute;
+  border-radius: 22%;
+  border: 1px solid rgba(232, 244, 255, 0.28);
+  background:
+    linear-gradient(140deg, rgba(240, 248, 255, 0.2) 0%, rgba(200, 225, 255, 0.07) 45%, rgba(170, 200, 255, 0.12) 100%);
+  box-shadow:
+    inset 0.3rem 0.3rem 0.6rem rgba(255, 255, 255, 0.14),
+    inset -0.45rem -0.45rem 0.9rem rgba(60, 40, 120, 0.35);
+  transform: rotate(var(--rot));
+}
+
+/* A short shine across the top corner of each cube. */
+.dp-ice span::after {
+  content: '';
+  position: absolute;
+  top: 14%;
+  left: 16%;
+  width: 34%;
+  height: 12%;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(-18deg);
+}
+
+.dp-ice span.is-back {
+  opacity: 0.6;
+}
+
+.dp-ice.is-shaking span {
+  animation: dp-clink var(--shake) ease-in-out infinite alternate;
+}
+
+@keyframes dp-clink {
+  from {
+    transform: translateX(calc(-1 * var(--dx))) rotate(calc(var(--rot) - var(--tilt)));
+  }
+  to {
+    transform: translate(var(--dx), -2px) rotate(calc(var(--rot) + var(--tilt)));
+  }
+}

@@ -57,3 +57,19 @@ test('an unknown Drink shows a not-found page', async ({ page }) => {
   await page.goto('/drinks/no-such-drink')
   await expect(page.getByRole('heading', { name: 'No drink here' })).toBeVisible()
 })
+
+test('bubbles rise only behind fizzy drinks', async ({ page }) => {
+  await page.goto('/drinks/cherry-limeade')
+  await expect(page.locator('.dp-bubbles')).toHaveCount(1)
+  await page.goto('/drinks/tea-sour')
+  await expect(page.getByRole('heading', { name: 'Tea Sour' })).toBeVisible()
+  await expect(page.locator('.dp-bubbles')).toHaveCount(0)
+})
+
+test('ice cubes sit at the bottom of rocks drinks served on ice', async ({ page }) => {
+  await page.goto('/drinks/garden-smash')
+  await expect(page.locator('.dp-ice')).toHaveCount(1)
+  await page.goto('/drinks/spiced-pear')
+  await expect(page.getByRole('heading', { name: 'Spiced Pear' })).toBeVisible()
+  await expect(page.locator('.dp-ice')).toHaveCount(0)
+})
