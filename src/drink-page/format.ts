@@ -1,4 +1,4 @@
-import type { Glass, Ingredient, Method } from '../riff-engine'
+import type { Glass, Ingredient, Method, Tool } from '../riff-engine'
 
 export const GLASS_NAMES: Record<Glass, string> = {
   collins: 'Collins glass',
@@ -7,6 +7,26 @@ export const GLASS_NAMES: Record<Glass, string> = {
   coupe: 'Coupe',
   mug: 'Mug',
   hurricane: 'Hurricane glass',
+}
+
+// "1 Collins glass", "2 Collins glasses", "3 coupes"
+export function glassCount(glass: Glass, count: number): string {
+  const name = glassInSentence(GLASS_NAMES[glass])
+  if (count === 1) return `1 ${name}`
+  return `${count} ${name.endsWith('glass') ? `${name}es` : `${name}s`}`
+}
+
+export const TOOL_NAMES: Record<Tool, string> = {
+  jigger: 'Jigger',
+  barspoon: 'Barspoon',
+  shaker: 'Shaker',
+  strainer: 'Strainer',
+  'fine-strainer': 'Fine strainer',
+  'mixing-glass': 'Mixing glass',
+  muddler: 'Muddler',
+  blender: 'Blender',
+  peeler: 'Peeler',
+  kettle: 'Kettle',
 }
 
 // For use mid-sentence: "Collins glass" keeps its capital, "Rocks glass"
