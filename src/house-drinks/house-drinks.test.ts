@@ -1,7 +1,8 @@
 import { describe, expect, test } from 'vitest'
-import { parseDrinkFile } from '../riff-engine'
+import { checkEveryRiff, parseDrinkFile } from '../riff-engine'
 
-// Every House Drink file in this folder must parse. CI runs this on every change.
+// Every House Drink file in this folder must parse, and every combination of
+// its Options must resolve. CI runs this on every change.
 const files = import.meta.glob<unknown>('./*.json', { eager: true, import: 'default' })
 
 describe('House Drink files', () => {
@@ -13,6 +14,12 @@ describe('House Drink files', () => {
     const result = parseDrinkFile(contents)
     expect(result.ok ? [] : result.errors).toEqual([])
     if (result.ok) expect(`./${result.drink.id}.json`).toBe(path)
+  })
+
+  test.each(Object.entries(files))('%s resolves for every combination of Options', (_path, contents) => {
+    const result = parseDrinkFile(contents)
+    if (!result.ok) throw new Error(result.errors.join('\n'))
+    expect(checkEveryRiff(result.drink)).toEqual([])
   })
 
   test('Drink IDs are unique', () => {
