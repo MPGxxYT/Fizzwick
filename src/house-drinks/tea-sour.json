@@ -1,0 +1,124 @@
+{
+  "formatVersion": 1,
+  "id": "tea-sour",
+  "name": "Tea Sour",
+  "glass": "coupe",
+  "method": "dry-shake",
+  "flavorTags": ["citrus", "creamy"],
+  "photo": "photos/tea-sour.jpg",
+  "ingredients": [
+    { "name": "fresh lemon juice", "amount": 0.75, "unit": "oz" },
+    { "name": "simple syrup", "amount": 0.75, "unit": "oz" }
+  ],
+  "slots": [
+    {
+      "id": "tea",
+      "label": "Tea",
+      "options": [
+        {
+          "id": "black-tea",
+          "label": "Chilled strong black tea",
+          "phrase": "black tea",
+          "ingredients": [{ "name": "chilled strong black tea", "amount": 2, "unit": "oz" }],
+          "dietaryTags": ["caffeine"],
+          "color": "#8a4b1f"
+        },
+        {
+          "id": "rooibos",
+          "label": "Chilled rooibos",
+          "phrase": "rooibos",
+          "ingredients": [{ "name": "chilled rooibos", "amount": 2, "unit": "oz" }],
+          "durations": { "steep-tea": 360 },
+          "color": "#b5562b"
+        }
+      ]
+    },
+    {
+      "id": "foam",
+      "label": "Foam",
+      "options": [
+        {
+          "id": "egg-white",
+          "label": "Egg white",
+          "phrase": "egg white",
+          "ingredients": [{ "name": "egg white", "amount": 1, "unit": "count" }],
+          "dietaryTags": ["egg"],
+          "color": "#fffbeb"
+        },
+        {
+          "id": "aquafaba",
+          "label": "Aquafaba",
+          "phrase": "aquafaba",
+          "ingredients": [{ "name": "aquafaba", "amount": 1, "unit": "oz" }],
+          "color": "#f5ecd7"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "lemon-peel",
+          "label": "Expressed lemon peel",
+          "ingredients": [{ "name": "lemon peel", "amount": 1, "unit": "count" }],
+          "color": "#facc15"
+        },
+        {
+          "id": "grated-nutmeg",
+          "label": "Grated nutmeg",
+          "ingredients": [{ "name": "grated nutmeg", "unit": "to-taste" }],
+          "color": "#8b5a2b"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "steep-tea",
+      "text": "Steep the {tea} strong in just-boiled water, using twice the usual amount of tea, then strain it and chill it in the fridge. Make it ahead if you can.",
+      "tools": ["kettle"],
+      "durationSeconds": 240
+    },
+    { "id": "chill-glass", "text": "Chill a coupe in the freezer, or fill it with ice water while you mix." },
+    {
+      "id": "add-base",
+      "text": "Pour the {tea}, lemon juice, simple syrup and {foam} into a shaker tin.",
+      "tools": ["jigger", "shaker"]
+    },
+    {
+      "id": "dry-shake",
+      "text": "Dry shake: seal the tin and shake hard without ice to whip up the foam.",
+      "tools": ["shaker"],
+      "durationSeconds": 15
+    },
+    {
+      "id": "shake",
+      "text": "Open the tin, fill it with ice and shake again until it is ice cold.",
+      "tools": ["shaker"],
+      "durationSeconds": 12
+    },
+    {
+      "id": "fine-strain",
+      "text": "Empty the coupe if it holds ice water, then fine strain the drink into it so the foam comes out smooth.",
+      "tools": ["strainer", "fine-strainer"]
+    },
+    {
+      "id": "express-peel",
+      "text": "Squeeze the lemon peel skin side down over the foam to spray its oils across the top, then rest it on the rim.",
+      "tools": ["peeler"],
+      "when": { "slot": "garnish", "option": "lemon-peel" }
+    },
+    {
+      "id": "garnish-nutmeg",
+      "text": "Grate a little nutmeg over the foam.",
+      "when": { "slot": "garnish", "option": "grated-nutmeg" }
+    }
+  ],
+  "houseSpec": {
+    "tea": "black-tea",
+    "foam": "egg-white",
+    "garnish": "lemon-peel"
+  }
+}

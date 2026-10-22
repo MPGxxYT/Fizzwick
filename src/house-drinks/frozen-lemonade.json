@@ -1,0 +1,136 @@
+{
+  "formatVersion": 1,
+  "id": "frozen-lemonade",
+  "name": "Frozen Lemonade",
+  "glass": "hurricane",
+  "method": "blend",
+  "flavorTags": ["fruity", "citrus"],
+  "photo": "photos/frozen-lemonade.jpg",
+  "ingredients": [
+    { "name": "fresh lemon juice", "amount": 1, "unit": "oz" },
+    { "name": "ice", "amount": 1, "unit": "cup" }
+  ],
+  "slots": [
+    {
+      "id": "fruit",
+      "label": "Fruit",
+      "options": [
+        {
+          "id": "frozen-strawberries",
+          "label": "Frozen strawberries",
+          "phrase": "frozen strawberries",
+          "ingredients": [{ "name": "frozen strawberries", "amount": 1, "unit": "cup" }],
+          "color": "#ef4444"
+        },
+        {
+          "id": "frozen-mango",
+          "label": "Frozen mango",
+          "phrase": "frozen mango",
+          "ingredients": [{ "name": "frozen mango", "amount": 1, "unit": "cup" }],
+          "color": "#fbbf24"
+        },
+        {
+          "id": "watermelon",
+          "label": "Watermelon",
+          "phrase": "watermelon",
+          "ingredients": [{ "name": "watermelon, cubed", "amount": 1, "unit": "cup" }],
+          "color": "#fb7185"
+        }
+      ]
+    },
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "simple-syrup",
+          "label": "Simple syrup",
+          "phrase": "simple syrup",
+          "ingredients": [{ "name": "simple syrup", "amount": 0.75, "unit": "oz" }],
+          "color": "#f5f5f4"
+        },
+        {
+          "id": "agave",
+          "label": "Agave",
+          "phrase": "agave",
+          "ingredients": [{ "name": "agave", "amount": 0.5, "unit": "oz" }],
+          "color": "#d6a84a"
+        }
+      ]
+    },
+    {
+      "id": "creamy",
+      "label": "Creamy",
+      "optional": true,
+      "options": [
+        {
+          "id": "coconut-cream",
+          "label": "Coconut cream",
+          "phrase": "coconut cream",
+          "ingredients": [{ "name": "coconut cream", "amount": 1, "unit": "oz" }],
+          "color": "#fdfaf3"
+        },
+        {
+          "id": "whole-milk",
+          "label": "Whole milk",
+          "phrase": "whole milk",
+          "ingredients": [{ "name": "whole milk", "amount": 2, "unit": "oz" }],
+          "dietaryTags": ["dairy"],
+          "color": "#fafaf9"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "lemon-wheel",
+          "label": "Lemon wheel",
+          "phrase": "lemon wheel on the rim",
+          "ingredients": [{ "name": "lemon wheel", "amount": 1, "unit": "count" }],
+          "color": "#fde047"
+        },
+        {
+          "id": "fresh-strawberry",
+          "label": "Fresh strawberry",
+          "phrase": "fresh strawberry, slit and perched on the rim",
+          "ingredients": [{ "name": "fresh strawberry", "amount": 1, "unit": "count" }],
+          "color": "#dc2626"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "add-base",
+      "text": "Put the {fruit}, lemon juice, {sweetener} and ice in a blender.",
+      "tools": ["jigger", "blender"]
+    },
+    {
+      "id": "add-creamy",
+      "text": "Add the {creamy}.",
+      "tools": ["jigger"],
+      "when": { "slot": "creamy" }
+    },
+    {
+      "id": "blend",
+      "text": "Blend until smooth and thick enough to hold its shape on a spoon. Add a splash of water if the blades stall.",
+      "tools": ["blender"],
+      "durationSeconds": 30
+    },
+    { "id": "pour", "text": "Pour into a hurricane glass." },
+    {
+      "id": "garnish",
+      "text": "Garnish with a {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "fruit": "frozen-strawberries",
+    "sweetener": "simple-syrup",
+    "creamy": null,
+    "garnish": "lemon-wheel"
+  }
+}

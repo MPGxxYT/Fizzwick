@@ -1,0 +1,156 @@
+{
+  "formatVersion": 1,
+  "id": "citrus-spritz",
+  "name": "Citrus Spritz",
+  "glass": "highball",
+  "method": "build",
+  "flavorTags": ["citrus", "bitter"],
+  "photo": "photos/citrus-spritz.jpg",
+  "ingredients": [{ "name": "ice", "unit": "fill" }],
+  "slots": [
+    {
+      "id": "citrus",
+      "label": "Citrus",
+      "options": [
+        {
+          "id": "grapefruit-juice",
+          "label": "Fresh grapefruit juice",
+          "phrase": "grapefruit juice",
+          "ingredients": [{ "name": "fresh grapefruit juice", "amount": 2, "unit": "oz" }],
+          "color": "#f4a6a0"
+        },
+        {
+          "id": "blood-orange-juice",
+          "label": "Blood orange juice",
+          "phrase": "blood orange juice",
+          "ingredients": [{ "name": "blood orange juice", "amount": 2, "unit": "oz" }],
+          "color": "#c2410c"
+        },
+        {
+          "id": "lemon-juice",
+          "label": "Fresh lemon juice",
+          "phrase": "lemon juice",
+          "ingredients": [
+            { "name": "fresh lemon juice", "amount": 0.75, "unit": "oz" },
+            { "name": "extra sweetener, to balance the lemon", "amount": 0.25, "unit": "oz" }
+          ],
+          "addSteps": [
+            {
+              "after": "add-base",
+              "step": {
+                "id": "extra-sweetener",
+                "text": "Add another quarter ounce of {sweetener} to balance the sharper lemon.",
+                "tools": ["jigger"]
+              }
+            }
+          ],
+          "color": "#fde047"
+        }
+      ]
+    },
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "honey-syrup",
+          "label": "Honey syrup",
+          "phrase": "honey syrup",
+          "ingredients": [{ "name": "honey syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#e8a33d"
+        },
+        {
+          "id": "simple-syrup",
+          "label": "Simple syrup",
+          "phrase": "simple syrup",
+          "ingredients": [{ "name": "simple syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#f5f5f4"
+        },
+        {
+          "id": "agave",
+          "label": "Agave",
+          "phrase": "agave",
+          "ingredients": [{ "name": "agave", "amount": 0.5, "unit": "oz" }],
+          "color": "#d6a84a"
+        }
+      ]
+    },
+    {
+      "id": "fizz",
+      "label": "Fizz",
+      "options": [
+        {
+          "id": "tonic",
+          "label": "Tonic",
+          "phrase": "tonic",
+          "ingredients": [{ "name": "tonic water", "unit": "top" }],
+          "color": "#ecfeff"
+        },
+        {
+          "id": "soda-water",
+          "label": "Soda water",
+          "phrase": "soda water",
+          "ingredients": [{ "name": "soda water", "unit": "top" }],
+          "color": "#e0f2fe"
+        },
+        {
+          "id": "ginger-beer",
+          "label": "Ginger beer",
+          "phrase": "ginger beer",
+          "ingredients": [{ "name": "ginger beer", "unit": "top" }],
+          "color": "#e9c46a"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "grapefruit-peel",
+          "label": "Expressed grapefruit peel",
+          "ingredients": [{ "name": "grapefruit peel", "amount": 1, "unit": "count" }],
+          "color": "#fb923c"
+        },
+        {
+          "id": "rosemary-sprig",
+          "label": "Rosemary sprig",
+          "ingredients": [{ "name": "rosemary sprig", "amount": 1, "unit": "count" }],
+          "color": "#4d7c0f"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    { "id": "fill-glass", "text": "Fill a highball glass with ice." },
+    {
+      "id": "add-base",
+      "text": "Pour the {citrus} and {sweetener} over the ice.",
+      "tools": ["jigger"]
+    },
+    {
+      "id": "stir-base",
+      "text": "Stir a few times with a barspoon so the {sweetener} mixes in before the fizz goes on.",
+      "tools": ["barspoon"]
+    },
+    { "id": "top", "text": "Top with {fizz}." },
+    {
+      "id": "express-peel",
+      "text": "Cut a wide strip of grapefruit peel. Squeeze it skin side down over the glass to spray the oils across the top, then drop it in.",
+      "tools": ["peeler"],
+      "when": { "slot": "garnish", "option": "grapefruit-peel" }
+    },
+    {
+      "id": "garnish-rosemary",
+      "text": "Slap the rosemary sprig between your palms to wake up its aroma, then tuck it into the glass.",
+      "when": { "slot": "garnish", "option": "rosemary-sprig" }
+    }
+  ],
+  "houseSpec": {
+    "citrus": "grapefruit-juice",
+    "sweetener": "honey-syrup",
+    "fizz": "tonic",
+    "garnish": "grapefruit-peel"
+  }
+}

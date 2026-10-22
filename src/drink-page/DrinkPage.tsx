@@ -4,7 +4,8 @@ import type { ListState } from '../drink-list/DrinkList'
 import { findHouseDrink } from '../house-drinks/catalog'
 import { GLASS_SIZES_OZ, resolveRiff, type Drink, type Picks } from '../riff-engine'
 import { NotFound } from '../NotFound'
-import { Bubbles, ColorSpots } from './Ambience'
+import { Bubbles, ColorSpots, IceCubes } from './Ambience'
+import { hasIceInGlass, isFizzy } from './ambience-for'
 import { glassInSentence, GLASS_NAMES, METHOD_NAMES } from './format'
 import { GlassSheet } from './GlassSheet'
 import { RecipeCard } from './RecipeCard'
@@ -45,7 +46,8 @@ function DrinkView({ drink }: { drink: Drink }) {
   return (
     <div className="dp">
       <ColorSpots drink={drink} picks={riff.picks} />
-      <Bubbles />
+      {isFizzy(riff) && <Bubbles />}
+      {hasIceInGlass(riff) && <IceCubes />}
       <main className="dp-page">
         <Link to={backToList} className="dp-back">
           <svg viewBox="0 0 24 24" aria-hidden="true">

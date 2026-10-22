@@ -1,0 +1,133 @@
+{
+  "formatVersion": 1,
+  "id": "cinnamon-cream",
+  "name": "Cinnamon Cream",
+  "glass": "rocks",
+  "method": "shake",
+  "flavorTags": ["creamy", "spicy"],
+  "photo": "photos/cinnamon-cream.jpg",
+  "ingredients": [
+    { "name": "cinnamon syrup", "amount": 0.75, "unit": "oz" },
+    { "name": "drops of vanilla extract", "amount": 2, "unit": "count" },
+    { "name": "ground cinnamon", "unit": "to-taste" }
+  ],
+  "slots": [
+    {
+      "id": "milk",
+      "label": "Milk",
+      "options": [
+        {
+          "id": "whole-milk",
+          "label": "Whole milk",
+          "phrase": "whole milk",
+          "ingredients": [{ "name": "whole milk", "amount": 3, "unit": "oz" }],
+          "dietaryTags": ["dairy"],
+          "color": "#fafaf9"
+        },
+        {
+          "id": "almond-milk",
+          "label": "Almond milk",
+          "phrase": "almond milk",
+          "ingredients": [{ "name": "almond milk", "amount": 3, "unit": "oz" }],
+          "dietaryTags": ["nuts"],
+          "color": "#f1e4cf"
+        },
+        {
+          "id": "oat-milk",
+          "label": "Oat milk",
+          "phrase": "oat milk",
+          "ingredients": [{ "name": "oat milk", "amount": 3, "unit": "oz" }],
+          "color": "#efe0c2"
+        }
+      ]
+    },
+    {
+      "id": "coffee",
+      "label": "Coffee",
+      "optional": true,
+      "options": [
+        {
+          "id": "cold-brew",
+          "label": "Cold brew",
+          "phrase": "cold brew",
+          "ingredients": [{ "name": "cold brew coffee", "amount": 1, "unit": "oz" }],
+          "dietaryTags": ["caffeine"],
+          "addSteps": [
+            {
+              "after": "add-base",
+              "step": {
+                "id": "add-coffee",
+                "text": "Add the {coffee}.",
+                "tools": ["jigger"]
+              }
+            }
+          ],
+          "color": "#3f2a1d"
+        }
+      ]
+    },
+    {
+      "id": "texture",
+      "label": "Texture",
+      "options": [
+        {
+          "id": "shaken",
+          "label": "Shaken over ice",
+          "ingredients": [{ "name": "ice", "unit": "fill" }],
+          "color": "#e7d3b8"
+        },
+        {
+          "id": "blended",
+          "label": "Blended with ice",
+          "ingredients": [{ "name": "ice", "amount": 1, "unit": "cup" }],
+          "method": "blend",
+          "removeSteps": ["add-base", "shake", "fill-glass", "strain"],
+          "addSteps": [
+            {
+              "step": {
+                "id": "blend-base",
+                "text": "Put the {milk}, cinnamon syrup, vanilla and 1 cup of ice in a blender.",
+                "tools": ["jigger", "blender"]
+              }
+            },
+            {
+              "after": "strain",
+              "step": {
+                "id": "blend",
+                "text": "Blend until smooth and frothy, then pour into a rocks glass.",
+                "tools": ["blender"],
+                "durationSeconds": 30
+              }
+            }
+          ],
+          "color": "#f3e7d6"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "add-base",
+      "text": "Pour the {milk} and cinnamon syrup into a shaker tin and add 2 drops of vanilla.",
+      "tools": ["jigger", "shaker"]
+    },
+    {
+      "id": "shake",
+      "text": "Fill the tin with ice and shake hard, so the milk turns light and foamy.",
+      "tools": ["shaker"],
+      "durationSeconds": 15
+    },
+    { "id": "fill-glass", "text": "Fill a rocks glass with ice." },
+    {
+      "id": "strain",
+      "text": "Strain into the glass, letting the foam settle on top.",
+      "tools": ["strainer"]
+    },
+    { "id": "garnish", "text": "Dust the top with a pinch of ground cinnamon." }
+  ],
+  "houseSpec": {
+    "milk": "whole-milk",
+    "coffee": null,
+    "texture": "shaken"
+  }
+}
