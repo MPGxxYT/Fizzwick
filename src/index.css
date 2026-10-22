@@ -4,6 +4,9 @@
   --text: #1f1a17;
   --muted: #6b625b;
   --accent: #c2410c;
+  --on-accent: #ffffff;
+  --surface: #f1ebe2;
+  --line: #ddd3c7;
 
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.5;
@@ -15,6 +18,9 @@
     --text: #f3ede6;
     --muted: #a89f97;
     --accent: #fb923c;
+    --on-accent: #1f1a17;
+    --surface: #24201d;
+    --line: #3a332e;
   }
 }
 

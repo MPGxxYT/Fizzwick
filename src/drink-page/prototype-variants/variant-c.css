@@ -1,0 +1,181 @@
+/* PROTOTYPE: throwaway. Variant C, "Spec sheet". */
+.vc {
+  --vc-paper: #ffffff;
+  --vc-ink: #000000;
+  --vc-rule: #d4d4d4;
+  --vc-soft: #5c5c5c;
+  --vc-highlight: #ffe45c;
+  --vc-red: #d6261f;
+
+  min-height: 100vh;
+  background: var(--vc-paper);
+  color: var(--vc-ink);
+  font-family: 'IBM Plex Sans Condensed', 'Arial Narrow', sans-serif;
+  color-scheme: light;
+}
+
+.vc-page {
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: 1rem 1rem 7rem;
+}
+
+.vc-back {
+  color: var(--vc-ink);
+  font-weight: 500;
+}
+
+.vc-head {
+  margin-top: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 4px solid var(--vc-ink);
+}
+
+.vc h1 {
+  margin: 0 0 0.75rem;
+  font-weight: 700;
+  font-size: clamp(2.5rem, 12vw, 3.75rem);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+}
+
+.vc-head dl {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: start;
+  gap: 0 1.75rem;
+  margin: 0;
+}
+
+.vc-head dt {
+  color: var(--vc-soft);
+  font-size: 0.85rem;
+}
+
+.vc-head dd {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.vc select {
+  max-width: 100%;
+  padding: 0.2rem 1.6rem 0.2rem 0.4rem;
+  border: 2px solid var(--vc-ink);
+  border-radius: 0;
+  background: var(--vc-paper)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z'/%3E%3C/svg%3E")
+    no-repeat right 0.45rem center;
+  color: var(--vc-ink);
+  font: 700 1rem 'IBM Plex Sans Condensed', sans-serif;
+  appearance: none;
+  cursor: pointer;
+}
+
+.vc-dietary {
+  margin: 0.75rem 0 0;
+  color: var(--vc-red);
+  font-weight: 700;
+}
+
+.vc-spec-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.vc h2 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
+.vc-spec-head span,
+.vc-spec-head button {
+  color: var(--vc-soft);
+  font: 500 0.95rem 'IBM Plex Sans Condensed', sans-serif;
+}
+
+.vc-spec-head button {
+  padding: 0.15rem 0.4rem;
+  border: 0;
+  background: var(--vc-highlight);
+  color: var(--vc-ink);
+  cursor: pointer;
+}
+
+.vc-table {
+  width: 100%;
+  margin-top: 0.5rem;
+  border-collapse: collapse;
+}
+
+.vc-table td {
+  padding: 0.6rem 0.25rem;
+  border-bottom: 1px solid var(--vc-rule);
+  vertical-align: top;
+}
+
+.vc-changed td {
+  background: var(--vc-highlight);
+}
+
+.vc-measure {
+  width: 6.5rem;
+  font-weight: 700;
+  font-size: 1.6rem;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.vc-slot {
+  display: block;
+  color: var(--vc-soft);
+  font-size: 0.8rem;
+}
+
+.vc-name {
+  font-size: 1.15rem;
+}
+
+.vc-name-under {
+  display: block;
+  margin-top: 0.3rem;
+}
+
+.vc-note {
+  margin: 0.75rem 0 0;
+  padding-left: 0.75rem;
+  border-left: 4px solid var(--vc-ink);
+}
+
+.vc-steps-title {
+  margin-top: 2rem !important;
+  padding-top: 1rem;
+  border-top: 4px solid var(--vc-ink);
+}
+
+.vc-steps {
+  margin: 0.75rem 0 0;
+  padding-left: 2rem;
+}
+
+.vc-steps li {
+  padding: 0.35rem 0;
+  font-size: 1.15rem;
+}
+
+.vc-steps li::marker {
+  font-weight: 700;
+}
+
+.vc-steps p {
+  margin: 0;
+}
+
+.vc-tools {
+  color: var(--vc-soft);
+  font-size: 0.9rem;
+}

@@ -1,0 +1,230 @@
+/* PROTOTYPE: throwaway. Variant B, "Layered glass". */
+.vb {
+  --vb-night: #24173b;
+  --vb-raised: #33244f;
+  --vb-text: #fbf6ff;
+  --vb-soft: #bfaedc;
+  --vb-pop: #ff8fc4;
+
+  min-height: 100vh;
+  background: radial-gradient(120% 60% at 50% 0%, #3b2763 0%, var(--vb-night) 60%);
+  color: var(--vb-text);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color-scheme: dark;
+}
+
+.vb-page {
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: 1.25rem 0 7rem;
+}
+
+.vb-back {
+  margin: 0 1.25rem;
+  color: var(--vb-soft);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.vb-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 1.25rem 0.5rem;
+  text-align: center;
+}
+
+.vb-hero .glass-icon {
+  width: 9rem;
+  height: auto;
+  color: var(--vb-text);
+  filter: drop-shadow(0 12px 30px rgba(255, 143, 196, 0.25));
+}
+
+.vb h1 {
+  margin: 1rem 0 0.25rem;
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.9rem, 8.5vw, 2.6rem);
+  line-height: 1.05;
+}
+
+.vb-hero p {
+  margin: 0;
+  color: var(--vb-soft);
+}
+
+.vb-dietary {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--vb-pop);
+  font-weight: 600;
+}
+
+.vb-reset {
+  margin-top: 0.9rem;
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--vb-soft);
+  border-radius: 999px;
+  background: none;
+  color: var(--vb-text);
+  font: 600 0.9rem 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+
+.vb-reset:disabled {
+  border-color: transparent;
+  color: var(--vb-soft);
+  cursor: default;
+}
+
+.vb-slot {
+  margin-top: 1.5rem;
+}
+
+.vb-slot h2 {
+  margin: 0 1.25rem 0.5rem;
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.vb-cards {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.25rem 1.25rem 0.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.vb-card {
+  flex: 0 0 8.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-height: 6.5rem;
+  padding: 0.75rem;
+  border: 2px solid transparent;
+  border-radius: 1rem;
+  background: var(--vb-raised);
+  color: var(--vb-text);
+  font: 600 0.95rem/1.25 'DM Sans', sans-serif;
+  text-align: left;
+  scroll-snap-align: start;
+  cursor: pointer;
+}
+
+.vb-card[aria-checked='true'] {
+  border-color: var(--vb-pop);
+  background: color-mix(in srgb, var(--swatch, var(--vb-raised)) 30%, var(--vb-raised));
+}
+
+.vb-card:focus-visible {
+  outline: 2px solid var(--vb-text);
+  outline-offset: 2px;
+}
+
+.vb-swatch {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--swatch);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+.vb-card-none .vb-swatch {
+  background: repeating-linear-gradient(45deg, transparent 0 4px, rgba(255, 255, 255, 0.25) 4px 5px);
+}
+
+.vb-tabs {
+  display: flex;
+  margin: 2rem 1.25rem 0;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: var(--vb-raised);
+}
+
+.vb-tabs button {
+  flex: 1;
+  min-height: 2.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--vb-soft);
+  font: 600 1rem 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+
+.vb-tabs button[aria-selected='true'] {
+  background: var(--vb-text);
+  color: var(--vb-night);
+}
+
+.vb-panel {
+  margin: 1rem 1.25rem 0;
+}
+
+.vb-servings {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.vb-servings button {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--vb-soft);
+  border-radius: 50%;
+  background: none;
+  color: var(--vb-text);
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.vb-servings button:disabled {
+  opacity: 0.3;
+}
+
+.vb-ingredients {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vb-ingredients li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid rgba(191, 174, 220, 0.2);
+}
+
+.vb-measure {
+  color: var(--vb-pop);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.vb-note {
+  margin: 1rem 0 0;
+  color: var(--vb-soft);
+}
+
+.vb-steps {
+  padding-left: 1.25rem;
+}
+
+.vb-steps li {
+  padding: 0.5rem 0;
+  font-size: 1.05rem;
+}
+
+.vb-steps li::marker {
+  color: var(--vb-pop);
+  font-family: 'Unbounded', sans-serif;
+}
