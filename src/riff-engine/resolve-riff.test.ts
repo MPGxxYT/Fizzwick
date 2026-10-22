@@ -117,7 +117,7 @@ describe('resolveRiff', () => {
 
   test('lays out the Mise en Place: glass, tools and ingredients', () => {
     const riff = resolveRiff(cherryLimeade)
-    expect(riff.miseEnPlace).toEqual({ glass: 'collins', tools: ['jigger', 'barspoon'], ingredients: riff.ingredients })
+    expect(riff.miseEnPlace).toEqual({ glass: 'collins', glassCount: 1, tools: ['jigger', 'barspoon'], ingredients: riff.ingredients })
   })
 
   test('swapping into an optional Slot adds its ingredient and its step', () => {

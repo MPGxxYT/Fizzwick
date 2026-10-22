@@ -13,6 +13,15 @@ import {
 // The Option ID picked for each Slot, or null for an empty optional Slot.
 export type Picks = Record<string, string | null>
 
+export type Units = 'oz' | 'ml'
+
+export interface RiffSettings {
+  servings?: number // 1 to 12, default 1
+  units?: Units // default oz
+}
+
+export const MAX_SERVINGS = 12
+
 export interface RiffStep {
   id: string
   text: string
@@ -31,11 +40,14 @@ export interface Riff {
   name: string
   glass: Glass
   method: Method
+  servings: number
+  units: Units
   picks: Picks
   slots: RiffSlot[]
   ingredients: Ingredient[]
   steps: RiffStep[]
-  miseEnPlace: { glass: Glass; tools: Tool[]; ingredients: Ingredient[] }
+  miseEnPlace: { glass: Glass; glassCount: number; tools: Tool[]; ingredients: Ingredient[] }
+  batchNotes: string[]
   dietaryTags: DietaryTag[]
   colors: string[]
   isHouseSpec: boolean
@@ -50,11 +62,23 @@ const METHOD_TOOLS: Record<Method, Tool[]> = {
   blend: ['blender'],
 }
 
-// Resolves a Drink and the Options picked for its Slots into the Riff to make.
+// How many drinks fit in one round of each Method's vessel, and what to say
+// when a batch is bigger. Build has no limit.
+const BATCH_LIMITS: Partial<Record<Method, { size: number; note: (rounds: number) => string }>> = {
+  shake: { size: 2, note: (rounds) => `A shaker holds about 2 drinks, so shake in ${rounds} rounds.` },
+  'dry-shake': { size: 2, note: (rounds) => `A shaker holds about 2 drinks, so shake in ${rounds} rounds.` },
+  stir: { size: 2, note: (rounds) => `A mixing glass holds about 2 drinks, so stir in ${rounds} rounds.` },
+  blend: { size: 4, note: (rounds) => `A blender holds about 4 drinks, so blend in ${rounds} batches.` },
+}
+
+const ML_PER_OZ = 30
+
+// Resolves a Drink and the Options picked for its Slots into the Riff to make,
+// scaled to `settings.servings` and shown in `settings.units`.
 // Slots left out of `picks` use the House Spec. Throws if a pick doesn't fit
 // the Drink; Retired Options are allowed, since Favorites may still use them.
-export function resolveRiff(drink: Drink, picks: Picks = {}): Riff {
-  return resolve(drink, picks).riff
+export function resolveRiff(drink: Drink, picks: Picks = {}, settings: RiffSettings = {}): Riff {
+  return resolve(drink, picks, settings).riff
 }
 
 // Resolves every combination of Options (Retired ones included) and reports
@@ -73,7 +97,10 @@ export function checkEveryRiff(drink: Drink): string[] {
   return problems
 }
 
-function resolve(drink: Drink, requested: Picks) {
+function resolve(drink: Drink, requested: Picks, { servings = 1, units = 'oz' }: RiffSettings = {}) {
+  if (!Number.isInteger(servings) || servings < 1 || servings > MAX_SERVINGS) {
+    throw new Error(`servings must be a whole number from 1 to ${MAX_SERVINGS}`)
+  }
   for (const slotId of Object.keys(requested)) {
     if (!drink.slots.some((slot) => slot.id === slotId)) throw new Error(`unknown Slot "${slotId}"`)
   }
@@ -95,7 +122,11 @@ function resolve(drink: Drink, requested: Picks) {
   const options = [...picked.values()].filter((option): option is Option => option !== null)
 
   const method = options.reduce<Method>((current, option) => option.method ?? current, drink.method)
-  const ingredients = [...drink.ingredients, ...options.flatMap((option) => option.ingredients)]
+  const ingredients = [...drink.ingredients, ...options.flatMap((option) => option.ingredients)].map((ingredient) =>
+    measure(ingredient, servings, units),
+  )
+  const batch = BATCH_LIMITS[method]
+  const batchNotes = batch && servings > batch.size ? [batch.note(Math.ceil(servings / batch.size))] : []
 
   const unresolved: { stepId: string; placeholder: string }[] = []
   const steps = orderSteps(drink.steps, options)
@@ -122,6 +153,8 @@ function resolve(drink: Drink, requested: Picks) {
     name: drink.name,
     glass: drink.glass,
     method,
+    servings,
+    units,
     picks,
     slots: drink.slots.map((slot) => {
       const option = picked.get(slot.id)
@@ -133,7 +166,8 @@ function resolve(drink: Drink, requested: Picks) {
     }),
     ingredients,
     steps,
-    miseEnPlace: { glass: drink.glass, tools, ingredients },
+    miseEnPlace: { glass: drink.glass, glassCount: servings, tools, ingredients },
+    batchNotes,
     dietaryTags: DIETARY_TAGS.filter((tag) => tags.has(tag)),
     colors: options.map((option) => option.color),
     isHouseSpec: drink.slots.every((slot) => picks[slot.id] === drink.houseSpec[slot.id]),
@@ -166,6 +200,33 @@ function orderSteps(base: Step[], options: Option[]): Step[] {
   }
   const removed = new Set(options.flatMap((option) => option.removeSteps ?? []))
   return steps.filter((step) => !removed.has(step.id))
+}
+
+// Scales an amount by the serving count, then converts oz and ml into the
+// chosen units. Other measured units scale but never convert; Top, to taste
+// and fill have no amount and are left alone.
+function measure(ingredient: Ingredient, servings: number, units: Units): Ingredient {
+  if (ingredient.amount === undefined) return ingredient
+  const scaled = ingredient.amount * servings
+  if (ingredient.unit === 'oz' && units === 'ml') return { ...ingredient, amount: roundMl(scaled * ML_PER_OZ), unit: 'ml' }
+  if (ingredient.unit === 'ml' && units === 'oz') return { ...ingredient, amount: roundOz(scaled / ML_PER_OZ), unit: 'oz' }
+  return { ...ingredient, amount: tidy(scaled) }
+}
+
+// Nearest 5 ml above 15 ml, nearest 2.5 ml at or below, never less than 2.5 ml.
+function roundMl(ml: number): number {
+  const step = ml > 15 ? 5 : 2.5
+  return Math.max(2.5, Math.round(ml / step) * step)
+}
+
+// Nearest quarter ounce, never less than a quarter.
+function roundOz(oz: number): number {
+  return Math.max(0.25, Math.round(oz * 4) / 4)
+}
+
+// Drops floating-point noise such as 0.30000000000000004.
+function tidy(amount: number): number {
+  return Math.round(amount * 1000) / 1000
 }
 
 function isShown(step: Step, picks: Picks): boolean {
