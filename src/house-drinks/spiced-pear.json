@@ -1,0 +1,113 @@
+{
+  "formatVersion": 1,
+  "id": "spiced-pear",
+  "name": "Spiced Pear",
+  "glass": "coupe",
+  "method": "shake",
+  "flavorTags": ["spicy", "fruity"],
+  "photo": "photos/spiced-pear.jpg",
+  "ingredients": [{ "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" }],
+  "slots": [
+    {
+      "id": "fruit",
+      "label": "Fruit",
+      "options": [
+        {
+          "id": "pear-juice",
+          "label": "Pear juice",
+          "phrase": "pear juice",
+          "ingredients": [{ "name": "pear juice", "amount": 2, "unit": "oz" }],
+          "color": "#d9c27a"
+        },
+        {
+          "id": "cloudy-apple-juice",
+          "label": "Cloudy apple juice",
+          "phrase": "cloudy apple juice",
+          "ingredients": [{ "name": "cloudy apple juice", "amount": 2, "unit": "oz" }],
+          "color": "#e0a84f"
+        }
+      ]
+    },
+    {
+      "id": "spice",
+      "label": "Spice",
+      "options": [
+        {
+          "id": "cinnamon-syrup",
+          "label": "Cinnamon syrup",
+          "phrase": "cinnamon syrup",
+          "ingredients": [{ "name": "cinnamon syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#9a4a1f"
+        },
+        {
+          "id": "ginger-syrup",
+          "label": "Ginger syrup",
+          "phrase": "ginger syrup",
+          "ingredients": [{ "name": "ginger syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#d4a24c"
+        },
+        {
+          "id": "chai-syrup",
+          "label": "Chai syrup",
+          "phrase": "chai syrup",
+          "ingredients": [{ "name": "chai syrup", "amount": 0.5, "unit": "oz" }],
+          "dietaryTags": ["caffeine"],
+          "color": "#7c4a2d"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "pear-slice",
+          "label": "Thin pear slice",
+          "ingredients": [{ "name": "thin pear slice", "amount": 1, "unit": "count" }],
+          "color": "#c5d86d"
+        },
+        {
+          "id": "grated-nutmeg",
+          "label": "Grated nutmeg",
+          "ingredients": [{ "name": "grated nutmeg", "unit": "to-taste" }],
+          "color": "#8b5a2b"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    { "id": "chill-glass", "text": "Chill a coupe in the freezer, or fill it with ice water while you mix." },
+    {
+      "id": "add-base",
+      "text": "Pour the {fruit}, {spice} and lemon juice into a shaker tin.",
+      "tools": ["jigger", "shaker"]
+    },
+    {
+      "id": "shake",
+      "text": "Fill the tin with ice and shake hard until the tin feels frosty.",
+      "tools": ["shaker"],
+      "durationSeconds": 12
+    },
+    {
+      "id": "strain",
+      "text": "Empty the coupe if it holds ice water, then strain the drink into it. No ice in the glass.",
+      "tools": ["strainer"]
+    },
+    {
+      "id": "garnish-pear",
+      "text": "Float the pear slice on top.",
+      "when": { "slot": "garnish", "option": "pear-slice" }
+    },
+    {
+      "id": "garnish-nutmeg",
+      "text": "Grate a little nutmeg over the top.",
+      "when": { "slot": "garnish", "option": "grated-nutmeg" }
+    }
+  ],
+  "houseSpec": {
+    "fruit": "pear-juice",
+    "spice": "cinnamon-syrup",
+    "garnish": "pear-slice"
+  }
+}

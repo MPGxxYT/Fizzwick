@@ -1,0 +1,123 @@
+{
+  "formatVersion": 1,
+  "id": "ginger-mule",
+  "name": "Ginger Mule",
+  "glass": "mug",
+  "method": "build",
+  "flavorTags": ["spicy", "citrus"],
+  "photo": "photos/ginger-mule.jpg",
+  "ingredients": [
+    { "name": "crushed ice", "unit": "fill" },
+    { "name": "fresh lime juice", "amount": 0.5, "unit": "oz" }
+  ],
+  "slots": [
+    {
+      "id": "ginger",
+      "label": "Ginger",
+      "options": [
+        {
+          "id": "ginger-beer",
+          "label": "Ginger beer",
+          "phrase": "ginger beer",
+          "ingredients": [{ "name": "ginger beer", "unit": "top" }],
+          "color": "#e9c46a"
+        },
+        {
+          "id": "ginger-ale",
+          "label": "Ginger ale",
+          "phrase": "ginger ale",
+          "ingredients": [{ "name": "ginger ale", "unit": "top" }],
+          "color": "#f3dfa2"
+        }
+      ]
+    },
+    {
+      "id": "fruit",
+      "label": "Fruit",
+      "optional": true,
+      "options": [
+        {
+          "id": "muddled-blackberries",
+          "label": "Muddled blackberries",
+          "phrase": "blackberries",
+          "ingredients": [{ "name": "blackberries", "amount": 4, "unit": "count" }],
+          "addSteps": [
+            {
+              "step": {
+                "id": "muddle-blackberries",
+                "text": "Muddle the {fruit} in the bottom of the mug until they break up and release their juice.",
+                "tools": ["muddler"]
+              }
+            }
+          ],
+          "color": "#4c1d95"
+        },
+        {
+          "id": "cranberry-juice",
+          "label": "Cranberry juice",
+          "phrase": "cranberry juice",
+          "ingredients": [{ "name": "cranberry juice", "amount": 1, "unit": "oz" }],
+          "addSteps": [
+            {
+              "after": "add-lime",
+              "step": {
+                "id": "add-cranberry",
+                "text": "Add the {fruit}.",
+                "tools": ["jigger"]
+              }
+            }
+          ],
+          "color": "#be123c"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "lime-and-mint",
+          "label": "Lime wedge and mint sprig",
+          "phrase": "lime wedge and a mint sprig",
+          "ingredients": [
+            { "name": "lime wedge", "amount": 1, "unit": "count" },
+            { "name": "mint sprig", "amount": 1, "unit": "count" }
+          ],
+          "color": "#65a30d"
+        },
+        {
+          "id": "candied-ginger",
+          "label": "Candied ginger",
+          "phrase": "piece of candied ginger on a pick",
+          "ingredients": [{ "name": "candied ginger", "amount": 1, "unit": "count" }],
+          "color": "#c08a3e"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    { "id": "fill-glass", "text": "Pack the mug with crushed ice." },
+    {
+      "id": "add-lime",
+      "text": "Pour the lime juice over the ice.",
+      "tools": ["jigger"]
+    },
+    { "id": "top", "text": "Top with {ginger}." },
+    {
+      "id": "stir",
+      "text": "Give it one gentle stir with a barspoon, pulling from the bottom up.",
+      "tools": ["barspoon"]
+    },
+    {
+      "id": "garnish",
+      "text": "Garnish with a {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "ginger": "ginger-beer",
+    "fruit": null,
+    "garnish": "lime-and-mint"
+  }
+}

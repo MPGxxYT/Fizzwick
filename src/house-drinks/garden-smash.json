@@ -1,0 +1,121 @@
+{
+  "formatVersion": 1,
+  "id": "garden-smash",
+  "name": "Garden Smash",
+  "glass": "rocks",
+  "method": "shake",
+  "flavorTags": ["herbal"],
+  "photo": "photos/garden-smash.jpg",
+  "ingredients": [
+    { "name": "cucumber slices", "amount": 3, "unit": "count" },
+    { "name": "ice", "unit": "fill" }
+  ],
+  "slots": [
+    {
+      "id": "herb",
+      "label": "Herb",
+      "options": [
+        {
+          "id": "mint",
+          "label": "Mint",
+          "phrase": "mint",
+          "ingredients": [
+            { "name": "mint leaves", "amount": 6, "unit": "count" },
+            { "name": "mint sprig, for garnish", "amount": 1, "unit": "count" }
+          ],
+          "color": "#22c55e"
+        },
+        {
+          "id": "basil",
+          "label": "Basil",
+          "phrase": "basil",
+          "ingredients": [
+            { "name": "basil leaves", "amount": 4, "unit": "count" },
+            { "name": "basil sprig, for garnish", "amount": 1, "unit": "count" }
+          ],
+          "color": "#15803d"
+        },
+        {
+          "id": "thyme",
+          "label": "Thyme",
+          "phrase": "thyme",
+          "ingredients": [
+            { "name": "thyme sprigs", "amount": 2, "unit": "count" },
+            { "name": "thyme sprig, for garnish", "amount": 1, "unit": "count" }
+          ],
+          "color": "#6b8e4e"
+        }
+      ]
+    },
+    {
+      "id": "citrus",
+      "label": "Citrus",
+      "options": [
+        {
+          "id": "lemon-juice",
+          "label": "Fresh lemon juice",
+          "phrase": "lemon juice",
+          "ingredients": [{ "name": "fresh lemon juice", "amount": 0.75, "unit": "oz" }],
+          "color": "#fde047"
+        },
+        {
+          "id": "lime-juice",
+          "label": "Fresh lime juice",
+          "phrase": "lime juice",
+          "ingredients": [{ "name": "fresh lime juice", "amount": 0.75, "unit": "oz" }],
+          "color": "#a3e635"
+        }
+      ]
+    },
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "simple-syrup",
+          "label": "Simple syrup",
+          "phrase": "simple syrup",
+          "ingredients": [{ "name": "simple syrup", "amount": 0.75, "unit": "oz" }],
+          "color": "#f5f5f4"
+        },
+        {
+          "id": "honey-syrup",
+          "label": "Honey syrup",
+          "phrase": "honey syrup",
+          "ingredients": [{ "name": "honey syrup", "amount": 0.75, "unit": "oz" }],
+          "color": "#e8a33d"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "muddle",
+      "text": "Muddle the cucumber slices and {herb} in a shaker tin until the cucumber is crushed and juicy.",
+      "tools": ["muddler", "shaker"]
+    },
+    {
+      "id": "add-base",
+      "text": "Add the {citrus} and {sweetener}.",
+      "tools": ["jigger"]
+    },
+    {
+      "id": "shake",
+      "text": "Fill the tin with ice and shake hard.",
+      "tools": ["shaker"],
+      "durationSeconds": 12
+    },
+    { "id": "fill-glass", "text": "Fill a rocks glass with fresh ice." },
+    {
+      "id": "double-strain",
+      "text": "Double strain into the glass, through the shaker strainer and a fine strainer, to catch the bits of herb and cucumber.",
+      "tools": ["strainer", "fine-strainer"]
+    },
+    { "id": "garnish", "text": "Garnish with a sprig of {herb}." }
+  ],
+  "houseSpec": {
+    "herb": "mint",
+    "citrus": "lemon-juice",
+    "sweetener": "simple-syrup"
+  }
+}

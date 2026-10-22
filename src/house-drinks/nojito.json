@@ -1,0 +1,128 @@
+{
+  "formatVersion": 1,
+  "id": "nojito",
+  "name": "Nojito",
+  "glass": "collins",
+  "method": "build",
+  "flavorTags": ["herbal", "citrus"],
+  "photo": "photos/nojito.jpg",
+  "ingredients": [
+    { "name": "mint leaves", "amount": 8, "unit": "count" },
+    { "name": "fresh lime juice", "amount": 0.75, "unit": "oz" },
+    { "name": "crushed ice", "unit": "fill" },
+    { "name": "mint sprig", "amount": 1, "unit": "count" }
+  ],
+  "slots": [
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "simple-syrup",
+          "label": "Simple syrup",
+          "phrase": "simple syrup",
+          "ingredients": [{ "name": "simple syrup", "amount": 0.75, "unit": "oz" }],
+          "color": "#f5f5f4"
+        },
+        {
+          "id": "demerara-syrup",
+          "label": "Demerara syrup",
+          "phrase": "demerara syrup",
+          "ingredients": [{ "name": "demerara syrup", "amount": 0.75, "unit": "oz" }],
+          "color": "#a16207"
+        },
+        {
+          "id": "agave",
+          "label": "Agave",
+          "phrase": "agave",
+          "ingredients": [{ "name": "agave", "amount": 0.5, "unit": "oz" }],
+          "color": "#d6a84a"
+        }
+      ]
+    },
+    {
+      "id": "fruit",
+      "label": "Fruit",
+      "optional": true,
+      "options": [
+        {
+          "id": "muddled-raspberries",
+          "label": "Muddled raspberries",
+          "phrase": "raspberries",
+          "ingredients": [{ "name": "raspberries", "amount": 4, "unit": "count" }],
+          "addSteps": [
+            {
+              "after": "muddle",
+              "step": {
+                "id": "muddle-raspberries",
+                "text": "Drop in the {fruit} and press them a few times with the muddler to break them open.",
+                "tools": ["muddler"]
+              }
+            }
+          ],
+          "color": "#e11d48"
+        },
+        {
+          "id": "passion-fruit-puree",
+          "label": "Passion fruit purée",
+          "phrase": "passion fruit purée",
+          "ingredients": [{ "name": "passion fruit purée", "amount": 0.75, "unit": "oz" }],
+          "addSteps": [
+            {
+              "after": "muddle",
+              "step": {
+                "id": "add-passion-fruit",
+                "text": "Add the {fruit}.",
+                "tools": ["jigger"]
+              }
+            }
+          ],
+          "color": "#f59e0b"
+        }
+      ]
+    },
+    {
+      "id": "fizz",
+      "label": "Fizz",
+      "options": [
+        {
+          "id": "soda-water",
+          "label": "Soda water",
+          "phrase": "soda water",
+          "ingredients": [{ "name": "soda water", "unit": "top" }],
+          "color": "#e0f2fe"
+        },
+        {
+          "id": "ginger-ale",
+          "label": "Ginger ale",
+          "phrase": "ginger ale",
+          "ingredients": [{ "name": "ginger ale", "unit": "top" }],
+          "color": "#f3dfa2"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "muddle",
+      "text": "Put the mint leaves, lime juice and {sweetener} in the glass. Press the mint gently with the muddler, just enough to bruise it. Grinding it turns it bitter.",
+      "tools": ["jigger", "muddler"]
+    },
+    { "id": "fill-glass", "text": "Fill the glass with crushed ice." },
+    { "id": "top", "text": "Top with {fizz}." },
+    {
+      "id": "churn",
+      "text": "Churn with a barspoon, lifting the mint up from the bottom through the ice.",
+      "tools": ["barspoon"]
+    },
+    {
+      "id": "garnish",
+      "text": "Slap the mint sprig between your palms to release its aroma and stand it in the ice."
+    }
+  ],
+  "houseSpec": {
+    "sweetener": "simple-syrup",
+    "fruit": null,
+    "fizz": "soda-water"
+  }
+}

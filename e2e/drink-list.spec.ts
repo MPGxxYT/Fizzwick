@@ -11,15 +11,15 @@ test('the home page lists the House Drinks and opens one', async ({ page }) => {
 
 test('search finds a Drink by an ingredient that only appears in an Option', async ({ page }) => {
   await page.goto('/')
-  await page.getByRole('searchbox', { name: 'Search drinks or ingredients' }).fill('agave')
+  await page.getByRole('searchbox', { name: 'Search drinks or ingredients' }).fill('tart cherry')
   await expect(page.getByRole('link', { name: /Cherry Limeade/ })).toBeVisible()
   await expect(page.getByText('1 drink', { exact: true })).toBeVisible()
 })
 
 test('a search with no matches says so and can be cleared', async ({ page }) => {
   await page.goto('/')
-  await page.getByRole('searchbox', { name: 'Search drinks or ingredients' }).fill('mango')
-  await expect(page.getByText('No drinks match "mango"')).toBeVisible()
+  await page.getByRole('searchbox', { name: 'Search drinks or ingredients' }).fill('pineapple')
+  await expect(page.getByText('No drinks match "pineapple"')).toBeVisible()
   await expect(page.getByRole('link', { name: /Cherry Limeade/ })).toHaveCount(0)
 
   await page.getByRole('button', { name: 'Clear search and filters' }).click()
