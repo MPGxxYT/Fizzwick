@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # the Drink ID check reads House Drinks at the base commit
       - uses: actions/setup-node@v5
         with:
           node-version: 24
@@ -17,5 +19,11 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
+      - name: Check no Drink IDs were removed
+        run: node scripts/check-drink-ids.mjs "$BASE_REF"
+        env:
+          # PRs compare with their base; pushes with the previous commit
+          # (all zeros on a new branch, which falls back to origin/main).
+          BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
