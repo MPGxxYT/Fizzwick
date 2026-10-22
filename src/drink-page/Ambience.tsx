@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Drink, Picks } from '../riff-engine'
+import './ambience.css'
 
 // Background bubbles. Fixed spots so they don't jump on every render. Each
 // rises from its spot on the page (not the screen) to past the top, taking

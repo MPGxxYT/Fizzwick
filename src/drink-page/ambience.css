@@ -1,0 +1,144 @@
+/* Background for the purple pages: the glow, one breathing color spot per
+   Slot, and bubbles that rise past the top with fizz on scroll. */
+/* The purple glow at the top, fixed to the screen. */
+.dp-glow {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: radial-gradient(120% 70% at 50% 0%, #3b2763 0%, transparent 65%);
+}
+
+/* One soft color spot per Slot, fixed to the screen. A spot fades to its
+   Slot's new Option color, and fades out while the Slot is empty. */
+.dp-spot {
+  position: absolute;
+  width: 85vw;
+  height: 55vh;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0;
+  transition:
+    background-color 1.6s ease,
+    opacity 1.6s ease;
+  /* Breathing: a slow, slight swell and glow. It works on size and brightness,
+     not opacity, so a spot never goes out. */
+  animation: dp-breathe var(--breathe, 11s) ease-in-out var(--breathe-delay, 0s) infinite alternate;
+}
+
+.dp-spot.is-filled {
+  opacity: 0.2;
+}
+
+@keyframes dp-breathe {
+  from {
+    transform: scale(0.96);
+    filter: blur(70px) brightness(0.9);
+  }
+  to {
+    transform: scale(1.05);
+    filter: blur(70px) brightness(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-spot {
+    animation: none;
+  }
+}
+
+.dp-spot-0 {
+  top: -22vh;
+  left: -30vw;
+}
+
+.dp-spot-1 {
+  top: 22vh;
+  right: -45vw;
+}
+
+.dp-spot-2 {
+  bottom: -25vh;
+  left: -35vw;
+}
+
+.dp-spot-3 {
+  bottom: 10vh;
+  right: -40vw;
+}
+
+.dp-spot-4 {
+  top: 40vh;
+  left: 10vw;
+}
+
+/* Bubbles drifting up behind the page. Faint and slow on purpose. They live
+   in the page, not the screen, so each one scrolls along with the text next
+   to it while it rises. */
+.dp-bubbles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.dp-bubbles span {
+  position: absolute;
+  border: 1px solid rgba(251, 246, 255, 0.35);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(251, 246, 255, 0.18), transparent 60%);
+  animation: dp-rise var(--duration) linear var(--delay) infinite;
+}
+
+/* From the bubble's spot on the page all the way up past the top (--rise is
+   its distance to the top of the page), then it starts again from its spot. */
+@keyframes dp-rise {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  4% {
+    opacity: var(--alpha);
+  }
+  50% {
+    transform: translate(var(--sway), calc(-0.5 * var(--rise)));
+  }
+  100% {
+    transform: translate(0, calc(-1 * var(--rise)));
+    opacity: var(--alpha);
+  }
+}
+
+/* Quick fizz released by scrolling: rises to the top of the screen, then pops. */
+.dp-bubbles .dp-fizz {
+  animation: dp-fizz var(--duration) ease-in forwards;
+}
+
+@keyframes dp-fizz {
+  0% {
+    transform: translate(0, 0) scale(0.6);
+    opacity: 0;
+  }
+  10% {
+    opacity: var(--alpha);
+  }
+  92% {
+    transform: translate(var(--sway), calc(-1 * var(--rise))) scale(1);
+    opacity: var(--alpha);
+  }
+  100% {
+    transform: translate(var(--sway), calc(-1 * var(--rise) - 1rem)) scale(1.6);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-spot {
+    transition: none;
+  }
+
+  .dp-bubbles span {
+    animation: none;
+    opacity: var(--alpha);
+  }
+}
