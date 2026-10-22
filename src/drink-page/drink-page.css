@@ -1,0 +1,757 @@
+/* The Drink page: midnight purple, rising bubbles, and the Riff as a sentence. */
+.dp {
+  --dp-paper: #24173b;
+  --dp-ink: #fbf6ff;
+  --dp-cherry: #ff8fb0;
+  --dp-mint: #3d2b5e;
+  --dp-card: #2e2049;
+  --dp-soft: #bfaedc;
+
+  position: relative;
+  min-height: 100vh;
+  background: var(--dp-paper);
+  color: var(--dp-ink);
+  font-family: 'Figtree', system-ui, sans-serif;
+  color-scheme: dark;
+}
+
+/* The purple glow at the top, fixed to the screen. */
+.dp-glow {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: radial-gradient(120% 70% at 50% 0%, #3b2763 0%, transparent 65%);
+}
+
+/* One soft color spot per Slot, fixed to the screen. A spot fades to its
+   Slot's new Option color, and fades out while the Slot is empty. */
+.dp-spot {
+  position: absolute;
+  width: 85vw;
+  height: 55vh;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0;
+  transition:
+    background-color 1.6s ease,
+    opacity 1.6s ease;
+  /* Breathing: a slow, slight swell and glow. It works on size and brightness,
+     not opacity, so a spot never goes out. */
+  animation: dp-breathe var(--breathe, 11s) ease-in-out var(--breathe-delay, 0s) infinite alternate;
+}
+
+.dp-spot.is-filled {
+  opacity: 0.2;
+}
+
+@keyframes dp-breathe {
+  from {
+    transform: scale(0.96);
+    filter: blur(70px) brightness(0.9);
+  }
+  to {
+    transform: scale(1.05);
+    filter: blur(70px) brightness(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-spot {
+    animation: none;
+  }
+}
+
+.dp-spot-0 {
+  top: -22vh;
+  left: -30vw;
+}
+
+.dp-spot-1 {
+  top: 22vh;
+  right: -45vw;
+}
+
+.dp-spot-2 {
+  bottom: -25vh;
+  left: -35vw;
+}
+
+.dp-spot-3 {
+  bottom: 10vh;
+  right: -40vw;
+}
+
+.dp-spot-4 {
+  top: 40vh;
+  left: 10vw;
+}
+
+/* Bubbles drifting up behind the page. Faint and slow on purpose. They live
+   in the page, not the screen, so each one scrolls along with the text next
+   to it while it rises. */
+.dp-bubbles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.dp-bubbles span {
+  position: absolute;
+  border: 1px solid rgba(251, 246, 255, 0.35);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(251, 246, 255, 0.18), transparent 60%);
+  animation: dp-rise var(--duration) linear var(--delay) infinite;
+}
+
+/* From the bubble's spot on the page all the way up past the top (--rise is
+   its distance to the top of the page), then it starts again from its spot. */
+@keyframes dp-rise {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  4% {
+    opacity: var(--alpha);
+  }
+  50% {
+    transform: translate(var(--sway), calc(-0.5 * var(--rise)));
+  }
+  100% {
+    transform: translate(0, calc(-1 * var(--rise)));
+    opacity: var(--alpha);
+  }
+}
+
+/* Quick fizz released by scrolling: rises to the top of the screen, then pops. */
+.dp-bubbles .dp-fizz {
+  animation: dp-fizz var(--duration) ease-in forwards;
+}
+
+@keyframes dp-fizz {
+  0% {
+    transform: translate(0, 0) scale(0.6);
+    opacity: 0;
+  }
+  10% {
+    opacity: var(--alpha);
+  }
+  92% {
+    transform: translate(var(--sway), calc(-1 * var(--rise))) scale(1);
+    opacity: var(--alpha);
+  }
+  100% {
+    transform: translate(var(--sway), calc(-1 * var(--rise) - 1rem)) scale(1.6);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-spot {
+    transition: none;
+  }
+
+  .dp-bubbles span {
+    animation: none;
+    opacity: var(--alpha);
+  }
+}
+
+.dp-page {
+  position: relative;
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: 1.25rem 1.25rem 7rem;
+}
+
+.dp-back {
+  color: var(--dp-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.dp-head {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.dp-head h1 span {
+  display: block;
+}
+
+.dp-kicker {
+  margin: 0.6rem 0 0;
+  color: var(--dp-soft);
+}
+
+.dp h1 {
+  margin: 0;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.75rem, 13vw, 4.25rem);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  color: var(--dp-cherry);
+}
+
+/* Indented to line up with the text inside the cards. */
+.dp-sentence,
+.dp-hint,
+.dp-row {
+  padding-left: 1.25rem;
+}
+
+.dp-sentence {
+  margin: 1.75rem 0 0.25rem;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-weight: 500;
+  font-size: 1.6rem;
+  line-height: 1.45;
+}
+
+.dp-word {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration-line: underline;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 6px;
+  cursor: pointer;
+}
+
+.dp-word:focus-visible {
+  outline: 2px solid var(--dp-cherry);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.dp-hint {
+  margin: 0;
+  color: var(--dp-soft);
+  font-size: 0.875rem;
+}
+
+.dp-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-top: 1rem;
+}
+
+.dp-dietary {
+  margin: 0;
+  font-weight: 600;
+}
+
+.dp-reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.9rem 0.5rem 0.7rem;
+  border: 1px solid rgba(191, 174, 220, 0.45);
+  border-radius: 999px;
+  background: none;
+  color: var(--dp-ink);
+  font: 600 0.95rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
+
+.dp-reset svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* "Made with": a quiet lead-in so the choices below carry the color. */
+.dp-sentence .dp-lead {
+  margin-bottom: 0.15rem;
+  color: var(--dp-soft);
+  font-family: 'Figtree', sans-serif;
+  font-weight: 500;
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+.dp-card {
+  margin-top: 2rem;
+  padding: 1.25rem;
+  border-radius: 1.25rem;
+  background: var(--dp-card);
+  box-shadow: 0 0 0 1px rgba(191, 174, 220, 0.25);
+}
+
+.dp-card h2 {
+  margin: 0;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-size: 1.35rem;
+}
+
+.dp-card h2 + .dp-steps {
+  margin-top: 0.75rem;
+}
+
+.dp-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dp-servings {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+.dp-servings button {
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--dp-mint);
+  color: var(--dp-ink);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.dp-servings button:disabled {
+  opacity: 0.35;
+}
+
+.dp-sentence-line {
+  display: block;
+}
+
+/* Wide enough for "12 drinks", so the buttons never shift as the count changes. */
+.dp-servings .dp-count {
+  min-width: 4.75rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.dp-ingredients {
+  margin: 1rem 0 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.dp-ingredients li {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 0.75rem;
+  padding: 0.4rem 0;
+}
+
+.dp-measure {
+  color: var(--dp-cherry);
+  font-weight: 600;
+}
+
+.dp-note {
+  margin: -0.75rem 0 1.5rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  background: var(--dp-mint);
+}
+
+.dp-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.dp-steps li {
+  position: relative;
+  padding: 0.5rem 0 0.5rem 2.5rem;
+  counter-increment: step;
+}
+
+.dp-steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0.25rem;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--dp-cherry);
+}
+
+.dp-sheet {
+  width: 100%;
+  max-width: 34rem;
+  max-height: 85vh;
+  margin: auto auto 0;
+  padding: 0;
+  border: 0;
+  border-radius: 1.25rem 1.25rem 0 0;
+  background: var(--dp-card);
+  color: var(--dp-ink);
+  font-family: 'Figtree', system-ui, sans-serif;
+}
+
+.dp-sheet::backdrop {
+  background: rgba(12, 6, 24, 0.6);
+}
+
+.dp-sheet-body {
+  padding: 1.25rem 1.25rem 2rem;
+}
+
+.dp-sheet h2 {
+  margin: 0 0 0.75rem;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+}
+
+.dp-options {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dp-options button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0 0.75rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: none;
+  color: var(--dp-ink);
+  font: 500 1.1rem 'Figtree', sans-serif;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dp-options button[aria-pressed='true'] {
+  background: var(--dp-mint);
+  font-weight: 600;
+}
+
+.dp-swatch {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(251, 246, 255, 0.3);
+}
+
+.dp-swatch-none {
+  background: repeating-linear-gradient(45deg, transparent 0 3px, rgba(251, 246, 255, 0.35) 3px 4px);
+}
+
+/* The tappable glass name: a different color, no underline. */
+.dp-glass-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #7fe3c6;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dp-glass-link:focus-visible {
+  outline: 2px solid #7fe3c6;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.dp-glass-top {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dp-glass-sketch {
+  width: 7rem;
+  height: auto;
+}
+
+.dp-glass-sheet h2 {
+  margin: 0;
+}
+
+.dp-glass-size {
+  margin: 0.25rem 0 0;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-weight: 800;
+  font-size: 2.5rem;
+  line-height: 1;
+  color: #7fe3c6;
+}
+
+.dp-glass-sub {
+  margin: 0.4rem 0 0;
+  color: var(--dp-soft);
+  font-size: 0.95rem;
+}
+
+.dp-glass-form {
+  margin-top: 1.5rem;
+}
+
+.dp-glass-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.dp-glass-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dp-glass-row input {
+  width: 5.5rem;
+  min-height: 3rem;
+  padding: 0 0.75rem;
+  border: 1px solid rgba(191, 174, 220, 0.4);
+  border-radius: 0.75rem;
+  background: var(--dp-paper);
+  color: var(--dp-ink);
+  font: 600 1.2rem 'Figtree', sans-serif;
+}
+
+.dp-glass-use {
+  width: auto;
+  min-height: 3rem;
+  margin-left: auto;
+  padding: 0 1rem;
+  background: #7fe3c6;
+  color: var(--dp-paper);
+  font-weight: 600;
+}
+
+.dp-glass-use:disabled {
+  opacity: 0.4;
+}
+
+.dp-glass-use {
+  min-height: 3rem;
+  margin-left: auto;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: 0.75rem;
+  font: 600 1rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
+
+.dp-glass-error {
+  margin: 0.5rem 0 0;
+  color: #ffb4c4;
+}
+
+.dp-glass-standard {
+  margin-top: 0.75rem;
+  padding: 0;
+  min-height: 2.5rem;
+  border: 0;
+  background: none;
+  color: var(--dp-soft);
+  font: 500 1rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
+
+/* Motion that answers what you did. All of it is off with reduced motion. */
+
+/* On load, the sentence rises in a line at a time, once. */
+.dp-line-in {
+  animation: dp-line-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes dp-line-in {
+  from {
+    opacity: 0.35;
+    transform: translateY(0.6em);
+  }
+}
+
+/* A newly picked word rises into place like a bubble. */
+.dp-word {
+  display: inline-block;
+}
+
+.dp-word.is-new {
+  animation: dp-word-rise 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+@keyframes dp-word-rise {
+  from {
+    opacity: 0.35;
+    transform: translateY(0.5em) scale(0.96);
+  }
+}
+
+/* Choice and glass sheets slide up from the bottom over a fading backdrop. */
+.dp-sheet[open] {
+  animation: dp-sheet-up 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.dp-sheet[open]::backdrop {
+  animation: dp-fade 0.2s ease-out both;
+}
+
+@keyframes dp-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes dp-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-line-in,
+  .dp-word.is-new,
+  .dp-sheet[open],
+  .dp-sheet[open]::backdrop {
+    animation: none;
+  }
+}
+
+/* One focus ring for everything you can tap. */
+.dp a:focus-visible,
+.dp button:focus-visible,
+.dp input:focus-visible,
+.dp-sheet button:focus-visible,
+.dp-sheet input:focus-visible {
+  outline: 2px solid #7fe3c6;
+  outline-offset: 3px;
+}
+
+.dp-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-left: -0.35rem;
+  padding: 0.25rem 0.35rem;
+  border-radius: 0.5rem;
+}
+
+.dp-back svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Changing the drink count rolls each changed amount to its new value:
+   up from below when adding drinks, down from above when removing. */
+.dp-measure-slot {
+  overflow: hidden;
+}
+
+.dp-count {
+  display: inline-block;
+}
+
+.dp-card[data-counting] .dp-count {
+  animation: dp-count 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes dp-count {
+  from {
+    opacity: 0;
+    transform: translateY(var(--count-from));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-card[data-counting] .dp-count {
+    animation: none;
+  }
+}
+
+/* The name fills up like liquid in a glass. */
+.dp h1.dp-title {
+  position: relative;
+  color: transparent;
+}
+
+/* The empty glass: just the outline of the letters. */
+.dp-title-empty {
+  -webkit-text-stroke: 1.5px rgba(255, 143, 176, 0.45);
+}
+
+/* The liquid: the same words painted with the Riff's colors and revealed
+   through a wave-topped mask that rises from below the letters to above them.
+   The mask is three times the title's height with the wave a third of the way
+   down, so moving it from 0% to 55% carries the wave from the bottom edge to
+   just past the top, while the sideways drift makes the surface roll. */
+.dp-title-fill {
+  position: absolute;
+  inset: 0;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  --wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300' preserveAspectRatio='none'%3E%3Cpath d='M0 100 Q12.5 92 25 100 T50 100 T75 100 T100 100 T125 100 T150 100 T175 100 T200 100 V300 H0 Z'/%3E%3C/svg%3E");
+  -webkit-mask-image: var(--wave);
+  mask-image: var(--wave);
+  -webkit-mask-size: 200% 300%;
+  mask-size: 200% 300%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: dp-fill 2.4s cubic-bezier(0.35, 0.1, 0.25, 1) 0.2s both;
+}
+
+@keyframes dp-fill {
+  from {
+    -webkit-mask-position: 0% 0%;
+    mask-position: 0% 0%;
+  }
+  to {
+    -webkit-mask-position: 100% 55%;
+    mask-position: 100% 55%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-title-fill {
+    animation: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
+/* The old color stays solid underneath while the new one fills over it. */
+.dp-title-solid {
+  position: absolute;
+  inset: 0;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* A refill starts with the wave just below the letters, rises more gently
+   and has no delay, since the glass is never empty. */
+.dp-title-fill.is-refill {
+  animation: dp-fill 1.8s cubic-bezier(0.4, 0, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-title-fill.is-refill {
+    animation: none;
+  }
+}
