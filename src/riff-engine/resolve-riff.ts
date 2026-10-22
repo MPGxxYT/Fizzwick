@@ -18,6 +18,17 @@ export type Units = 'oz' | 'ml'
 export interface RiffSettings {
   servings?: number // 1 to 12, default 1
   units?: Units // default oz
+  glassOz?: number // the user's own glass, 2 to 64 oz; default the glass's standard size
+}
+
+// The size a recipe for each glass is written for.
+export const GLASS_SIZES_OZ: Record<Glass, number> = {
+  collins: 12,
+  highball: 10,
+  rocks: 8,
+  coupe: 6,
+  mug: 16,
+  hurricane: 15,
 }
 
 export const MAX_SERVINGS = 12
@@ -46,6 +57,7 @@ export interface Riff {
   slots: RiffSlot[]
   ingredients: Ingredient[]
   steps: RiffStep[]
+  glassOz: number
   miseEnPlace: { glass: Glass; glassCount: number; tools: Tool[]; ingredients: Ingredient[] }
   batchNotes: string[]
   dietaryTags: DietaryTag[]
@@ -97,10 +109,15 @@ export function checkEveryRiff(drink: Drink): string[] {
   return problems
 }
 
-function resolve(drink: Drink, requested: Picks, { servings = 1, units = 'oz' }: RiffSettings = {}) {
+function resolve(drink: Drink, requested: Picks, { servings = 1, units = 'oz', glassOz }: RiffSettings = {}) {
   if (!Number.isInteger(servings) || servings < 1 || servings > MAX_SERVINGS) {
     throw new Error(`servings must be a whole number from 1 to ${MAX_SERVINGS}`)
   }
+  if (glassOz !== undefined && !(glassOz >= 2 && glassOz <= 64)) {
+    throw new Error('glassOz must be from 2 to 64')
+  }
+  const glassSize = glassOz ?? GLASS_SIZES_OZ[drink.glass]
+  const glassRatio = glassSize / GLASS_SIZES_OZ[drink.glass]
   for (const slotId of Object.keys(requested)) {
     if (!drink.slots.some((slot) => slot.id === slotId)) throw new Error(`unknown Slot "${slotId}"`)
   }
@@ -123,7 +140,7 @@ function resolve(drink: Drink, requested: Picks, { servings = 1, units = 'oz' }:
 
   const method = options.reduce<Method>((current, option) => option.method ?? current, drink.method)
   const ingredients = [...drink.ingredients, ...options.flatMap((option) => option.ingredients)].map((ingredient) =>
-    measure(ingredient, servings, units),
+    measure(ingredient, servings, units, glassRatio),
   )
   const batch = BATCH_LIMITS[method]
   const batchNotes = batch && servings > batch.size ? [batch.note(Math.ceil(servings / batch.size))] : []
@@ -166,6 +183,7 @@ function resolve(drink: Drink, requested: Picks, { servings = 1, units = 'oz' }:
     }),
     ingredients,
     steps,
+    glassOz: glassSize,
     miseEnPlace: { glass: drink.glass, glassCount: servings, tools, ingredients },
     batchNotes,
     dietaryTags: DIETARY_TAGS.filter((tag) => tags.has(tag)),
@@ -203,13 +221,19 @@ function orderSteps(base: Step[], options: Option[]): Step[] {
 }
 
 // Scales an amount by the serving count, then converts oz and ml into the
-// chosen units. Other measured units scale but never convert; Top, to taste
-// and fill have no amount and are left alone.
-function measure(ingredient: Ingredient, servings: number, units: Units): Ingredient {
+// chosen units. Poured amounts (oz and ml) also scale to the glass, and are
+// then rounded to something pourable. Other measured units scale by servings
+// but never convert or follow the glass; Top, to taste and fill have no
+// amount and are left alone.
+function measure(ingredient: Ingredient, servings: number, units: Units, glassRatio: number): Ingredient {
   if (ingredient.amount === undefined) return ingredient
-  const scaled = ingredient.amount * servings
+  const poured = ingredient.unit === 'oz' || ingredient.unit === 'ml'
+  const scaled = ingredient.amount * servings * (poured ? glassRatio : 1)
   if (ingredient.unit === 'oz' && units === 'ml') return { ...ingredient, amount: roundMl(scaled * ML_PER_OZ), unit: 'ml' }
   if (ingredient.unit === 'ml' && units === 'oz') return { ...ingredient, amount: roundOz(scaled / ML_PER_OZ), unit: 'oz' }
+  if (poured && glassRatio !== 1) {
+    return { ...ingredient, amount: ingredient.unit === 'oz' ? roundOz(scaled) : roundMl(scaled) }
+  }
   return { ...ingredient, amount: tidy(scaled) }
 }
 

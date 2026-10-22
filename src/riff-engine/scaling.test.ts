@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import cherryLimeadeFile from '../house-drinks/cherry-limeade.json'
-import { parseDrinkFile, resolveRiff, type Drink, type Method } from '.'
+import { GLASS_SIZES_OZ, parseDrinkFile, resolveRiff, type Drink, type Method } from '.'
 
 function parse(input: unknown): Drink {
   const result = parseDrinkFile(input)
@@ -114,6 +114,44 @@ describe('scaling', () => {
     expect(() => resolveRiff(cherryLimeade, {}, { servings: 13 })).toThrow('servings must be a whole number from 1 to 12')
     expect(() => resolveRiff(cherryLimeade, {}, { servings: 1.5 })).toThrow('servings must be a whole number from 1 to 12')
     expect(resolveRiff(cherryLimeade, {}, { servings: 12 }).servings).toBe(12)
+  })
+})
+
+describe('glass size', () => {
+  test('each glass has a standard size, and a Riff reports the size it is made for', () => {
+    expect(GLASS_SIZES_OZ.collins).toBe(12)
+    expect(resolveRiff(cherryLimeade).glassOz).toBe(12)
+    expect(resolveRiff(cherryLimeade, {}, { glassOz: 16 }).glassOz).toBe(16)
+  })
+
+  test('a bigger glass scales the pours to fit, rounded to quarter ounces', () => {
+    expect(amounts(cherryLimeade, { glassOz: 16 })).toEqual([
+      'ice: fill',
+      'fresh lime juice: 1 oz',
+      'cherry syrup: 1 oz',
+      'lemon-lime soda: top',
+      'lime wheel: 1 count',
+      'cherry: 1 count',
+    ])
+  })
+
+  test('a smaller glass scales the pours down, never below a quarter ounce', () => {
+    const drink = drinkWith('build', [{ name: 'a', amount: 0.25, unit: 'oz' }])
+    expect(amounts(drink, { glassOz: 4 })[0]).toBe('a: 0.25 oz')
+  })
+
+  test('glass size and servings scale together, before converting to ml', () => {
+    expect(amounts(cherryLimeade, { glassOz: 16, servings: 2 })).toContain('fresh lime juice: 2 oz')
+    expect(amounts(cherryLimeade, { glassOz: 16, units: 'ml' })).toContain('fresh lime juice: 30 ml')
+  })
+
+  test('the standard size changes nothing', () => {
+    expect(resolveRiff(cherryLimeade, {}, { glassOz: 12 }).ingredients).toEqual(resolveRiff(cherryLimeade).ingredients)
+  })
+
+  test('accepts glass sizes from 2 to 64 oz only', () => {
+    expect(() => resolveRiff(cherryLimeade, {}, { glassOz: 1 })).toThrow('glassOz must be from 2 to 64')
+    expect(() => resolveRiff(cherryLimeade, {}, { glassOz: 65 })).toThrow('glassOz must be from 2 to 64')
   })
 })
 

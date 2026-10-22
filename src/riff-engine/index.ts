@@ -2,6 +2,7 @@
 export { parseDrinkFile, type ParseResult } from './parse-drink-file'
 export {
   checkEveryRiff,
+  GLASS_SIZES_OZ,
   MAX_SERVINGS,
   resolveRiff,
   type Picks,
