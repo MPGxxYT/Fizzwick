@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react'
 import { markBarTerms } from '../bar-terms'
 import { MAX_SERVINGS, type Riff } from '../riff-engine'
-import { formatIngredient } from './format'
+import { formatIngredient, isMakeAhead, TOOL_NAMES } from './format'
 import { TermText } from './TermText'
 
-// The ingredients with a drink count, then the steps. Changing the count
+// The ingredients with a drink count, then the steps. Anything to do ahead
+// comes first and the tools come after the ingredients, so nothing in step
+// mode is a surprise. Changing the count
 // rolls each amount that changes: up from below when adding drinks, down from
 // above when removing. Amounts are keyed by their text, so only the ones that
 // change remount and roll, and nothing rolls until the count first changes.
@@ -15,20 +17,29 @@ export function RecipeCard({ riff, onServings }: { riff: Riff; onServings: (serv
     onServings(next)
   }
 
+  const ahead = useMemo(() => riff.steps.filter(isMakeAhead), [riff])
+  const { tools } = riff.miseEnPlace
+
   // The card is one screen for Bar Terms: each is underlined once, in reading
-  // order. Each ingredient is its measure then its name, then the steps.
+  // order. The make-ahead steps, each ingredient as its measure then its
+  // name, the tools, then the steps.
   const marked = useMemo(
     () =>
       markBarTerms([
+        ...ahead.map((step) => step.text),
         ...riff.ingredients.flatMap((ingredient) => {
           const { measure, name } = formatIngredient(ingredient)
           return [measure, name]
         }),
+        // One list in a sentence: only the first tool keeps its capital.
+        ...tools.map((tool, i) => (i === 0 ? TOOL_NAMES[tool] : TOOL_NAMES[tool].toLowerCase())),
         ...riff.steps.map((step) => step.text),
       ]),
-    [riff],
+    [riff, ahead, tools],
   )
-  const stepsFrom = riff.ingredients.length * 2
+  const ingredientsFrom = ahead.length
+  const toolsFrom = ingredientsFrom + riff.ingredients.length * 2
+  const stepsFrom = toolsFrom + tools.length
 
   return (
     <section
@@ -61,6 +72,13 @@ export function RecipeCard({ riff, onServings }: { riff: Riff; onServings: (serv
         </div>
       </div>
 
+      {ahead.map((step, i) => (
+        <p key={step.id} className="dp-ahead">
+          <strong>Make ahead</strong>
+          <TermText segments={marked[i]} />
+        </p>
+      ))}
+
       <ul className="dp-ingredients" aria-label="Ingredients">
         {riff.ingredients.map((ingredient, i) => {
           const { measure } = formatIngredient(ingredient)
@@ -68,11 +86,11 @@ export function RecipeCard({ riff, onServings }: { riff: Riff; onServings: (serv
             <li key={i}>
               <span className="dp-measure-slot">
                 <span key={measure} className={ingredient.amount === undefined ? 'dp-measure' : 'dp-measure dp-count'}>
-                  <TermText segments={marked[i * 2]} />
+                  <TermText segments={marked[ingredientsFrom + i * 2]} />
                 </span>
               </span>
               <span>
-                <TermText segments={marked[i * 2 + 1]} />
+                <TermText segments={marked[ingredientsFrom + i * 2 + 1]} />
               </span>
             </li>
           )
@@ -83,6 +101,17 @@ export function RecipeCard({ riff, onServings }: { riff: Riff; onServings: (serv
           {note}
         </p>
       ))}
+      {tools.length > 0 && (
+        <p className="dp-tools">
+          <strong>Tools</strong>{' '}
+          {tools.map((tool, i) => (
+            <span key={tool}>
+              {i > 0 && ', '}
+              <TermText segments={marked[toolsFrom + i]} />
+            </span>
+          ))}
+        </p>
+      )}
 
       <h2 id="dp-steps-heading">How to make it</h2>
       <ol className="dp-steps" aria-labelledby="dp-steps-heading">

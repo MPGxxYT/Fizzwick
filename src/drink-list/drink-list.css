@@ -28,8 +28,9 @@
 }
 
 .dl-head p {
-  margin: 0.5rem 0 0;
+  margin: 0.4rem 0 0;
   color: var(--muted);
+  text-wrap: balance;
 }
 
 .dl-visually-hidden {
@@ -43,7 +44,7 @@
 
 .dl-search {
   position: relative;
-  margin-top: 1.75rem;
+  margin-top: 1rem;
 }
 
 .dl-search svg {
@@ -77,16 +78,40 @@
 
 .dl-filter {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 1rem;
+  margin-top: 0.75rem;
 }
 
 .dl-filter-label {
+  flex: none;
   min-width: 3.75rem;
   color: var(--muted);
   font-size: 0.9rem;
+}
+
+/* The chips run off the right edge of the screen and scroll sideways, so
+   each filter takes one line. The fade says there's more. */
+.dl-chips {
+  display: flex;
+  gap: 0.5rem;
+  min-width: 0;
+  margin: -0.3rem calc(-1 * max(1.25rem, env(safe-area-inset-right))) -0.3rem 0;
+  padding: 0.3rem max(1.25rem, env(safe-area-inset-right)) 0.3rem 0.3rem;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
+}
+
+.dl-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.dl-chips button {
+  flex: none;
+  scroll-snap-align: start;
 }
 
 .dl-filter button {
@@ -108,7 +133,7 @@
 }
 
 .dl-count {
-  margin: 1.5rem 0 0.5rem;
+  margin: 1.25rem 0 0.5rem;
   color: var(--muted);
   font-size: 0.9rem;
 }
@@ -125,10 +150,10 @@
 
 .dl-card {
   display: grid;
-  grid-template-columns: 5rem 1fr;
+  grid-template-columns: 4.25rem 1fr;
   align-items: center;
   gap: 1rem;
-  padding: 0.9rem 1rem;
+  padding: 0.75rem 1rem;
   border-radius: 1.25rem;
   background: #2e2049;
   box-shadow: 0 0 0 1px rgba(191, 174, 220, 0.25);
@@ -140,7 +165,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 6rem;
+  height: 5rem;
 }
 
 .dl-card-art img {
@@ -209,7 +234,7 @@
   display: inline-flex;
   align-items: center;
   min-height: 2.75rem;
-  margin-top: 0.25rem;
+  margin-top: 0;
   padding: 0 0.5rem;
   border-radius: 0.5rem;
   color: var(--link);
