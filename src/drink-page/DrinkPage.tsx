@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import type { ListState } from '../drink-list/DrinkList'
 import { SaveFavorite } from '../favorites/SaveFavorite'
@@ -73,6 +73,14 @@ function DrinkView({ drink, pairs }: { drink: Drink; pairs: string | undefined }
     setMakingEntry(leftover ? 'replaced' : 'pushed')
     navigate(location, { state: { ...pageState, making: true }, replace: leftover })
   }
+  // Focus goes back to the Make button after step mode closes, which
+  // removed it while it was open.
+  const makeButton = useRef<HTMLButtonElement>(null)
+  const wasMaking = useRef(making)
+  useEffect(() => {
+    if (wasMaking.current && !making) makeButton.current?.focus()
+    wasMaking.current = making
+  }, [making])
   const stopMaking = () => {
     if (makingEntry === 'pushed') navigate(-1)
     else navigate(location, { state: { ...pageState, making: false }, replace: true })
@@ -138,7 +146,7 @@ function DrinkView({ drink, pairs }: { drink: Drink; pairs: string | undefined }
 
       {!making && (
         <div className="dp-make">
-          <button type="button" onClick={startMaking}>
+          <button type="button" onClick={startMaking} ref={makeButton}>
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M8 5.5v13a1 1 0 0 0 1.5.9l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 8 5.5z" />
             </svg>

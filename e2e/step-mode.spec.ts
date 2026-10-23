@@ -9,6 +9,7 @@ test('making a Riff goes from the Mise en Place through every step and back', as
 
   const making = page.getByRole('dialog', { name: 'Making Cherry Limeade' })
   await expect(making.getByRole('heading', { name: 'Mise en Place' })).toBeVisible()
+  await expect(making).toBeFocused()
   await expect(making).toContainText('2 Collins glasses')
   await expect(making.getByRole('list', { name: 'Tools' })).toContainText('Muddler')
   await expect(making.getByRole('list', { name: 'Ingredients' })).toContainText('1½ oz')
@@ -17,7 +18,7 @@ test('making a Riff goes from the Mise en Place through every step and back', as
   await expect(making).toContainText(/Step 1 of \d+/)
   await expect(making).toContainText('Muddle the cherries')
 
-  const total = Number((await making.getByText(/Step 1 of \d+/).textContent())?.match(/of (\d+)/)?.[1])
+  const total = Number((await making.locator('.sm-counter').textContent())?.match(/of (\d+)/)?.[1])
   for (let step = 2; step <= total; step++) {
     await making.getByRole('button', { name: 'Next step' }).click()
     await expect(making).toContainText(`Step ${step} of ${total}`)
@@ -25,8 +26,16 @@ test('making a Riff goes from the Mise en Place through every step and back', as
   await expect(making.getByRole('button', { name: 'Next step' })).toHaveCount(0)
 
   await making.getByRole('button', { name: 'Done' }).click()
+  await expect(making.getByRole('heading', { name: /^(Cheers!|Hooray!|Ta-da!|Nailed it!|Salud!|Bottoms up!|Well done!|Santé!)$/ })).toBeVisible()
+  await expect(making).toContainText('Your Cherry Limeade is ready.')
+  await making.getByRole('button', { name: 'Save to Favorites' }).click()
+  await expect(making).toContainText('Saved to Favorites')
+
+  await making.getByRole('button', { name: 'Back to the drink' }).click()
   await expect(making).toHaveCount(0)
   await expect(page.getByRole('heading', { name: 'Cherry Limeade' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Make it' })).toBeFocused()
+  await expect(page.getByRole('button', { name: 'Remove from Favorites' })).toBeVisible()
   // The Riff is as it was.
   await expect(page.getByRole('group', { name: 'Servings' })).toContainText('2 drinks')
 })
