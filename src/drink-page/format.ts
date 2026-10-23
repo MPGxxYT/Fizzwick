@@ -81,3 +81,10 @@ export function formatIngredient({ name, amount, unit }: Ingredient): { measure:
       return { measure: String(n), name }
   }
 }
+
+// A step that takes time before the drink can be made, such as tea that has
+// to brew and chill. The Drink page shows it above the ingredients, so it
+// isn't a surprise in step mode.
+export function isMakeAhead(step: { text: string }): boolean {
+  return /\bmake it ahead\b/i.test(step.text)
+}

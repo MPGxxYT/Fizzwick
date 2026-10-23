@@ -12,6 +12,8 @@ import { FLAVOR_TAGS, METHODS, resolveRiff, type Drink, type FlavorTag, type Met
 import './drink-list.css'
 
 const CHOICES = filterChoices(houseDrinks)
+// The card's ground, so the Drink names on it stay readable.
+const CARD = '#2e2049'
 
 // Passed to a Drink page so its "All drinks" link can return to this list.
 export interface ListState {
@@ -122,7 +124,8 @@ export function DrinkList() {
   )
 }
 
-// One row of toggle chips. Tapping the picked chip again clears the filter.
+// One row of toggle chips that scrolls sideways. Tapping the picked chip
+// again clears the filter.
 function FilterRow<T extends string>({
   label,
   choices,
@@ -137,16 +140,18 @@ function FilterRow<T extends string>({
   return (
     <div className="dl-filter" role="group" aria-label={label}>
       <span className="dl-filter-label">{label}</span>
-      {choices.map((choice) => (
-        <button
-          key={choice.value}
-          type="button"
-          aria-pressed={picked === choice.value}
-          onClick={() => onPick(picked === choice.value ? undefined : choice.value)}
-        >
-          {choice.name}
-        </button>
-      ))}
+      <div className="dl-chips">
+        {choices.map((choice) => (
+          <button
+            key={choice.value}
+            type="button"
+            aria-pressed={picked === choice.value}
+            onClick={() => onPick(picked === choice.value ? undefined : choice.value)}
+          >
+            {choice.name}
+          </button>
+        ))}
+      </div>
     </div>
   )
 }
@@ -170,7 +175,7 @@ function DrinkCard({ drink, listSearch }: { drink: Drink; listSearch: string }) 
         )}
       </span>
       <span className="dl-card-text">
-        <span className="dl-card-name" style={firstColor ? { color: readable(firstColor) } : undefined}>
+        <span className="dl-card-name" style={firstColor ? { color: readable(firstColor, CARD) } : undefined}>
           {drink.name}
         </span>
         <span className="dl-card-meta">

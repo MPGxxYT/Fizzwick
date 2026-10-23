@@ -13,11 +13,11 @@ function luminance([r, g, b]: number[]): number {
 }
 
 // The Option color, lightened toward white just until it reaches 4.5:1
-// contrast on the night background. Dark colors such as tart cherry juice
+// contrast on the night background, or on another ground such as a card. Dark colors such as tart cherry juice
 // move the most; light ones such as lemon-lime soda not at all.
-export function readable(hex: string): string {
+export function readable(hex: string, ground?: string): string {
   const base = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16))
-  const night = luminance(NIGHT)
+  const night = luminance(ground ? [1, 3, 5].map((i) => parseInt(ground.slice(i, i + 2), 16)) : NIGHT)
   for (let t = 0; t <= 1; t += 0.05) {
     const mixed = base.map((c, i) => Math.round(c + (WHITE[i] - c) * t))
     if ((luminance(mixed) + 0.05) / (night + 0.05) >= 4.5) return `rgb(${mixed.join(' ')})`

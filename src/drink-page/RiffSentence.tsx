@@ -4,8 +4,9 @@ import { readable } from './colors'
 import { Sheet } from './Sheet'
 
 // Each Slot's word gets its own underline style, so the words read as
-// different things. The color comes from the picked Option.
-const LINE_STYLES = ['wavy', 'dotted', 'double', 'dashed', 'solid'] as const
+// different things. The color comes from the picked Option. Dotted is left
+// out: a dotted underline always means a Bar Term.
+const LINE_STYLES = ['wavy', 'double', 'dashed', 'solid'] as const
 
 function wordStyle(slotIndex: number, color: string | null): React.CSSProperties {
   if (color === null) return { color: 'var(--dp-soft)', textDecorationStyle: 'dashed', textDecorationThickness: '1px' }

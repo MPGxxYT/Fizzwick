@@ -246,6 +246,32 @@
   font-weight: 600;
 }
 
+/* Something to do before you start, such as brewing and chilling tea. */
+.dp-ahead {
+  margin: 1rem 0 0;
+  padding: 0.7rem 0.85rem;
+  border-radius: 0.75rem;
+  background: var(--dp-mint);
+}
+
+.dp-ahead strong {
+  display: block;
+  margin-bottom: 0.15rem;
+  color: #7fe3c6;
+  font-size: 0.9rem;
+}
+
+/* The tools, as one line under the ingredients. */
+.dp-tools {
+  margin: -0.5rem 0 1.5rem;
+}
+
+.dp-tools strong {
+  margin-right: 0.25rem;
+  color: var(--dp-soft);
+  font-weight: 600;
+}
+
 .dp-note {
   margin: -0.75rem 0 1.5rem;
   padding: 0.6rem 0.8rem;

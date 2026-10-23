@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { markBarTerms } from '../bar-terms'
-import { GLASS_NAMES, METHOD_NAMES, TOOL_NAMES } from '../drink-page/format'
+import { GLASS_NAMES, isMakeAhead, METHOD_NAMES, TOOL_NAMES } from '../drink-page/format'
 import { checkEveryRiff, GLASSES, METHODS, parseDrinkFile, resolveRiff, type Drink, type Ingredient } from '../riff-engine'
 import { houseDrinks } from './catalog'
 
@@ -70,6 +70,11 @@ describe('House Drink Riffs', () => {
       'Add another quarter ounce of agave to balance the sharper lemon.',
     )
     expect(riff.ingredients).toContainEqual({ name: 'extra sweetener, to balance the lemon', amount: 0.25, unit: 'oz' })
+  })
+
+  test('only the drinks with tea to brew and chill have a make-ahead step', () => {
+    const withAhead = houseDrinks.filter((drink) => resolveRiff(drink).steps.some(isMakeAhead)).map((drink) => drink.id)
+    expect(withAhead).toEqual(['black-tea-old-fashioned', 'tea-sour'])
   })
 
   test('blueberry syrup in the Blueberry Fizz skips the muddling and starts in the tin', () => {
