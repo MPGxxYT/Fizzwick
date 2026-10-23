@@ -83,13 +83,13 @@ export function DrinkList() {
 
         <FilterRow
           label="Method"
-          choices={CHOICES.methods.map((value) => ({ value, name: METHOD_NAMES[value] }))}
+          choices={byName(CHOICES.methods.map((value) => ({ value, name: METHOD_NAMES[value] })))}
           picked={method}
           onPick={(value) => update('method', value)}
         />
         <FilterRow
           label="Flavor"
-          choices={CHOICES.flavors.map((value) => ({ value, name: value[0].toUpperCase() + value.slice(1) }))}
+          choices={byName(CHOICES.flavors.map((value) => ({ value, name: value[0].toUpperCase() + value.slice(1) })))}
           picked={flavor}
           onPick={(value) => update('flavor', value)}
         />
@@ -123,6 +123,9 @@ export function DrinkList() {
     </div>
   )
 }
+
+// Filter chips read in alphabetical order.
+const byName = <T extends { name: string }>(choices: T[]) => [...choices].sort((a, b) => a.name.localeCompare(b.name))
 
 // One row of toggle chips that scrolls sideways. Tapping the picked chip
 // again clears the filter.

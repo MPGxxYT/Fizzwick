@@ -8,6 +8,7 @@ import { NotFound } from '../NotFound'
 import { useSettings } from '../settings/use-settings'
 import { StepMode } from '../step-mode/StepMode'
 import { Bubbles, ColorSpots, IceCubes } from './Ambience'
+import { readable } from './colors'
 import { hasIceInGlass, isFizzy } from './ambience-for'
 import { glassInSentence, GLASS_NAMES, METHOD_NAMES } from './format'
 import { GlassSheet } from './GlassSheet'
@@ -81,6 +82,18 @@ function DrinkView({ drink, pairs }: { drink: Drink; pairs: string | undefined }
     setPicks({ ...riff.picks, [slotId]: optionId })
     setJustPicked(slotId)
   }
+  const reset = () => {
+    setPicks(drink.houseSpec)
+    setJustPicked('all')
+  }
+
+  // Recipe lines a swap changed are marked in the picked Option's color, or
+  // in mint after a reset or when a Slot was emptied.
+  const pickedColor =
+    justPicked && justPicked !== 'all'
+      ? drink.slots.find((slot) => slot.id === justPicked)?.options.find((option) => option.id === riff.picks[justPicked])?.color
+      : undefined
+  const changeColor = pickedColor ? readable(pickedColor) : '#7fe3c6'
 
   return (
     <div className="dp">
@@ -107,30 +120,20 @@ function DrinkView({ drink, pairs }: { drink: Drink; pairs: string | undefined }
           </p>
         </header>
 
-        <RiffSentence drink={drink} picks={riff.picks} justPicked={justPicked} onPick={pick} />
+        <RiffSentence
+          drink={drink}
+          picks={riff.picks}
+          justPicked={justPicked}
+          onPick={pick}
+          onReset={riff.isHouseSpec ? undefined : reset}
+        />
         {fellBack.length > 0 && <LinkNotice drink={drink} slotIds={fellBack} />}
 
         <div className="dp-row">
           {riff.dietaryTags.length > 0 && <p className="dp-dietary">Contains {riff.dietaryTags.join(', ')}</p>}
-          {!riff.isHouseSpec && (
-            <button
-              type="button"
-              className="dp-reset"
-              onClick={() => {
-                setPicks(drink.houseSpec)
-                setJustPicked('all')
-              }}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 12a8 8 0 1 0 2.6-5.9" />
-                <path d="M4 4v4.5h4.5" />
-              </svg>
-              Reset to House Spec
-            </button>
-          )}
         </div>
 
-        <RecipeCard riff={riff} onServings={setServings} />
+        <RecipeCard riff={riff} onServings={setServings} changeColor={changeColor} />
       </main>
 
       {!making && (

@@ -88,3 +88,22 @@ export function formatIngredient({ name, amount, unit }: Ingredient): { measure:
 export function isMakeAhead(step: { text: string }): boolean {
   return /\bmake it ahead\b/i.test(step.text)
 }
+
+// The lines the name is set on. One or two words get a line each (Garden /
+// Smash). Longer names get two lines, split where the lines come out closest
+// in length, the shorter one first on a tie (Black Tea / Old Fashioned).
+export function titleLines(name: string): string[] {
+  const words = name.split(' ')
+  if (words.length <= 2) return words
+  let best = [words.join(' ')]
+  let longest = Infinity
+  for (let i = 1; i < words.length; i++) {
+    const lines = [words.slice(0, i).join(' '), words.slice(i).join(' ')]
+    const length = Math.max(...lines.map((line) => line.length))
+    if (length < longest) {
+      best = lines
+      longest = length
+    }
+  }
+  return best
+}

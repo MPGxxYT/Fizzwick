@@ -29,11 +29,14 @@ export function RiffSentence({
   picks,
   justPicked,
   onPick,
+  onReset,
 }: {
   drink: Drink
   picks: Picks
   justPicked: string | null
   onPick: (slotId: string, optionId: string | null) => void
+  // Given once the Riff differs from the House Spec.
+  onReset?: () => void
 }) {
   const [openSlot, setOpenSlot] = useState<Slot | null>(null)
 
@@ -56,7 +59,20 @@ export function RiffSentence({
   return (
     <>
       <p className="dp-sentence">
-        <span className="dp-sentence-line dp-lead dp-line-in">Made with</span>
+        {/* Reset sits on the lead line, which always has room for it, so
+            it appearing never moves the page. */}
+        <span className="dp-sentence-line dp-lead dp-line-in">
+          Made with
+          {onReset && (
+            <button type="button" className="dp-reset" onClick={onReset}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 12a8 8 0 1 0 2.6-5.9" />
+                <path d="M4 4v4.5h4.5" />
+              </svg>
+              Reset to House Spec
+            </button>
+          )}
+        </span>
         {words.map(({ slot, style, text, retired }, i) => (
           <span key={slot.id} className="dp-sentence-line dp-line-in" style={{ animationDelay: `${(i + 1) * 90}ms` }}>
             <button
@@ -70,8 +86,8 @@ export function RiffSentence({
               {text}
               {/* A Favorite can still use an Option that new Riffs can't pick. */}
               {retired && <span className="dp-retired">retired</span>}
+              <span className="dp-joiner">{joiner(i)}</span>
             </button>
-            {joiner(i)}
           </span>
         ))}
       </p>
