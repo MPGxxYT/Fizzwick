@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { markBarTerms } from '../bar-terms'
 import { GLASS_NAMES, isMakeAhead, METHOD_NAMES, TOOL_NAMES } from '../drink-page/format'
 import { checkEveryRiff, GLASSES, METHODS, parseDrinkFile, resolveRiff, type Drink, type Ingredient } from '../riff-engine'
+import { timedPart } from '../step-mode/timed-part'
 import { houseDrinks } from './catalog'
 
 // Every House Drink file in this folder must parse, and every combination of
@@ -81,6 +82,18 @@ describe('House Drink Riffs', () => {
     const riff = resolveRiff(houseDrink('blueberry-fizz'), { blueberry: 'blueberry-syrup', herb: null })
     expect(riff.steps.map((step) => step.id)).toEqual(['add-syrup', 'add-base', 'shake', 'fill-glass', 'strain', 'top', 'garnish'])
     expect(riff.miseEnPlace.tools).not.toContain('muddler')
+  })
+})
+
+describe('House Drink timers', () => {
+  // Step mode colors the part of a timed step its timer is for, so every
+  // timed step has to name a timed action (steep, stir, shake or blend).
+  test.each(houseDrinks.map((drink) => [drink.id, drink] as const))('%s names what each timer is for', (_id, drink) => {
+    const options = drink.slots.flatMap((slot) => slot.options)
+    const steps = [...drink.steps, ...options.flatMap((option) => (option.addSteps ?? []).map(({ step }) => step))]
+    const timedIds = new Set(options.flatMap((option) => Object.keys(option.durations ?? {})))
+    const unnamed = steps.filter((step) => (step.durationSeconds || timedIds.has(step.id)) && !timedPart(step.text))
+    expect(unnamed.map((step) => step.id)).toEqual([])
   })
 })
 

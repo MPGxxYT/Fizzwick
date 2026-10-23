@@ -251,6 +251,28 @@
   line-height: 1.25;
 }
 
+/* The part of a timed step the timer is for: the timer's mint, led by a
+   small stopwatch. */
+.sm-timed {
+  color: #7fe3c6;
+}
+
+.sm-timed svg {
+  width: 0.7em;
+  height: 0.7em;
+  margin-right: 0.12em;
+  vertical-align: -0.02em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sm-timed .dp-term {
+  text-decoration-color: rgba(127, 227, 198, 0.6);
+}
+
 .sm-step-tools {
   margin: 1rem 0 0;
   color: var(--dp-soft);
