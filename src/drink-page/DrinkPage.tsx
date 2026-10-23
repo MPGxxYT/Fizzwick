@@ -1,10 +1,9 @@
 import { useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import type { ListState } from '../drink-list/DrinkList'
-import { favoritePicks } from '../favorites/favorite'
 import { SaveFavorite } from '../favorites/SaveFavorite'
 import { findHouseDrink } from '../house-drinks/catalog'
-import { GLASS_SIZES_OZ, resolveRiff, type Drink, type Picks } from '../riff-engine'
+import { GLASS_SIZES_OZ, readRiffLink, resolveRiff, riffLink, type Drink, type Picks } from '../riff-engine'
 import { NotFound } from '../NotFound'
 import { useSettings } from '../settings/use-settings'
 import { StepMode } from '../step-mode/StepMode'
@@ -14,33 +13,36 @@ import { glassInSentence, GLASS_NAMES, METHOD_NAMES } from './format'
 import { GlassSheet } from './GlassSheet'
 import { RecipeCard } from './RecipeCard'
 import { RiffSentence } from './RiffSentence'
+import { ShareRiff } from './ShareRiff'
 import { Title } from './Title'
 import './drink-page.css'
 
+// The page is a Riff link: /drinks/<drink>/<slot=option pairs>. With no
+// pairs it's the House Spec.
 export function DrinkPage() {
-  const { drinkId = '' } = useParams()
+  const { drinkId = '', riff: pairs } = useParams()
   const drink = findHouseDrink(drinkId)
   if (!drink) return <NotFound />
-  // Keyed so that moving to another Drink starts again from its House Spec.
-  return <DrinkView key={drink.id} drink={drink} />
+  // Keyed so that moving to another Drink starts it afresh.
+  return <DrinkView key={drink.id} drink={drink} pairs={pairs} />
 }
 
-// What the page was opened with: the list's search to go back to, or a
-// Favorite's picks; and whether step mode is open.
+// What the page was opened with: the list's search to go back to, or that it
+// came from Favorites; and whether step mode is open.
 export interface DrinkPageState extends Partial<ListState> {
-  favoritePicks?: Picks
+  fromFavorites?: boolean
   making?: boolean
 }
 
-function DrinkView({ drink }: { drink: Drink }) {
+function DrinkView({ drink, pairs }: { drink: Drink; pairs: string | undefined }) {
   const location = useLocation()
   const navigate = useNavigate()
   const pageState = location.state as DrinkPageState | null
 
-  // Empty picks are the House Spec. A Favorite opens with its own.
-  const [picks, setPicks] = useState<Picks>(() =>
-    pageState?.favoritePicks ? favoritePicks(drink, pageState.favoritePicks) : {},
-  )
+  // The picks live in the address, so a reload or a shared link opens the
+  // same Riff. Swapping an Option rewrites the address in place.
+  const { picks, fellBack } = useMemo(() => readRiffLink(drink, pairs), [drink, pairs])
+  const setPicks = (next: Picks) => navigate(riffLink(drink, next), { replace: true, state: pageState })
   const [servings, setServings] = useState(1)
   const [customOz, setCustomOz] = useState<number | null>(null)
   const [glassOpen, setGlassOpen] = useState(false)
@@ -55,13 +57,14 @@ function DrinkView({ drink }: { drink: Drink }) {
 
   // Back to the list as it was (same search and filters), or to Favorites.
   const listSearch = pageState?.listSearch
-  const back = pageState?.favoritePicks
+  const back = pageState?.fromFavorites
     ? { to: '/favorites', label: 'Favorites' }
     : { to: listSearch ? `/?${listSearch}` : '/', label: 'All drinks' }
 
   // Step mode is its own history entry, so the back gesture leaves it. After
-  // a reload the Riff is gone, so a leftover entry shows the Drink page, and
-  // the next Make reuses that entry instead of stacking another.
+  // a reload the drink count and glass size are gone, so a leftover entry
+  // shows the Drink page, and the next Make reuses that entry instead of
+  // stacking another.
   const [makingEntry, setMakingEntry] = useState<'pushed' | 'replaced' | null>(null)
   const making = pageState?.making === true && makingEntry !== null
   const startMaking = () => {
@@ -91,6 +94,7 @@ function DrinkView({ drink }: { drink: Drink }) {
           </svg>
           {back.label}
         </Link>
+        <ShareRiff drink={drink} riff={riff} />
         <SaveFavorite riff={riff} />
 
         <header className="dp-head">
@@ -104,6 +108,7 @@ function DrinkView({ drink }: { drink: Drink }) {
         </header>
 
         <RiffSentence drink={drink} picks={riff.picks} justPicked={justPicked} onPick={pick} />
+        {fellBack.length > 0 && <LinkNotice drink={drink} slotIds={fellBack} />}
 
         <div className="dp-row">
           {riff.dietaryTags.length > 0 && <p className="dp-dietary">Contains {riff.dietaryTags.join(', ')}</p>}
@@ -112,7 +117,7 @@ function DrinkView({ drink }: { drink: Drink }) {
               type="button"
               className="dp-reset"
               onClick={() => {
-                setPicks({})
+                setPicks(drink.houseSpec)
                 setJustPicked('all')
               }}
             >
@@ -150,5 +155,18 @@ function DrinkView({ drink }: { drink: Drink }) {
         />
       )}
     </div>
+  )
+}
+
+// A link asked for Options this copy of Fizzwick doesn't have (an older
+// version, or a typo), so those Slots show the House Spec instead.
+function LinkNotice({ drink, slotIds }: { drink: Drink; slotIds: string[] }) {
+  const labels = drink.slots.filter((slot) => slotIds.includes(slot.id)).map((slot) => slot.label.toLowerCase())
+  const list = labels.length > 1 ? `${labels.slice(0, -1).join(', ')} and ${labels.at(-1)}` : labels[0]
+  return (
+    <p className="dp-note dp-link-note" role="status">
+      This link asks for a {list} this version of Fizzwick doesn't have, so you're seeing the House Spec{' '}
+      {labels.length > 1 ? 'ones' : 'one'} instead.
+    </p>
   )
 }

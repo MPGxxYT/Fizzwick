@@ -12,4 +12,5 @@ export {
   type RiffStep,
   type Units,
 } from './resolve-riff'
+export { readRiffLink, riffLink } from './riff-link'
 export * from './drink-format'
