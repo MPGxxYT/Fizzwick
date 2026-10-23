@@ -71,6 +71,12 @@ describe('House Drink Riffs', () => {
     )
     expect(riff.ingredients).toContainEqual({ name: 'extra sweetener, to balance the lemon', amount: 0.25, unit: 'oz' })
   })
+
+  test('blueberry syrup in the Blueberry Fizz skips the muddling and starts in the tin', () => {
+    const riff = resolveRiff(houseDrink('blueberry-fizz'), { blueberry: 'blueberry-syrup', herb: null })
+    expect(riff.steps.map((step) => step.id)).toEqual(['add-syrup', 'add-base', 'shake', 'fill-glass', 'strain', 'top', 'garnish'])
+    expect(riff.miseEnPlace.tools).not.toContain('muddler')
+  })
 })
 
 function houseDrink(id: string): Drink {
