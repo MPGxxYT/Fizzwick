@@ -98,6 +98,11 @@
   margin: 0;
   color: var(--dp-soft);
   font-size: 0.875rem;
+  transition: opacity 0.4s ease-out;
+}
+
+.dp-hint.is-done {
+  opacity: 0;
 }
 
 /* Holds one line even when there are no Dietary Tags, so tags coming and
@@ -1022,4 +1027,22 @@
   to {
     background: color-mix(in srgb, var(--change) 0%, transparent);
   }
+}
+
+/* The Close button at the bottom of every sheet. */
+.dp-sheet-close {
+  display: block;
+  width: 100%;
+  min-height: 3rem;
+  margin-top: 1rem;
+  border: 1px solid rgba(191, 174, 220, 0.4);
+  border-radius: 999px;
+  background: none;
+  color: var(--dp-ink);
+  font: 600 1rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
+
+.dp-sheet-close:active {
+  background: rgba(191, 174, 220, 0.15);
 }

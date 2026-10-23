@@ -42,7 +42,7 @@ test('Share uses the share sheet when there is one', async ({ page }) => {
   expect(shared).toEqual([
     {
       title: 'Cherry Limeade',
-      text: 'Cherry Limeade · cherry syrup, soda water, lime wheel and cherry',
+      text: 'Cherry Limeade · soda water',
       url: 'http://localhost:4173/drinks/cherry-limeade/fizz=soda-water',
     },
   ])

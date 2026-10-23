@@ -98,11 +98,12 @@ describe('resolveRiff', () => {
     expect(riff.isHouseSpec).toBe(true)
     expect(riff.glass).toBe('collins')
     expect(riff.method).toBe('build')
+    // Pours first, then the ice, then the garnish.
     expect(riff.ingredients).toEqual([
-      { name: 'ice', unit: 'fill' },
       { name: 'fresh lime juice', amount: 0.75, unit: 'oz' },
       { name: 'cherry syrup', amount: 0.75, unit: 'oz' },
       { name: 'lemon-lime soda', unit: 'top' },
+      { name: 'ice', unit: 'fill' },
       { name: 'lime wheel', amount: 1, unit: 'count' },
       { name: 'cherry', amount: 1, unit: 'count' },
     ])
@@ -205,11 +206,12 @@ describe('resolveRiff', () => {
     expect(riff.steps[0].text).toBe('Steep the Green tea and chill it.')
   })
 
-  test('produces a default Favorite name from the Drink and its Options', () => {
-    expect(resolveRiff(cherryLimeade).defaultFavoriteName).toBe(
-      'Cherry Limeade · cherry syrup, lemon-lime soda, lime wheel and cherry',
+  test('names a Favorite by the Drink and what differs from its House Spec', () => {
+    expect(resolveRiff(cherryLimeade).defaultFavoriteName).toBe('Cherry Limeade')
+    expect(resolveRiff(cherryLimeade, { fizz: 'soda-water', sweetener: 'agave' }).defaultFavoriteName).toBe(
+      'Cherry Limeade · agave, soda water',
     )
-    expect(resolveRiff(testSour(), { foam: null }).defaultFavoriteName).toBe('Test Sour · black tea')
+    expect(resolveRiff(cherryLimeade, { garnish: null }).defaultFavoriteName).toBe('Cherry Limeade · no garnish')
   })
 
   test('rejects picks that do not fit the Drink', () => {
