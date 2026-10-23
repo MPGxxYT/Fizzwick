@@ -10,12 +10,50 @@ import { TermText } from './TermText'
 // rolls each amount that changes: up from below when adding drinks, down from
 // above when removing. Amounts are keyed by their text, so only the ones that
 // change remount and roll, and nothing rolls until the count first changes.
-export function RecipeCard({ riff, onServings }: { riff: Riff; onServings: (servings: number) => void }) {
+export function RecipeCard({
+  riff,
+  onServings,
+  changeColor,
+}: {
+  riff: Riff
+  onServings: (servings: number) => void
+  // The color to mark a swap's changed lines in.
+  changeColor: string
+}) {
   const [direction, setDirection] = useState<'up' | 'down' | null>(null)
   const change = (next: number) => {
     setDirection(next > riff.servings ? 'up' : 'down')
     onServings(next)
   }
+
+  // After a swap, the ingredient and step lines that weren't there before
+  // wash in the picked Option's color and fade, so you can see what changed.
+  // Lines are compared by their text. A changed drink count doesn't count
+  // as a swap; its amounts roll instead.
+  const lines = useMemo(
+    () => ({
+      ingredients: riff.ingredients.map((ingredient) => {
+        const { measure, name } = formatIngredient(ingredient)
+        return `${measure} ${name}`
+      }),
+      steps: riff.steps.map((step) => step.text),
+    }),
+    [riff],
+  )
+  const picksKey = JSON.stringify(riff.picks)
+  const [swap, setSwap] = useState({ picksKey, lines, changed: new Set<string>(), count: 0 })
+  if (swap.picksKey !== picksKey) {
+    const before = new Set([...swap.lines.ingredients, ...swap.lines.steps])
+    const changed = new Set([...lines.ingredients, ...lines.steps].filter((line) => !before.has(line)))
+    setSwap({ picksKey, lines, changed, count: swap.count + 1 })
+    // A swap remounts changed amounts; they shouldn't roll as if counted.
+    setDirection(null)
+  } else if (swap.lines !== lines) {
+    setSwap({ ...swap, lines })
+  }
+  // Each swap gets fresh keys on its changed lines, so the wash plays again.
+  const lineKey = (line: string, i: number) => (swap.changed.has(line) ? `${i}-swap-${swap.count}` : `${i}`)
+  const lineClass = (line: string) => (swap.changed.has(line) ? 'is-changed' : undefined)
 
   const ahead = useMemo(() => riff.steps.filter(isMakeAhead), [riff])
   const { tools } = riff.miseEnPlace
@@ -46,7 +84,7 @@ export function RecipeCard({ riff, onServings }: { riff: Riff; onServings: (serv
       className="dp-card"
       aria-labelledby="dp-need-heading"
       data-counting={direction ?? undefined}
-      style={{ '--count-from': direction === 'down' ? '-0.7em' : '0.7em' } as React.CSSProperties}
+      style={{ '--count-from': direction === 'down' ? '-0.7em' : '0.7em', '--change': changeColor } as React.CSSProperties}
     >
       <div className="dp-card-head">
         <h2 id="dp-need-heading">You'll need</h2>
@@ -83,7 +121,7 @@ export function RecipeCard({ riff, onServings }: { riff: Riff; onServings: (serv
         {riff.ingredients.map((ingredient, i) => {
           const { measure } = formatIngredient(ingredient)
           return (
-            <li key={i}>
+            <li key={lineKey(lines.ingredients[i], i)} className={lineClass(lines.ingredients[i])}>
               <span className="dp-measure-slot">
                 <span key={measure} className={ingredient.amount === undefined ? 'dp-measure' : 'dp-measure dp-count'}>
                   <TermText segments={marked[ingredientsFrom + i * 2]} />
@@ -116,7 +154,7 @@ export function RecipeCard({ riff, onServings }: { riff: Riff; onServings: (serv
       <h2 id="dp-steps-heading">How to make it</h2>
       <ol className="dp-steps" aria-labelledby="dp-steps-heading">
         {riff.steps.map((step, i) => (
-          <li key={step.id}>
+          <li key={lineKey(step.text, i) + step.id} className={lineClass(step.text)}>
             <TermText segments={marked[stepsFrom + i]} />
           </li>
         ))}

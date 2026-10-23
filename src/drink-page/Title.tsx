@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Drink, Picks } from '../riff-engine'
 import { readable } from './colors'
+import { titleLines } from './format'
 
 // A lighter band below a wave on each line of the name, blurred so the wave
 // fades in instead of ending in a hard line. It runs past the tile's sides and
@@ -10,7 +11,7 @@ const WAVE_SHADE =
 
 const FALLBACK = '#ff8fb0'
 
-// The Drink's name, one word per line, filled like a glass in the color of the
+// The Drink's name on its lines, filled like a glass in the color of the
 // Option in its first Slot (the cherry on Cherry Limeade). On page load it
 // pours in from an empty outline. When that Option changes, the new color
 // fills up over the old one.
@@ -24,7 +25,8 @@ export function Title({ drink, picks }: { drink: Drink; picks: Picks }) {
   const [shown, setShown] = useState({ color, previous: null as string | null })
   if (shown.color !== color) setShown({ color, previous: shown.color })
 
-  const words = drink.name.split(' ').map((word, i) => <span key={i}>{word}</span>)
+  const lines = titleLines(drink.name)
+  const words = lines.map((line, i) => <span key={i}>{line}</span>)
   const paint = (c: string) => ({
     backgroundImage: `${WAVE_SHADE}, linear-gradient(180deg, transparent 50%, rgba(20, 8, 40, 0.14)), linear-gradient(${c}, ${c})`,
     // One wave and one darkening per line of the name.
@@ -33,8 +35,8 @@ export function Title({ drink, picks }: { drink: Drink; picks: Picks }) {
   })
 
   return (
-    // Labelled, because the stacked words would otherwise read as one ("CherryLimeade").
-    <h1 className="dp-title" aria-label={drink.name}>
+    // Labelled, because the stacked lines would otherwise read as one ("CherryLimeade").
+    <h1 className={lines.some((line) => line.includes(' ')) ? 'dp-title is-long' : 'dp-title'} aria-label={drink.name}>
       <span className="dp-title-empty">{words}</span>
       {shown.previous && (
         <span className="dp-title-solid" aria-hidden="true" style={paint(shown.previous)}>
