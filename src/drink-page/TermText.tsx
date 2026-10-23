@@ -2,18 +2,21 @@ import { Fragment, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router'
 import type { BarTerm, Segment } from '../bar-terms'
+import { useSettings } from '../settings/use-settings'
 import { Sheet } from './Sheet'
 
-// Text with its Bar Terms underlined. Tapping one opens its definition.
+// Text with its Bar Terms underlined, unless the underlines are turned off in
+// Settings. Tapping one opens its definition either way.
 // Step mode leaves out the link to the Bar Terms page, so a tap can't lose
 // your place.
 export function TermText({ segments, linkToPage = true }: { segments: Segment[]; linkToPage?: boolean }) {
   const [open, setOpen] = useState<BarTerm | null>(null)
+  const { underlines } = useSettings()
   return (
     <>
       {segments.map((segment, i) =>
         segment.term ? (
-          <button key={i} type="button" className="dp-term" onClick={() => setOpen(segment.term!)}>
+          <button key={i} type="button" className={underlines ? 'dp-term' : 'dp-term is-plain'} onClick={() => setOpen(segment.term!)}>
             {segment.text}
           </button>
         ) : (

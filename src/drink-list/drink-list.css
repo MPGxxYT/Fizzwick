@@ -217,3 +217,26 @@
   outline: 2px solid var(--link);
   outline-offset: 3px;
 }
+
+/* Settings, as a gear in the top corner. */
+.dl-settings {
+  position: absolute;
+  top: 1rem;
+  right: 0.75rem;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  color: var(--muted);
+}
+
+.dl-settings svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

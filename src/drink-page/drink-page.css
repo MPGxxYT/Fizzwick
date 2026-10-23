@@ -653,3 +653,10 @@
   font-weight: 600;
   text-decoration: none;
 }
+
+/* Underlines turned off in Settings: the term looks like the text around it
+   and still opens its definition. */
+.dp-term.is-plain {
+  text-decoration-line: none;
+  cursor: pointer;
+}

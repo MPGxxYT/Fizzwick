@@ -1,0 +1,108 @@
+/* The Settings page: the Drink page's purple, one card per setting. */
+.st-back {
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.st-card {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border-radius: 1.25rem;
+  background: var(--dp-card);
+  box-shadow: 0 0 0 1px rgba(191, 174, 220, 0.25);
+}
+
+.st-card + .st-card {
+  margin-top: 1rem;
+}
+
+.st-card h2 {
+  margin: 0;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-size: 1.25rem;
+}
+
+.st-hint {
+  margin: 0.3rem 0 0;
+  color: var(--dp-soft);
+  font-size: 0.95rem;
+}
+
+/* Units: two choices side by side, the picked one filled in mint. */
+.st-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.st-choices button {
+  min-height: 3rem;
+  padding: 0 0.75rem;
+  border: 1px solid rgba(191, 174, 220, 0.35);
+  border-radius: 0.9rem;
+  background: none;
+  color: var(--dp-ink);
+  font: 600 1rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
+
+.st-choices button[aria-checked='true'] {
+  border-color: #7fe3c6;
+  background: #7fe3c6;
+  color: var(--dp-paper);
+}
+
+/* Underlines: an on/off switch beside its label. */
+.st-switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.st-switch {
+  flex: none;
+  position: relative;
+  width: 3.25rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid rgba(191, 174, 220, 0.45);
+  border-radius: 999px;
+  background: var(--dp-paper);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.st-switch span {
+  position: absolute;
+  top: 0.2rem;
+  left: 0.2rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--dp-soft);
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.st-switch[aria-checked='true'] {
+  border-color: #7fe3c6;
+  background: #7fe3c6;
+}
+
+.st-switch[aria-checked='true'] span {
+  background: var(--dp-paper);
+  transform: translateX(1.25rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .st-switch,
+  .st-switch span {
+    transition: none;
+  }
+}
