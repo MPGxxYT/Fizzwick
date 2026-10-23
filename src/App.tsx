@@ -8,12 +8,13 @@ import { NotFound } from './NotFound'
 import { SettingsPage } from './settings/SettingsPage'
 
 // A link to another page starts it at the top. Going back or forward keeps
-// the browser's own scroll position, so the list is where you left it.
+// the browser's own scroll position, so the list is where you left it, and
+// swapping an Option (which rewrites the Riff link in place) doesn't move.
 function ScrollToTop() {
   const { pathname } = useLocation()
   const navigationType = useNavigationType()
   useLayoutEffect(() => {
-    if (navigationType !== 'POP') window.scrollTo(0, 0)
+    if (navigationType === 'PUSH') window.scrollTo(0, 0)
   }, [pathname, navigationType])
   return null
 }
@@ -24,7 +25,7 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<DrinkList />} />
-        <Route path="/drinks/:drinkId" element={<DrinkPage />} />
+        <Route path="/drinks/:drinkId/:riff?" element={<DrinkPage />} />
         <Route path="/bar-terms" element={<BarTermsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/favorites" element={<FavoritesPage />} />

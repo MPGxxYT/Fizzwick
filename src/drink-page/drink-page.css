@@ -783,6 +783,53 @@
   }
 }
 
+/* Share, to the left of the heart. */
+.dp-share {
+  position: absolute;
+  top: 0.9rem;
+  right: 3.9rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--dp-ink);
+  cursor: pointer;
+}
+
+.dp-share svg {
+  width: 1.55rem;
+  height: 1.55rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dp-share-note {
+  position: absolute;
+  top: 3.9rem;
+  right: 1rem;
+  z-index: 2;
+  max-width: 14rem;
+  margin: 0;
+  color: #7fe3c6;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* A Riff link asked for Options this version doesn't have. */
+.dp-link-note {
+  margin: 1rem 0 0;
+  font-size: 0.95rem;
+}
+
 /* A Retired Option in a Favorite's Riff: a small tag after the word. */
 .dp-retired {
   display: inline-block;

@@ -36,6 +36,10 @@ _Avoid_: Mix, combo, build, variation
 The Riff a House Drink opens with: Fizzwick's standard version of that drink.
 _Avoid_: Default riff, original, classic
 
+**Riff link**:
+A link that opens a Riff: the Drink's ID and the Option picked for each Slot that differs from the House Spec, IDs only. A Riff link with no picks opens the House Spec.
+_Avoid_: Share link, deep link, URL
+
 **Favorite**:
 A Riff the user has saved, with an optional name and note.
 _Avoid_: Bookmark, saved drink

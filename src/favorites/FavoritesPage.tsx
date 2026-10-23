@@ -4,7 +4,7 @@ import { GlassSketch } from '../drink-page/GlassSketch'
 import { Sheet } from '../drink-page/Sheet'
 import type { DrinkPageState } from '../drink-page/DrinkPage'
 import { findHouseDrink } from '../house-drinks/catalog'
-import { resolveRiff } from '../riff-engine'
+import { resolveRiff, riffLink } from '../riff-engine'
 import { favoritePicks, type Favorite } from './favorite'
 import { deleteFavorite, putFavorite, useFavorites } from './store'
 import '../drink-page/drink-page.css'
@@ -66,8 +66,8 @@ function FavoriteCard({ favorite, onEdit }: { favorite: Favorite; onEdit: () => 
     <article className="fv-card">
       {drink && riff ? (
         <Link
-          to={`/drinks/${drink.id}`}
-          state={{ favoritePicks: picks! } satisfies DrinkPageState}
+          to={riffLink(drink, picks!)}
+          state={{ fromFavorites: true } satisfies DrinkPageState}
           className="fv-open"
         >
           <GlassSketch glass={drink.glass} colors={riff.colors} className="fv-sketch" />
