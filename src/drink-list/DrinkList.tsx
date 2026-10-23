@@ -5,6 +5,7 @@ import { Bubbles } from '../drink-page/Ambience'
 import { readable } from '../drink-page/colors'
 import { glassInSentence, GLASS_NAMES, METHOD_NAMES } from '../drink-page/format'
 import { GlassSketch } from '../drink-page/GlassSketch'
+import { Heart } from '../favorites/SaveFavorite'
 import { houseDrinks } from '../house-drinks/catalog'
 import { filterChoices, searchDrinks } from '../house-drinks/search'
 import { FLAVOR_TAGS, METHODS, resolveRiff, type Drink, type FlavorTag, type Method } from '../riff-engine'
@@ -44,6 +45,9 @@ export function DrinkList() {
       <div className="dp-glow" aria-hidden="true" />
       <Bubbles />
       <main className="dl-page">
+        <Link to="/favorites" className="dl-favorites" aria-label="Favorites">
+          <Heart />
+        </Link>
         <Link to="/settings" className="dl-settings" aria-label="Settings">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="12" cy="12" r="3" />

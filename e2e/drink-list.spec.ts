@@ -44,3 +44,22 @@ test('filters toggle on and off, and the list keeps them after visiting a Drink'
   await page.getByRole('group', { name: 'Method' }).getByRole('button', { name: 'Build' }).click()
   await expect(page).not.toHaveURL(/method=/)
 })
+
+test('opening a Drink from far down the list starts at the top, and going back returns to the same spot', async ({
+  page,
+}) => {
+  const scrollY = () => page.evaluate<number>('window.scrollY')
+  await page.goto('/')
+  const last = page.getByRole('listitem').filter({ hasText: 'Tea Sour' })
+  await last.scrollIntoViewIfNeeded()
+  const listY = await scrollY()
+  expect(listY).toBeGreaterThan(500)
+
+  await last.getByRole('link').click()
+  await expect(page.getByRole('heading', { name: 'Tea Sour' })).toBeVisible()
+  expect(await scrollY()).toBe(0)
+
+  await page.goBack()
+  await expect(page.getByRole('heading', { name: 'Fizzwick' })).toBeVisible()
+  await expect.poll(scrollY).toBeGreaterThan(listY - 50)
+})
