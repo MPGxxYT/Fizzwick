@@ -42,6 +42,7 @@ export function RiffSentence({
       slot,
       style: wordStyle(i, option?.color ?? null),
       text: option ? option.label.toLowerCase() : `no ${slot.label.toLowerCase()}`,
+      retired: option?.retired === true,
     }
   })
   const joiner = (i: number) => (i < words.length - 2 ? ', ' : i === words.length - 2 ? ' and ' : '.')
@@ -55,17 +56,19 @@ export function RiffSentence({
     <>
       <p className="dp-sentence">
         <span className="dp-sentence-line dp-lead dp-line-in">Made with</span>
-        {words.map(({ slot, style, text }, i) => (
+        {words.map(({ slot, style, text, retired }, i) => (
           <span key={slot.id} className="dp-sentence-line dp-line-in" style={{ animationDelay: `${(i + 1) * 90}ms` }}>
             <button
               key={picks[slot.id] ?? 'none'}
               type="button"
               className={justPicked === slot.id || justPicked === 'all' ? 'dp-word is-new' : 'dp-word'}
               style={style}
-              aria-label={`${slot.label}: ${text}. Change`}
+              aria-label={`${slot.label}: ${text}${retired ? ', retired' : ''}. Change`}
               onClick={() => setOpenSlot(slot)}
             >
               {text}
+              {/* A Favorite can still use an Option that new Riffs can't pick. */}
+              {retired && <span className="dp-retired">retired</span>}
             </button>
             {joiner(i)}
           </span>

@@ -660,3 +660,137 @@
   text-decoration-line: none;
   cursor: pointer;
 }
+
+/* The Favorite heart, top right: empty, or filled in cherry once saved. */
+.dp-fav {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--dp-ink);
+  cursor: pointer;
+}
+
+.dp-fav svg {
+  grid-area: 1 / 1;
+  width: 1.75rem;
+  height: 1.75rem;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+.dp-fav.is-filled {
+  color: var(--dp-cherry);
+}
+
+.dp-fav.is-filled .dp-fav-heart {
+  fill: currentColor;
+}
+
+/* Saved: two quick beats. */
+.dp-fav.is-beat .dp-fav-heart {
+  animation: dp-fav-beat 0.5s ease-in-out both;
+}
+
+@keyframes dp-fav-beat {
+  0%,
+  50%,
+  100% {
+    transform: scale(1);
+  }
+  20%,
+  70% {
+    transform: scale(1.25);
+  }
+}
+
+/* Removed: the filled heart splits along a jagged crack, each half tips
+   away, falls, shrinks and greys out, and the empty heart fades back in. */
+.dp-fav-crack {
+  display: grid;
+  grid-area: 1 / 1;
+  pointer-events: none;
+}
+
+.dp-fav-half {
+  color: var(--dp-cherry);
+  fill: currentColor !important;
+  transform-origin: 50% 85%;
+  animation: dp-fav-wither 0.85s cubic-bezier(0.4, 0, 0.7, 0.6) both;
+}
+
+.dp-fav-half.is-left {
+  clip-path: polygon(0 0, 52% 0, 44% 32%, 56% 50%, 45% 70%, 50% 100%, 0 100%);
+  --tip: -24deg;
+  --drift: -0.35rem;
+}
+
+.dp-fav-half.is-right {
+  clip-path: polygon(52% 0, 100% 0, 100% 100%, 50% 100%, 45% 70%, 56% 50%, 44% 32%);
+  --tip: 24deg;
+  --drift: 0.35rem;
+}
+
+@keyframes dp-fav-wither {
+  0% {
+    transform: none;
+    filter: none;
+    opacity: 1;
+  }
+  18% {
+    transform: translateX(calc(var(--drift) * 0.4)) rotate(calc(var(--tip) * 0.3));
+    filter: none;
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--drift), 0.9rem) rotate(var(--tip)) scale(0.55);
+    filter: grayscale(1) brightness(0.55);
+    opacity: 0;
+  }
+}
+
+.dp-fav.is-crack .dp-fav-heart {
+  animation: dp-fade 0.35s ease-out 0.7s both;
+}
+
+.dp-fav-error {
+  position: absolute;
+  top: 3.9rem;
+  right: 1rem;
+  z-index: 2;
+  max-width: 12rem;
+  margin: 0;
+  color: #ffb4c4;
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-fav-heart,
+  .dp-fav-half {
+    animation: none !important;
+  }
+}
+
+/* A Retired Option in a Favorite's Riff: a small tag after the word. */
+.dp-retired {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.45rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font: 600 0.75rem 'Figtree', sans-serif;
+  vertical-align: middle;
+  text-decoration: none;
+}

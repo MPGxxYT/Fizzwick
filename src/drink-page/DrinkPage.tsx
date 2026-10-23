@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import type { ListState } from '../drink-list/DrinkList'
+import { favoritePicks } from '../favorites/favorite'
+import { SaveFavorite } from '../favorites/SaveFavorite'
 import { findHouseDrink } from '../house-drinks/catalog'
 import { GLASS_SIZES_OZ, resolveRiff, type Drink, type Picks } from '../riff-engine'
 import { NotFound } from '../NotFound'
@@ -23,8 +25,22 @@ export function DrinkPage() {
   return <DrinkView key={drink.id} drink={drink} />
 }
 
+// What the page was opened with: the list's search to go back to, or a
+// Favorite's picks; and whether step mode is open.
+export interface DrinkPageState extends Partial<ListState> {
+  favoritePicks?: Picks
+  making?: boolean
+}
+
 function DrinkView({ drink }: { drink: Drink }) {
-  const [picks, setPicks] = useState<Picks>({}) // empty: the House Spec
+  const location = useLocation()
+  const navigate = useNavigate()
+  const pageState = location.state as DrinkPageState | null
+
+  // Empty picks are the House Spec. A Favorite opens with its own.
+  const [picks, setPicks] = useState<Picks>(() =>
+    pageState?.favoritePicks ? favoritePicks(drink, pageState.favoritePicks) : {},
+  )
   const [servings, setServings] = useState(1)
   const [customOz, setCustomOz] = useState<number | null>(null)
   const [glassOpen, setGlassOpen] = useState(false)
@@ -37,13 +53,11 @@ function DrinkView({ drink }: { drink: Drink }) {
     [drink, picks, servings, units, customOz],
   )
 
-  const location = useLocation()
-  const navigate = useNavigate()
-  const pageState = location.state as (Partial<ListState> & { making?: boolean }) | null
-
-  // Back to the list as it was: same search and filters, if we came from it.
+  // Back to the list as it was (same search and filters), or to Favorites.
   const listSearch = pageState?.listSearch
-  const backToList = listSearch ? `/?${listSearch}` : '/'
+  const back = pageState?.favoritePicks
+    ? { to: '/favorites', label: 'Favorites' }
+    : { to: listSearch ? `/?${listSearch}` : '/', label: 'All drinks' }
 
   // Step mode is its own history entry, so the back gesture leaves it. After
   // a reload the Riff is gone, so a leftover entry shows the Drink page, and
@@ -71,12 +85,13 @@ function DrinkView({ drink }: { drink: Drink }) {
       {isFizzy(riff) && <Bubbles />}
       {hasIceInGlass(riff) && <IceCubes />}
       <main className="dp-page" inert={making}>
-        <Link to={backToList} className="dp-back">
+        <Link to={back.to} className="dp-back">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M15 5l-7 7 7 7" />
           </svg>
-          All drinks
+          {back.label}
         </Link>
+        <SaveFavorite riff={riff} />
 
         <header className="dp-head">
           <Title drink={drink} picks={riff.picks} />
