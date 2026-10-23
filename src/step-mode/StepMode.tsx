@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { markBarTerms } from '../bar-terms'
 import { Bubbles, ColorSpots, IceCubes } from '../drink-page/Ambience'
 import { hasIceInGlass, isFizzy } from '../drink-page/ambience-for'
 import { formatIngredient, glassCount, TOOL_NAMES } from '../drink-page/format'
 import { GlassSketch } from '../drink-page/GlassSketch'
+import { TermText } from '../drink-page/TermText'
 import type { Drink, Riff, RiffStep } from '../riff-engine'
 import { primeAlarm, soundAlarm } from './alarm'
 import {
@@ -17,9 +19,10 @@ import {
 import { useWakeLock } from './wake-lock'
 import './step-mode.css'
 
-// A horizontal drag this long, and mostly sideways, counts as a swipe.
+// A drag this long counts as a swipe.
 const SWIPE_PX = 50
-// Taps on the left part of the screen go back; the rest go forward.
+// On the Mise en Place, taps on the left part of the screen go back and the
+// rest go forward. On the steps, taps above the current step go back.
 const BACK_ZONE = 0.3
 
 // Making the Riff one screen at a time: the Mise en Place first, then one
@@ -49,9 +52,11 @@ export function StepMode({ drink, riff, onLeave }: { drink: Drink; riff: Riff; o
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
+      // Keys in an open Bar Term sheet are the sheet's own.
+      if ((event.target as Element | null)?.closest?.('dialog')) return
       const { go, screen, onLeave } = latest.current
-      if (event.key === 'ArrowRight') go(screen + 1)
-      else if (event.key === 'ArrowLeft') go(screen - 1)
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') go(screen + 1)
+      else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') go(screen - 1)
       else if (event.key === 'Escape') onLeave()
     }
     window.addEventListener('keydown', onKey)
@@ -98,6 +103,8 @@ export function StepMode({ drink, riff, onLeave }: { drink: Drink; riff: Riff; o
   }
 
   // Swipes and taps on the screen itself. Buttons and links handle their own.
+  // Sideways swipes work everywhere. On the steps, which don't scroll, an
+  // upward swipe brings the next step up and a downward one goes back.
   const pointer = useRef<{ x: number; y: number } | null>(null)
   const swiped = useRef(false)
   const stageHandlers = {
@@ -111,9 +118,13 @@ export function StepMode({ drink, riff, onLeave }: { drink: Drink; riff: Riff; o
       if (!start) return
       const dx = event.clientX - start.x
       const dy = event.clientY - start.y
-      if (Math.abs(dx) < SWIPE_PX || Math.abs(dx) < Math.abs(dy) * 1.5) return
-      swiped.current = true
-      go(dx < 0 ? screen + 1 : screen - 1)
+      if (Math.abs(dx) >= SWIPE_PX && Math.abs(dx) >= Math.abs(dy) * 1.5) {
+        swiped.current = true
+        go(dx < 0 ? screen + 1 : screen - 1)
+      } else if (step && Math.abs(dy) >= SWIPE_PX && Math.abs(dy) >= Math.abs(dx) * 1.5) {
+        swiped.current = true
+        go(dy < 0 ? screen + 1 : screen - 1)
+      }
     },
     onClick: (event: React.MouseEvent<HTMLElement>) => {
       if (swiped.current) {
@@ -121,6 +132,11 @@ export function StepMode({ drink, riff, onLeave }: { drink: Drink; riff: Riff; o
         return
       }
       if ((event.target as Element).closest('button, a')) return
+      if (step) {
+        const current = event.currentTarget.querySelector('[data-current]')
+        go(current && event.clientY < current.getBoundingClientRect().top ? screen - 1 : screen + 1)
+        return
+      }
       const box = event.currentTarget.getBoundingClientRect()
       go(event.clientX - box.left < box.width * BACK_ZONE ? screen - 1 : screen + 1)
     },
@@ -158,14 +174,14 @@ export function StepMode({ drink, riff, onLeave }: { drink: Drink; riff: Riff; o
         ))}
       </div>
 
-      <div className="sm-stage" {...stageHandlers}>
-        <div key={screen} className="sm-screen" data-direction={direction}>
-          {step ? (
-            <StepScreen number={screen} step={step} timer={timer} now={now} controls={timerControls} />
-          ) : (
+      <div className="sm-stage" data-screen={step ? 'steps' : 'mise'} {...stageHandlers}>
+        {step ? (
+          <StepStack steps={riff.steps} current={screen - 1} timer={timer} now={now} controls={timerControls} />
+        ) : (
+          <div className="sm-screen" data-direction={direction}>
             <MiseEnPlace riff={riff} />
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       <nav className="sm-nav" aria-label="Steps">
@@ -195,6 +211,18 @@ export function StepMode({ drink, riff, onLeave }: { drink: Drink; riff: Riff; o
 
 function MiseEnPlace({ riff }: { riff: Riff }) {
   const { glass, glassCount: count, tools, ingredients } = riff.miseEnPlace
+  // Tools, then each ingredient's measure and name, marked as one screen.
+  const marked = useMemo(
+    () =>
+      markBarTerms([
+        ...tools.map((tool) => TOOL_NAMES[tool]),
+        ...ingredients.flatMap((ingredient) => {
+          const { measure, name } = formatIngredient(ingredient)
+          return [measure, name]
+        }),
+      ]),
+    [tools, ingredients],
+  )
   return (
     <section className="sm-mise" aria-labelledby="sm-mise-heading">
       <h2 id="sm-mise-heading">Mise en Place</h2>
@@ -209,8 +237,10 @@ function MiseEnPlace({ riff }: { riff: Riff }) {
         <>
           <h3 id="sm-tools-heading">Tools</h3>
           <ul className="sm-tools" aria-labelledby="sm-tools-heading">
-            {tools.map((tool) => (
-              <li key={tool}>{TOOL_NAMES[tool]}</li>
+            {tools.map((tool, i) => (
+              <li key={tool}>
+                <TermText segments={marked[i]} linkToPage={false} />
+              </li>
             ))}
           </ul>
         </>
@@ -218,15 +248,16 @@ function MiseEnPlace({ riff }: { riff: Riff }) {
 
       <h3 id="sm-ingredients-heading">Ingredients</h3>
       <ul className="dp-ingredients sm-ingredients" aria-labelledby="sm-ingredients-heading">
-        {ingredients.map((ingredient, i) => {
-          const { measure, name } = formatIngredient(ingredient)
-          return (
-            <li key={i}>
-              <span className="dp-measure">{measure}</span>
-              <span>{name}</span>
-            </li>
-          )
-        })}
+        {ingredients.map((_ingredient, i) => (
+          <li key={i}>
+            <span className="dp-measure">
+              <TermText segments={marked[tools.length + i * 2]} linkToPage={false} />
+            </span>
+            <span>
+              <TermText segments={marked[tools.length + i * 2 + 1]} linkToPage={false} />
+            </span>
+          </li>
+        ))}
       </ul>
       {riff.batchNotes.map((note) => (
         <p key={note} className="dp-note">
@@ -244,41 +275,129 @@ interface TimerControls {
   clear: () => void
 }
 
-function StepScreen({
+// How much each step shows, by its place from the current one: the next
+// steps fade the farther off they are, and the step just done fades most.
+function visibility(distance: number): number {
+  if (distance === 0) return 1
+  if (distance === -1) return 0.16
+  if (distance < -1) return 0
+  return [0.5, 0.3][distance - 1] ?? 0.18
+}
+
+// Every step in order, the current one near the top. Moving on slides the
+// list up, so the next step is always in view before you get to it.
+function StepStack({
+  steps,
+  current,
+  timer,
+  now,
+  controls,
+}: {
+  steps: RiffStep[]
+  current: number
+  timer: StepTimer | null
+  now: number
+  controls: TimerControls
+}) {
+  const list = useRef<HTMLOListElement>(null)
+
+  // Lines the current step up near the top of the stage, leaving room above
+  // for the end of the step before. Measured again if anything changes size.
+  useLayoutEffect(() => {
+    const element = list.current
+    if (!element) return
+    const place = () => {
+      const item = element.children[current] as HTMLElement | undefined
+      const stage = element.parentElement
+      if (!item || !stage) return
+      const anchor = Math.min(stage.clientHeight * 0.22, 160)
+      element.style.transform = `translateY(${Math.round(anchor - item.offsetTop)}px)`
+    }
+    place()
+    const observer = new ResizeObserver(place)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [current])
+
+  return (
+    <ol className="sm-stack" ref={list}>
+      {steps.map((step, i) => (
+        <li
+          key={step.id}
+          className="sm-item"
+          data-current={i === current || undefined}
+          inert={i !== current}
+          aria-hidden={i !== current || undefined}
+          style={{ opacity: visibility(i - current) }}
+        >
+          <StepItem
+            number={i + 1}
+            step={step}
+            current={i === current}
+            timer={timer}
+            now={now}
+            controls={controls}
+          />
+        </li>
+      ))}
+    </ol>
+  )
+}
+
+function StepItem({
   number,
   step,
+  current,
   timer,
   now,
   controls,
 }: {
   number: number
   step: RiffStep
+  current: boolean
   timer: StepTimer | null
   now: number
   controls: TimerControls
 }) {
+  // The step text, then its tools, marked as one screen.
+  const [text, ...tools] = useMemo(
+    () => markBarTerms([step.text, ...step.tools.map((tool) => TOOL_NAMES[tool])]),
+    [step],
+  )
   return (
-    <section className="sm-step" aria-labelledby="sm-step-text">
+    <>
       <p className="sm-number" aria-hidden="true">
         {number}
       </p>
-      <h2 id="sm-step-text" className="sm-text">
-        {step.text}
-      </h2>
-      {step.tools.length > 0 && (
-        <p className="sm-step-tools">{step.tools.map((tool) => TOOL_NAMES[tool]).join(' · ')}</p>
-      )}
-      {step.durationSeconds && (
-        <StepClock
-          step={step}
-          seconds={step.durationSeconds}
-          timer={timer?.stepId === step.id ? timer : null}
-          otherRunning={timer !== null && timer.stepId !== step.id && !isFinished(timer, now)}
-          now={now}
-          controls={controls}
-        />
-      )}
-    </section>
+      <div>
+        <h2 className="sm-text">
+          <TermText segments={text} linkToPage={false} />
+        </h2>
+        {tools.length > 0 && (
+          <p className="sm-step-tools">
+            {tools.map((segments, i) => (
+              <Fragment key={i}>
+                {i > 0 && ' · '}
+                <TermText segments={segments} linkToPage={false} />
+              </Fragment>
+            ))}
+          </p>
+        )}
+        {step.durationSeconds &&
+          (current ? (
+            <StepClock
+              step={step}
+              seconds={step.durationSeconds}
+              timer={timer?.stepId === step.id ? timer : null}
+              otherRunning={timer !== null && timer.stepId !== step.id && !isFinished(timer, now)}
+              now={now}
+              controls={controls}
+            />
+          ) : (
+            <p className="sm-step-tools">{formatClock(step.durationSeconds)} timer</p>
+          ))}
+      </div>
+    </>
   )
 }
 

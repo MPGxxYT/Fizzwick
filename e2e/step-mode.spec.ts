@@ -31,7 +31,7 @@ test('making a Riff goes from the Mise en Place through every step and back', as
   await expect(page.getByRole('group', { name: 'Servings' })).toContainText('2 drinks')
 })
 
-test('tapping the sides and going back move through step mode', async ({ page }) => {
+test('taps, swipes and going back move through step mode', async ({ page }) => {
   await page.goto('/drinks/cherry-limeade')
   await page.getByRole('button', { name: 'Make it' }).click()
   const making = page.getByRole('dialog', { name: 'Making Cherry Limeade' })
@@ -42,8 +42,13 @@ test('tapping the sides and going back move through step mode', async ({ page })
   await expect(making).toContainText('Step 1 of')
   await page.touchscreen.tap(box.width * 0.8, box.height * 0.5)
   await expect(making).toContainText('Step 2 of')
-  await page.touchscreen.tap(box.width * 0.1, box.height * 0.5)
+  // Above the current step is the one before it.
+  await page.touchscreen.tap(box.width * 0.5, box.height * 0.14)
   await expect(making).toContainText('Step 1 of')
+  // The steps don't scroll, so an upward swipe brings the next one up.
+  await making.locator('.sm-stage').dispatchEvent('pointerdown', { clientX: 200, clientY: 600 })
+  await making.locator('.sm-stage').dispatchEvent('pointerup', { clientX: 200, clientY: 400 })
+  await expect(making).toContainText('Step 2 of')
 
   await page.goBack()
   await expect(making).toHaveCount(0)
@@ -56,9 +61,8 @@ test('a timed step counts down and says when time is up', async ({ page }) => {
   await page.getByRole('button', { name: 'Make it' }).click()
   const making = page.getByRole('dialog', { name: 'Making Tea Sour' })
   await making.getByRole('button', { name: 'Start' }).click()
-  while (!(await making.getByText('Dry shake: seal the tin').isVisible())) {
-    await making.getByRole('button', { name: 'Next step' }).click()
-  }
+  for (let step = 2; step <= 4; step++) await making.getByRole('button', { name: 'Next step' }).click()
+  await expect(making.getByRole('heading', { name: /seal the tin and shake hard/ })).toBeVisible()
 
   await making.getByRole('button', { name: 'Start 0:15 timer' }).click()
   const clock = making.getByRole('timer')

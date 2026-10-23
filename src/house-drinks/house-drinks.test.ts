@@ -1,5 +1,7 @@
 import { describe, expect, test } from 'vitest'
-import { checkEveryRiff, GLASSES, METHODS, parseDrinkFile, resolveRiff, type Drink } from '../riff-engine'
+import { markBarTerms } from '../bar-terms'
+import { GLASS_NAMES, METHOD_NAMES, TOOL_NAMES } from '../drink-page/format'
+import { checkEveryRiff, GLASSES, METHODS, parseDrinkFile, resolveRiff, type Drink, type Ingredient } from '../riff-engine'
 import { houseDrinks } from './catalog'
 
 // Every House Drink file in this folder must parse, and every combination of
@@ -76,3 +78,39 @@ function houseDrink(id: string): Drink {
   if (!drink) throw new Error(`no House Drink "${id}"`)
   return drink
 }
+
+// Drink files never tag Bar Terms by hand, but every bartending word a House
+// Drink uses through its Method, glass, tools and measures needs a Bar Term.
+// Words anyone knows are listed here instead.
+const PLAIN_WORDS = new Set(['mug', 'kettle', 'blender', 'peeler', 'oz', 'ml', 'cup', 'count', 'to-taste', 'fill'])
+type Unit = Ingredient['unit']
+const UNIT_WORDS: Partial<Record<Unit, string>> = { top: 'Top', dash: 'dash', barspoon: 'barspoon' }
+
+function vocabulary(drink: Drink): { id: string; word: string }[] {
+  const options = drink.slots.flatMap((slot) => slot.options)
+  const steps = [...drink.steps, ...options.flatMap((option) => (option.addSteps ?? []).map(({ step }) => step))]
+  const methods = [drink.method, ...options.flatMap((option) => option.method ?? [])]
+  const tools = steps.flatMap((step) => step.tools ?? [])
+  const units = [...drink.ingredients, ...options.flatMap((option) => option.ingredients)].map((ingredient) => ingredient.unit)
+  return [
+    ...methods.map((id) => ({ id, word: METHOD_NAMES[id] })),
+    { id: drink.glass, word: GLASS_NAMES[drink.glass] },
+    ...tools.map((id) => ({ id, word: TOOL_NAMES[id] })),
+    ...units.map((id) => ({ id, word: UNIT_WORDS[id] ?? id })),
+  ].filter(({ id }) => !PLAIN_WORDS.has(id))
+}
+
+describe('House Drink Bar Terms', () => {
+  test.each(houseDrinks.map((drink) => [drink.id, drink] as const))(
+    '%s uses no bartending word without a Bar Term',
+    (_id, drink) => {
+      const missing = vocabulary(drink)
+        .filter(({ word }) => {
+          const [segments] = markBarTerms([word])
+          return !(segments.length === 1 && segments[0].term)
+        })
+        .map(({ word }) => word)
+      expect([...new Set(missing)]).toEqual([])
+    },
+  )
+})

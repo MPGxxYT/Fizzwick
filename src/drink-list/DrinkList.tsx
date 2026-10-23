@@ -47,6 +47,9 @@ export function DrinkList() {
         <header className="dl-head">
           <h1>{APP_NAME}</h1>
           <p>Pick a drink, then swap its parts to make it yours.</p>
+          <Link to="/bar-terms" className="dl-terms-link">
+            Bar Terms explained
+          </Link>
         </header>
 
         <div className="dl-search">

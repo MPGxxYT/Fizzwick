@@ -1,12 +1,16 @@
 /* The Drink page: midnight purple, rising bubbles, and the Riff as a sentence. */
-.dp {
+/* Sheets get the colors too, since a Bar Term's sheet opens outside .dp. */
+.dp,
+.dp-sheet {
   --dp-paper: #24173b;
   --dp-ink: #fbf6ff;
   --dp-cherry: #ff8fb0;
   --dp-mint: #3d2b5e;
   --dp-card: #2e2049;
   --dp-soft: #bfaedc;
+}
 
+.dp {
   position: relative;
   min-height: 100vh;
   background: var(--dp-paper);
@@ -611,4 +615,41 @@
   .dp-title-fill.is-refill {
     animation: none;
   }
+}
+
+/* A Bar Term: a dotted underline, tap for its definition. It keeps the look
+   of the text around it. */
+.dp-term {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: rgba(251, 246, 255, 0.55);
+  cursor: help;
+}
+
+.dp-measure .dp-term {
+  text-decoration-color: rgba(255, 143, 176, 0.6);
+}
+
+.dp-term-definition {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.dp-term-all {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.35rem 0;
+  color: #7fe3c6;
+  font-weight: 600;
+  text-decoration: none;
 }
