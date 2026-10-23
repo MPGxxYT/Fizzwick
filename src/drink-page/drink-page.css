@@ -13,6 +13,7 @@
 .dp {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--dp-paper);
   color: var(--dp-ink);
   font-family: 'Figtree', system-ui, sans-serif;
@@ -23,7 +24,8 @@
   position: relative;
   max-width: 34rem;
   margin: 0 auto;
-  padding: 1.25rem 1.25rem 7rem;
+  padding: calc(1.25rem + env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right))
+    calc(7rem + env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-left));
 }
 
 .dp-back {
@@ -174,7 +176,10 @@
   font-weight: 600;
 }
 
+/* Drawn at 2.25rem so "You'll need" keeps its line; the ::after makes
+   each one 44px to the finger. */
 .dp-servings button {
+  position: relative;
   width: 2.25rem;
   height: 2.25rem;
   border: 0;
@@ -183,6 +188,28 @@
   color: var(--dp-ink);
   font-size: 1.2rem;
   cursor: pointer;
+}
+
+/* Drawn, not typed: a typed + or − sits on the text baseline, off center. */
+.dp-servings button {
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+.dp-servings button svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.dp-servings button::after {
+  content: '';
+  position: absolute;
+  inset: -0.25rem;
 }
 
 .dp-servings button:disabled {
@@ -254,7 +281,10 @@
   width: 100%;
   max-width: 34rem;
   max-height: 85vh;
+  max-height: 85dvh;
   margin: auto auto 0;
+  overscroll-behavior: contain;
+  transition: transform 0.2s ease-out;
   padding: 0;
   border: 0;
   border-radius: 1.25rem 1.25rem 0 0;
@@ -267,8 +297,22 @@
   background: rgba(12, 6, 24, 0.6);
 }
 
+.dp-sheet.is-dragging {
+  transition: none;
+}
+
+/* The grab bar: says the sheet can be swiped down. */
+.dp-sheet-handle {
+  width: 2.5rem;
+  height: 0.3rem;
+  margin: 0.6rem auto 0;
+  border-radius: 999px;
+  background: rgba(191, 174, 220, 0.4);
+}
+
 .dp-sheet-body {
-  padding: 1.25rem 1.25rem 2rem;
+  padding: 0.75rem max(1.25rem, env(safe-area-inset-right)) calc(2rem + env(safe-area-inset-bottom))
+    max(1.25rem, env(safe-area-inset-left));
 }
 
 .dp-sheet h2 {
@@ -421,7 +465,7 @@
 .dp-glass-standard {
   margin-top: 0.75rem;
   padding: 0;
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   border: 0;
   background: none;
   color: var(--dp-soft);
@@ -461,7 +505,7 @@
 
 /* Choice and glass sheets slide up from the bottom over a fading backdrop. */
 .dp-sheet[open] {
-  animation: dp-sheet-up 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: dp-sheet-up 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 }
 
 .dp-sheet[open]::backdrop {
@@ -503,8 +547,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.2rem;
-  margin-left: -0.35rem;
-  padding: 0.25rem 0.35rem;
+  min-height: 2.75rem;
+  margin: -0.4rem 0 -0.35rem -0.35rem;
+  padding: 0 0.5rem 0 0.35rem;
   border-radius: 0.5rem;
 }
 
@@ -664,8 +709,8 @@
 /* The Favorite heart, top right: empty, or filled in cherry once saved. */
 .dp-fav {
   position: absolute;
-  top: 0.9rem;
-  right: 0.9rem;
+  top: calc(0.9rem + env(safe-area-inset-top));
+  right: max(0.9rem, env(safe-area-inset-right));
   z-index: 2;
   display: grid;
   place-items: center;
@@ -766,7 +811,7 @@
 
 .dp-fav-error {
   position: absolute;
-  top: 3.9rem;
+  top: calc(3.9rem + env(safe-area-inset-top));
   right: 1rem;
   z-index: 2;
   max-width: 12rem;
@@ -786,8 +831,8 @@
 /* Share, to the left of the heart. */
 .dp-share {
   position: absolute;
-  top: 0.9rem;
-  right: 3.9rem;
+  top: calc(0.9rem + env(safe-area-inset-top));
+  right: calc(max(0.9rem, env(safe-area-inset-right)) + 3rem);
   z-index: 2;
   display: grid;
   place-items: center;
@@ -813,7 +858,7 @@
 
 .dp-share-note {
   position: absolute;
-  top: 3.9rem;
+  top: calc(3.9rem + env(safe-area-inset-top));
   right: 1rem;
   z-index: 2;
   max-width: 14rem;
@@ -840,4 +885,45 @@
   font: 600 0.75rem 'Figtree', sans-serif;
   vertical-align: middle;
   text-decoration: none;
+}
+
+/* Pressed: things you tap sink a little, since a phone has no hover. Icon
+   buttons get a soft circle instead, so the heart's own motion stays clean. */
+.dp-reset,
+.dp-servings button,
+.dp-options button,
+.dp-glass-use,
+.dp-back {
+  transition:
+    transform 0.12s ease-out,
+    background-color 0.12s ease-out;
+}
+
+.dp-reset:active,
+.dp-servings button:active:not(:disabled),
+.dp-glass-use:active:not(:disabled),
+.dp-back:active {
+  transform: scale(0.94);
+}
+
+.dp-options button:active {
+  background: rgba(61, 43, 94, 0.7);
+}
+
+.dp-fav:active,
+.dp-share:active {
+  background: rgba(191, 174, 220, 0.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-reset:active,
+  .dp-servings button:active,
+  .dp-glass-use:active,
+  .dp-back:active {
+    transform: none;
+  }
+
+  .dp-sheet {
+    transition: none;
+  }
 }

@@ -11,8 +11,11 @@
 }
 
 .fv-message a {
-  display: inline-block;
-  margin-top: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  margin-top: 0.25rem;
+  padding: 0 0.5rem;
   color: #7fe3c6;
   font-weight: 600;
   text-decoration: none;
@@ -159,4 +162,29 @@
 .fv-form textarea:focus-visible {
   outline: 2px solid #7fe3c6;
   outline-offset: 1px;
+}
+
+/* Pressed: the card sinks a little, the pencil gets a soft fill. */
+.fv-card,
+.fv-actions button {
+  transition: transform 0.12s ease-out;
+}
+
+.fv-card:has(.fv-open:active) {
+  transform: scale(0.98);
+}
+
+.fv-actions button:active {
+  transform: scale(0.96);
+}
+
+.fv-edit:active {
+  background: rgba(191, 174, 220, 0.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fv-card:has(.fv-open:active),
+  .fv-actions button:active {
+    transform: none;
+  }
 }
