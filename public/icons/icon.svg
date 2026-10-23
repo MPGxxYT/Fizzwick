@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Fizzwick's icon: a Collins glass of cherry fading into lime, with bubbles,
+       on midnight purple. Everything sits inside the middle 70%, so it survives
+       the round and squircle masks phones put on installed apps. -->
+  <defs>
+    <linearGradient id="drink" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff8fb0" />
+      <stop offset="0.55" stop-color="#e85d8a" />
+      <stop offset="1" stop-color="#7fe3c6" />
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.3" r="0.75">
+      <stop offset="0" stop-color="#3b2763" />
+      <stop offset="1" stop-color="#24173b" />
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#glow)" />
+  <path d="M186 196 L326 196 L318 402 L194 402 Z" fill="url(#drink)" />
+  <path d="M176 128 L336 128 L326 412 L186 412 Z" fill="none" stroke="#fbf6ff" stroke-width="14" stroke-linejoin="round" />
+  <path d="M204 150 L200 380" stroke="#fbf6ff" stroke-opacity="0.45" stroke-width="8" stroke-linecap="round" />
+  <g fill="none" stroke="#fbf6ff" stroke-width="7">
+    <circle cx="282" cy="330" r="13" />
+    <circle cx="246" cy="270" r="9" />
+    <circle cx="292" cy="236" r="16" />
+    <circle cx="262" cy="160" r="11" stroke-opacity="0.7" />
+    <circle cx="300" cy="102" r="8" stroke-opacity="0.5" />
+  </g>
+</svg>
