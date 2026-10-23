@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { markBarTerms } from '../bar-terms'
+import { markBarTerms, type Segment } from '../bar-terms'
 import { Bubbles, ColorSpots, IceCubes } from '../drink-page/Ambience'
 import { hasIceInGlass, isFizzy } from '../drink-page/ambience-for'
 import { formatIngredient, glassCount, TOOL_NAMES } from '../drink-page/format'
@@ -7,6 +7,7 @@ import { GlassSketch } from '../drink-page/GlassSketch'
 import { TermText } from '../drink-page/TermText'
 import type { Drink, Riff, RiffStep } from '../riff-engine'
 import { primeAlarm, soundAlarm } from './alarm'
+import { splitTimedPart, timedPart } from './timed-part'
 import {
   formatClock,
   isFinished,
@@ -371,7 +372,7 @@ function StepItem({
       </p>
       <div>
         <h2 className="sm-text">
-          <TermText segments={text} linkToPage={false} />
+          <StepText step={step} segments={text} />
         </h2>
         {tools.length > 0 && (
           <p className="sm-step-tools">
@@ -397,6 +398,27 @@ function StepItem({
             <p className="sm-step-tools">{formatClock(step.durationSeconds)} timer</p>
           ))}
       </div>
+    </>
+  )
+}
+
+// The step text. In a timed step, the part the timer is for is colored like
+// the timer and starts with a small stopwatch, so it's clear what to time.
+function StepText({ step, segments }: { step: RiffStep; segments: Segment[] }) {
+  const range = step.durationSeconds ? timedPart(step.text) : null
+  if (!range) return <TermText segments={segments} linkToPage={false} />
+  const { before, timed, after } = splitTimedPart(segments, range)
+  return (
+    <>
+      <TermText segments={before} linkToPage={false} />
+      <span className="sm-timed">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="13" r="8" />
+          <path d="M12 9v4l2.5 2.5M9.5 2.5h5" />
+        </svg>
+        <TermText segments={timed} linkToPage={false} />
+      </span>
+      <TermText segments={after} linkToPage={false} />
     </>
   )
 }
