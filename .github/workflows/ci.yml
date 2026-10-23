@@ -25,5 +25,7 @@ jobs:
           # PRs compare with their base; pushes with the previous commit
           # (all zeros on a new branch, which falls back to origin/main).
           BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
+      - name: Check House Spec photo sizes
+        run: npm run check:photos
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
