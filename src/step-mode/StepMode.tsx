@@ -5,8 +5,13 @@ import { hasIceInGlass, isFizzy } from '../drink-page/ambience-for'
 import { formatIngredient, glassCount, TOOL_NAMES } from '../drink-page/format'
 import { GlassSketch } from '../drink-page/GlassSketch'
 import { TermText } from '../drink-page/TermText'
+import { newFavorite, sameRiff } from '../favorites/favorite'
+import { favoriteId, putFavorite, useFavorites } from '../favorites/store'
 import type { Drink, Riff, RiffStep } from '../riff-engine'
 import { primeAlarm, soundAlarm } from './alarm'
+import { pickCheers } from './cheers'
+import { finishShow, ICE_SECONDS } from './finish-show'
+import { FinishShow } from './FinishShow'
 import { splitTimedPart, timedPart } from './timed-part'
 import {
   formatClock,
@@ -27,20 +32,36 @@ const SWIPE_PX = 50
 const BACK_ZONE = 0.3
 
 // Making the Riff one screen at a time: the Mise en Place first, then one
-// step per screen. Covers the Drink page, which stays where it was underneath.
+// step per screen, then a finish screen. Covers the Drink page, which stays
+// where it was underneath.
 export function StepMode({ drink, riff, onLeave }: { drink: Drink; riff: Riff; onLeave: () => void }) {
-  // 0 is the Mise en Place, 1 to steps.length are the steps.
+  // 0 is the Mise en Place, 1 to steps.length are the steps, and the one
+  // after the last step is the finish.
   const [screen, setScreen] = useState(0)
   const [direction, setDirection] = useState<'forward' | 'back'>('forward')
   const [timer, setTimer] = useState<StepTimer | null>(null)
   const [now, setNow] = useState(() => Date.now())
   const last = riff.steps.length
-  const step = screen > 0 ? riff.steps[screen - 1] : null
+  const finish = last + 1
+  const step = screen > 0 && screen <= last ? riff.steps[screen - 1] : null
 
   useWakeLock()
 
+  // Focus comes inside when step mode opens, so a screen reader starts here
+  // and keys work at once.
+  const root = useRef<HTMLDivElement>(null)
+  useEffect(() => root.current?.focus(), [])
+
+  // A fresh cheer each time the finish comes up.
+  const [cheers, setCheers] = useState('Cheers!')
+
   const go = (next: number) => {
-    if (next < 0 || next > last || next === screen) return
+    if (next < 0 || next > finish || next === screen) return
+    if (next === finish) {
+      const picked = pickCheers(lastCheers, Math.random())
+      lastCheers = picked
+      setCheers(picked)
+    }
     setDirection(next > screen ? 'forward' : 'back')
     setScreen(next)
   }
@@ -132,6 +153,11 @@ export function StepMode({ drink, riff, onLeave }: { drink: Drink; riff: Riff; o
         swiped.current = false
         return
       }
+      // On the finish, a tap skips the show to its end.
+      if (screen === finish) {
+        event.currentTarget.getAnimations({ subtree: true }).forEach((animation) => animation.finish())
+        return
+      }
       if ((event.target as Element).closest('button, a')) return
       if (step) {
         const current = event.currentTarget.querySelector('[data-current]')
@@ -146,7 +172,7 @@ export function StepMode({ drink, riff, onLeave }: { drink: Drink; riff: Riff; o
   const timerStep = timer ? riff.steps.findIndex((candidate) => candidate.id === timer.stepId) + 1 : 0
 
   return (
-    <div className="dp sm" role="dialog" aria-modal="true" aria-label={`Making ${riff.name}`}>
+    <div className="dp sm" role="dialog" aria-modal="true" aria-label={`Making ${riff.name}`} ref={root} tabIndex={-1}>
       <ColorSpots drink={drink} picks={riff.picks} />
       {isFizzy(riff) && <Bubbles />}
       {hasIceInGlass(riff) && <IceCubes />}
@@ -164,8 +190,11 @@ export function StepMode({ drink, riff, onLeave }: { drink: Drink; riff: Riff; o
             <span className="sm-visually-hidden">, step {timerStep} timer</span>
           </button>
         )}
-        <p className="sm-counter" aria-live="polite">
-          {step ? `Step ${screen} of ${last}` : 'Before you start'}
+        <p className="sm-counter">{step ? `Step ${screen} of ${last}` : screen === finish ? 'Done' : 'Before you start'}</p>
+        {/* Read out in full, so a screen reader hears the step and not just
+            its number. */}
+        <p className="sm-visually-hidden" aria-live="polite">
+          {step ? `Step ${screen} of ${last}. ${step.text}` : screen === finish ? `${cheers} Your ${riff.name} is ready.` : ''}
         </p>
       </header>
 
@@ -175,9 +204,13 @@ export function StepMode({ drink, riff, onLeave }: { drink: Drink; riff: Riff; o
         ))}
       </div>
 
-      <div className="sm-stage" data-screen={step ? 'steps' : 'mise'} {...stageHandlers}>
+      <div className="sm-stage" data-screen={step ? 'steps' : screen === finish ? 'finish' : 'mise'} {...stageHandlers}>
         {step ? (
           <StepStack steps={riff.steps} current={screen - 1} timer={timer} now={now} controls={timerControls} />
+        ) : screen === finish ? (
+          <div className="sm-screen" data-direction={direction}>
+            <Finish riff={riff} cheers={cheers} />
+          </div>
         ) : (
           <div className="sm-screen" data-direction={direction}>
             <MiseEnPlace riff={riff} />
@@ -200,9 +233,13 @@ export function StepMode({ drink, riff, onLeave }: { drink: Drink; riff: Riff; o
               <path d="M9 5l7 7-7 7" />
             </svg>
           </button>
+        ) : screen === last ? (
+          <button type="button" className="sm-next" onClick={() => go(finish)}>
+            Done
+          </button>
         ) : (
           <button type="button" className="sm-next" onClick={onLeave}>
-            Done
+            Back to the drink
           </button>
         )}
       </nav>
@@ -212,6 +249,7 @@ export function StepMode({ drink, riff, onLeave }: { drink: Drink; riff: Riff; o
 
 function MiseEnPlace({ riff }: { riff: Riff }) {
   const { glass, glassCount: count, tools, ingredients } = riff.miseEnPlace
+  const heading = useMemo(() => markBarTerms(['Mise en Place'])[0], [])
   // Tools, then each ingredient's measure and name, marked as one screen.
   const marked = useMemo(
     () =>
@@ -226,7 +264,10 @@ function MiseEnPlace({ riff }: { riff: Riff }) {
   )
   return (
     <section className="sm-mise" aria-labelledby="sm-mise-heading">
-      <h2 id="sm-mise-heading">Mise en Place</h2>
+      {/* The heading is a Bar Term too, so it explains itself. */}
+      <h2 id="sm-mise-heading">
+        <TermText segments={heading} linkToPage={false} />
+      </h2>
       <p className="sm-lead">Set all of this out before the first step.</p>
 
       <div className="sm-glass">
@@ -265,6 +306,64 @@ function MiseEnPlace({ riff }: { riff: Riff }) {
           {note}
         </p>
       ))}
+    </section>
+  )
+}
+
+// The phrase the finish showed last, so the next one is different.
+let lastCheers: string | null = null
+
+// The end of making it: the drink is served in a way that shows how it was
+// made (see FinishShow), and a short cheer ("Cheers!", "Ta-da!") pops in. Then a way to keep the Riff,
+// since now is when you know whether you liked it.
+function Finish({ riff, cheers }: { riff: Riff; cheers: string }) {
+  const show = useMemo(() => finishShow(riff), [riff])
+  const favorites = useFavorites()
+  const [failed, setFailed] = useState(false)
+  const saved =
+    favorites.status === 'ready' &&
+    favorites.favorites.some((favorite) => favorite.drinkId === riff.drinkId && sameRiff(favorite.picks, riff.picks))
+
+  const save = () => {
+    setFailed(false)
+    putFavorite(newFavorite(riff, favoriteId(), Date.now())).catch(() => setFailed(true))
+  }
+
+  return (
+    // Drinks with ice spend a moment filling the glass with it, so the cheer
+    // waits that much longer too.
+    <section
+      className="sm-finish"
+      aria-labelledby="sm-finish-heading"
+      style={{ '--shift': `${show.ice ? ICE_SECONDS : 0}s` } as React.CSSProperties}
+    >
+      <FinishShow riff={riff} show={show} />
+      <h2 id="sm-finish-heading">{cheers}</h2>
+      <p className="sm-finish-ready">Your {riff.name} is ready.</p>
+      {favorites.status === 'unavailable' || failed ? (
+        <p className="sm-lead" role="alert">
+          This browser won't keep Favorites.
+        </p>
+      ) : saved ? (
+        <p className="sm-finish-saved">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 20s-7-4.4-9.2-9A5 5 0 0 1 12 6.1 5 5 0 0 1 21.2 11C19 15.6 12 20 12 20z" />
+          </svg>
+          Saved to Favorites
+        </p>
+      ) : (
+        favorites.status === 'ready' && (
+          <>
+            <p className="sm-lead">Liked this Riff? Save it to make it again.</p>
+            <button type="button" className="sm-clock-start sm-finish-save" onClick={save}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 20s-7-4.4-9.2-9A5 5 0 0 1 12 6.1 5 5 0 0 1 21.2 11C19 15.6 12 20 12 20z" />
+              </svg>
+              Save to Favorites
+            </button>
+          </>
+        )
+      )}
     </section>
   )
 }

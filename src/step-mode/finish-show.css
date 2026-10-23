@@ -1,0 +1,398 @@
+/* The finish show: the served glass, with a drawing laid over it for the
+   making beat, the body effect and the garnish. Every piece rests in its
+   finished place; the animations only bring it there, so with reduced motion
+   or after a tap to skip, the drink simply sits there, complete. Pieces that
+   only exist in passing (fizz, splashes, mist, the swirl) rest hidden. */
+.fs {
+  position: relative;
+  width: 9rem;
+  /* Room above the glass for the fizz to burst into. */
+  margin-top: 6rem;
+}
+
+.fs-main {
+  position: relative;
+}
+
+.fs-glass {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.fs-over {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Animated pieces move around their own box. Only these: the setting also
+   changes how SVG reads a transform attribute, which would shift the
+   rotated pieces (ice cubes, leaves) drawn with one. */
+.fs-foam,
+.fs-peak,
+.fs-ice,
+.fs-shimmer,
+.fs-sparkle,
+.fs-roll,
+.fs-slide,
+.fs-drop,
+.fs-ripple,
+.fs-tuck,
+.fs-leaves,
+.fs-mist,
+.fs-speck,
+.fs-spear {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* The pour. The glass drawing's own liquid stays hidden on the served
+   glass; the drink is drawn over it, shown up to a wavy level that rises from
+   the bottom, rolling sideways as it climbs. Plain transforms, so every
+   browser animates it. */
+.fs-main .glass-liquid {
+  opacity: 0;
+}
+
+/* The level rises, rolling its wave sideways as it climbs. */
+.fs-level {
+  animation: fs-fill 1.15s cubic-bezier(0.37, 0, 0.3, 1) calc(var(--shift) + 0.15s) both;
+}
+
+@keyframes fs-fill {
+  from {
+    transform: translate(-20px, var(--fill));
+  }
+}
+
+/* Shake: frost creeps up the glass. */
+.fs-frost {
+  opacity: 0.32;
+  animation: fs-frost 0.7s ease-out calc(var(--shift) + 1.15s) both;
+}
+
+@keyframes fs-frost {
+  from {
+    opacity: 0;
+    clip-path: inset(100% 0 0 0);
+  }
+}
+
+/* Dry shake: a foam cap swells on top. */
+.fs-foam {
+  transform-origin: center bottom;
+  animation: fs-swell 0.5s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--shift) + 1.2s) both;
+}
+
+@keyframes fs-swell {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+}
+
+/* Stir: a slow swirl in the liquid that settles. Blend: a faster one. */
+.fs-swirl {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.5);
+  stroke-width: 1.6;
+  stroke-dasharray: 10 8;
+  opacity: 0;
+  animation: fs-swirl 1.3s ease-in-out calc(var(--shift) + 0.5s) both;
+}
+
+.fs-swirl.is-fast {
+  animation-duration: 0.9s;
+}
+
+@keyframes fs-swirl {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+  25%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    stroke-dashoffset: -72;
+  }
+}
+
+/* Blend: the drink rises into a frozen peak above the rim. */
+.fs-peak {
+  opacity: 0.85;
+  transform-origin: center bottom;
+  animation: fs-swell 0.55s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--shift) + 1.2s) both;
+}
+
+/* Ice goes into the empty glass first, each piece falling from above the
+   rim, bottom first, with a small settle. */
+.fs-ice {
+  animation: fs-ice 0.4s cubic-bezier(0.55, 0, 1, 0.45) both;
+}
+
+@keyframes fs-ice {
+  0% {
+    opacity: 0;
+    transform: translateY(var(--from));
+  }
+  20% {
+    opacity: 1;
+  }
+  85% {
+    transform: translateY(1px);
+  }
+}
+
+/* Still drinks: a shine sweeps across the surface. */
+.fs-shimmer {
+  opacity: 0;
+  animation: fs-shimmer 0.9s ease-in-out calc(var(--shift) + 1.35s) both;
+}
+
+@keyframes fs-shimmer {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  5%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(120px);
+  }
+}
+
+/* Coupes: a second coupe swings in and the two clink. */
+/* Sized so the two rims just meet once both tilt in. */
+.fs.is-clink {
+  width: 14.8rem;
+}
+
+.fs.is-clink .fs-main,
+.fs-partner {
+  width: 7.5rem;
+  transform-origin: 50% 100%;
+}
+
+.fs.is-clink .fs-main {
+  transform: rotate(6deg);
+  animation: fs-tilt 0.6s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--shift) + 1.35s) both;
+}
+
+@keyframes fs-tilt {
+  from {
+    transform: rotate(0);
+  }
+}
+
+.fs-partner {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  transform: scaleX(-1) rotate(6deg);
+  animation: fs-partner 0.6s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--shift) + 1.35s) both;
+}
+
+@keyframes fs-partner {
+  from {
+    opacity: 0;
+    transform: translateX(-4rem) scaleX(-1) rotate(0);
+  }
+}
+
+.fs-sparkle {
+  opacity: 0;
+  animation: fs-flash 0.5s ease-out both;
+}
+
+@keyframes fs-flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}
+
+/* Fizz: bubbles in the Riff's colors burst out of the glass and pop. */
+.fs-bubble {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid var(--bubble);
+  background: radial-gradient(circle at 35% 30%, rgba(251, 246, 255, 0.55), color-mix(in srgb, var(--bubble) 35%, transparent) 65%);
+  opacity: 0;
+  animation: fs-burst 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fs-burst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.4);
+  }
+  6% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--drift)), calc(-1 * var(--rise))) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--drift)), calc(-1 * var(--rise) - 0.5rem)) scale(1.7);
+  }
+}
+
+/* Garnishes. A wheel or wedge rolls in onto the rim. */
+.fs-roll {
+  animation: fs-roll 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fs-roll {
+  from {
+    opacity: 0;
+    transform: translate(28px, -6px) rotate(220deg);
+  }
+}
+
+/* A slice slides on without the spin. */
+.fs-slide {
+  animation: fs-slide 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fs-slide {
+  from {
+    opacity: 0;
+    transform: translate(22px, -4px);
+  }
+}
+
+/* A cherry drops in and rings the surface. */
+.fs-drop {
+  animation: fs-drop 0.4s cubic-bezier(0.5, 0, 0.75, 0) both;
+}
+
+@keyframes fs-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-70px);
+  }
+  20% {
+    opacity: 1;
+  }
+}
+
+.fs-ripple {
+  fill: none;
+  stroke: rgba(251, 246, 255, 0.7);
+  stroke-width: 1;
+  opacity: 0;
+  animation: fs-flash 0.6s ease-out both;
+}
+
+/* A sprig tucks in, then its leaves wiggle. */
+.fs-tuck {
+  animation: fs-tuck 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fs-tuck {
+  from {
+    opacity: 0;
+    transform: translateY(-26px);
+  }
+}
+
+.fs-leaves {
+  transform-origin: center bottom;
+  animation: fs-wiggle 0.5s ease-in-out both;
+}
+
+@keyframes fs-wiggle {
+  25% {
+    rotate: 12deg;
+  }
+  75% {
+    rotate: -8deg;
+  }
+}
+
+/* A peel twists into being over the rim, then mists. */
+.fs-peel {
+  stroke-dasharray: 1;
+  animation: fs-draw 0.55s ease-out both;
+}
+
+/* Hidden until it starts drawing: a round line cap would otherwise leave a
+   dot where the peel begins. */
+@keyframes fs-draw {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 1;
+  }
+  5% {
+    opacity: 1;
+  }
+}
+
+.fs-mist {
+  opacity: 0;
+  animation: fs-mist 0.6s ease-out both;
+}
+
+@keyframes fs-mist {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  5% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy));
+  }
+}
+
+/* Spice dusts down onto the surface. */
+.fs-speck {
+  animation: fs-dust 0.6s ease-in both;
+}
+
+@keyframes fs-dust {
+  from {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+}
+
+/* A pick spears in at an angle. */
+.fs-spear {
+  animation: fs-spear 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fs-spear {
+  from {
+    opacity: 0;
+    transform: translate(16px, -16px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fs,
+  .fs * {
+    animation: none !important;
+  }
+}

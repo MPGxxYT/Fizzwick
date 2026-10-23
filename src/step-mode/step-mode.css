@@ -141,6 +141,11 @@
   }
 }
 
+/* Focus lands on the step mode itself when it opens; that needs no ring. */
+.dp.sm:focus {
+  outline: none;
+}
+
 /* Mise en Place */
 .sm-mise h2,
 .sm-mise h3 {
@@ -474,4 +479,83 @@
   .dp-make button:active {
     transform: none;
   }
+}
+
+/* The finish: the served glass, "Cheers!", and a way to keep the Riff. */
+.sm-finish {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.sm-finish h2 {
+  margin: 0.5rem 0 0;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-weight: 800;
+  font-size: clamp(3rem, 15vw, 4.25rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--dp-cherry);
+  animation: sm-cheers-pop 0.6s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--shift, 0s) + 2.45s) both;
+}
+
+.sm-finish-ready {
+  margin: 0.4rem 0 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  animation: sm-fade 0.5s ease-out calc(var(--shift, 0s) + 2.7s) both;
+}
+
+.sm-finish .sm-lead {
+  margin-top: 1.25rem;
+  animation: sm-fade 0.5s ease-out calc(var(--shift, 0s) + 2.85s) both;
+}
+
+.sm-finish .sm-finish-save,
+.sm-finish .sm-finish-saved {
+  animation: sm-fade 0.5s ease-out calc(var(--shift, 0s) + 2.95s) both;
+}
+
+@keyframes sm-cheers-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+/* With reduced motion the words fade in where they are; the show itself
+   rests finished (finish-show.css). */
+@media (prefers-reduced-motion: reduce) {
+  .sm-finish h2 {
+    animation-name: sm-fade;
+  }
+}
+
+.sm-finish-save {
+  margin-top: 1.25rem;
+}
+
+.sm-finish-save svg,
+.sm-finish-saved svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.sm-finish-saved {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.25rem 0 0;
+  color: var(--dp-cherry);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.sm-finish-saved svg {
+  fill: currentColor;
 }
