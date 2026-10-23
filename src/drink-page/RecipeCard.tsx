@@ -41,7 +41,9 @@ export function RecipeCard({ riff, onServings }: { riff: Riff; onServings: (serv
         <h2 id="dp-need-heading">You'll need</h2>
         <div className="dp-servings" role="group" aria-label="Servings">
           <button type="button" aria-label="Fewer servings" disabled={riff.servings <= 1} onClick={() => change(riff.servings - 1)}>
-            −
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 12h12" />
+            </svg>
           </button>
           <span key={riff.servings} className="dp-count" aria-live="polite">
             {riff.servings} {riff.servings === 1 ? 'drink' : 'drinks'}
@@ -52,7 +54,9 @@ export function RecipeCard({ riff, onServings }: { riff: Riff; onServings: (serv
             disabled={riff.servings >= MAX_SERVINGS}
             onClick={() => change(riff.servings + 1)}
           >
-            +
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 12h12M12 6v12" />
+            </svg>
           </button>
         </div>
       </div>

@@ -73,7 +73,7 @@
 }
 
 .bt-group button {
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   padding: 0 1rem;
   border: 1px solid color-mix(in srgb, var(--bt-color) 55%, transparent);
   border-radius: 999px;
@@ -81,6 +81,10 @@
   color: var(--dp-ink);
   font: 600 1rem 'Figtree', sans-serif;
   cursor: pointer;
+}
+
+.bt-group button:active {
+  background: color-mix(in srgb, var(--bt-color) 30%, var(--dp-paper));
 }
 
 .bt-group button:focus-visible {

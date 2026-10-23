@@ -16,11 +16,41 @@
   box-sizing: border-box;
 }
 
+/* Phone basics: no font inflation when the phone turns sideways, no grey
+   flash on tap (buttons get their own pressed look), no double-tap zoom
+   delay, and the purple behind the page when it bounces past an edge. */
+html {
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--bg);
   color: var(--text);
+}
+
+::selection {
+  background: rgba(127, 227, 198, 0.35);
+  color: var(--text);
+}
+
+input,
+textarea {
+  caret-color: var(--link);
+}
+
+/* A long press on a button shouldn't select its label or open the
+   phone's callout menu. */
+button {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .home {

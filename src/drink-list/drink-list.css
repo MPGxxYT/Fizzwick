@@ -2,13 +2,15 @@
 .dl {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .dl-page {
   position: relative;
   max-width: 34rem;
   margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
+  padding: calc(2rem + env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right))
+    calc(4rem + env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-left));
 }
 
 .dl-head {
@@ -88,7 +90,7 @@
 }
 
 .dl-filter button {
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   padding: 0 0.95rem;
   border: 1px solid rgba(191, 174, 220, 0.35);
   border-radius: 999px;
@@ -204,9 +206,11 @@
 
 /* The way to the Bar Terms page, under the tagline. */
 .dl-terms-link {
-  display: inline-block;
-  margin-top: 0.5rem;
-  padding: 0.25rem 0.35rem;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  margin-top: 0.25rem;
+  padding: 0 0.5rem;
   border-radius: 0.5rem;
   color: var(--link);
   font-weight: 600;
@@ -221,7 +225,7 @@
 /* Settings, as a gear in the top corner. */
 .dl-settings {
   position: absolute;
-  top: 1rem;
+  top: calc(1rem + env(safe-area-inset-top));
   right: 0.75rem;
   display: grid;
   place-items: center;
@@ -244,7 +248,7 @@
 /* Favorites, as a heart in the other top corner. */
 .dl-favorites {
   position: absolute;
-  top: 1rem;
+  top: calc(1rem + env(safe-area-inset-top));
   left: 0.75rem;
   display: grid;
   place-items: center;
@@ -261,4 +265,40 @@
   stroke: currentColor;
   stroke-width: 1.8;
   stroke-linejoin: round;
+}
+
+/* Pressed: things you tap sink a little, since a phone has no hover. */
+.dl-card,
+.dl-filter button,
+.dl-empty button,
+.dl-settings,
+.dl-favorites,
+.dl-terms-link {
+  transition:
+    transform 0.12s ease-out,
+    background-color 0.12s ease-out;
+}
+
+.dl-card:active {
+  transform: scale(0.98);
+}
+
+.dl-filter button:active,
+.dl-empty button:active,
+.dl-terms-link:active {
+  transform: scale(0.95);
+}
+
+.dl-settings:active,
+.dl-favorites:active {
+  background: rgba(191, 174, 220, 0.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dl-card:active,
+  .dl-filter button:active,
+  .dl-empty button:active,
+  .dl-terms-link:active {
+    transform: none;
+  }
 }

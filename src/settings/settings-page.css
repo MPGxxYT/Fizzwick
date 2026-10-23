@@ -50,6 +50,10 @@
   cursor: pointer;
 }
 
+.st-choices button:active {
+  background: rgba(191, 174, 220, 0.15);
+}
+
 .st-choices button[aria-checked='true'] {
   border-color: #7fe3c6;
   background: #7fe3c6;
@@ -88,6 +92,13 @@
   transition:
     transform 0.2s ease,
     background-color 0.2s ease;
+}
+
+/* Taller to the finger than it looks. */
+.st-switch::after {
+  content: '';
+  position: absolute;
+  inset: -0.45rem -0.35rem;
 }
 
 .st-switch[aria-checked='true'] {
