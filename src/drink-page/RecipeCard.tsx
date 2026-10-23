@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { markBarTerms } from '../bar-terms'
 import { MAX_SERVINGS, type Riff } from '../riff-engine'
 import { formatIngredient } from './format'
+import { TermText } from './TermText'
 
 // The ingredients with a drink count, then the steps. Changing the count
 // rolls each amount that changes: up from below when adding drinks, down from
@@ -12,6 +14,21 @@ export function RecipeCard({ riff, onServings }: { riff: Riff; onServings: (serv
     setDirection(next > riff.servings ? 'up' : 'down')
     onServings(next)
   }
+
+  // The card is one screen for Bar Terms: each is underlined once, in reading
+  // order. Each ingredient is its measure then its name, then the steps.
+  const marked = useMemo(
+    () =>
+      markBarTerms([
+        ...riff.ingredients.flatMap((ingredient) => {
+          const { measure, name } = formatIngredient(ingredient)
+          return [measure, name]
+        }),
+        ...riff.steps.map((step) => step.text),
+      ]),
+    [riff],
+  )
+  const stepsFrom = riff.ingredients.length * 2
 
   return (
     <section
@@ -42,15 +59,17 @@ export function RecipeCard({ riff, onServings }: { riff: Riff; onServings: (serv
 
       <ul className="dp-ingredients" aria-label="Ingredients">
         {riff.ingredients.map((ingredient, i) => {
-          const { measure, name } = formatIngredient(ingredient)
+          const { measure } = formatIngredient(ingredient)
           return (
             <li key={i}>
               <span className="dp-measure-slot">
                 <span key={measure} className={ingredient.amount === undefined ? 'dp-measure' : 'dp-measure dp-count'}>
-                  {measure}
+                  <TermText segments={marked[i * 2]} />
                 </span>
               </span>
-              <span>{name}</span>
+              <span>
+                <TermText segments={marked[i * 2 + 1]} />
+              </span>
             </li>
           )
         })}
@@ -63,8 +82,10 @@ export function RecipeCard({ riff, onServings }: { riff: Riff; onServings: (serv
 
       <h2 id="dp-steps-heading">How to make it</h2>
       <ol className="dp-steps" aria-labelledby="dp-steps-heading">
-        {riff.steps.map((step) => (
-          <li key={step.id}>{step.text}</li>
+        {riff.steps.map((step, i) => (
+          <li key={step.id}>
+            <TermText segments={marked[stepsFrom + i]} />
+          </li>
         ))}
       </ol>
     </section>

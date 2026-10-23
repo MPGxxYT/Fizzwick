@@ -42,7 +42,8 @@ test('scaling to three drinks triples the amounts', async ({ page }) => {
 
 test('a bigger glass scales the pours to fit', async ({ page }) => {
   await page.goto('/drinks/cherry-limeade')
-  await page.getByRole('button', { name: 'Collins glass' }).click()
+  // The glass in the line under the title. The steps' "Collins glass" is a Bar Term.
+  await page.getByText('Build, in a').getByRole('button', { name: 'Collins glass' }).click()
   const sheet = page.getByRole('dialog', { name: 'Collins glass' })
   await expect(sheet).toContainText('12 oz')
   await sheet.getByLabel(/Using a different glass/).fill('16')

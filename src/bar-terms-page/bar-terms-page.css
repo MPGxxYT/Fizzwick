@@ -1,0 +1,108 @@
+/* The Bar Terms page: the Drink page's purple, a search, and the terms as
+   chips grouped by kind. Definitions open in a sheet. */
+.bt-back {
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bt-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.bt-group {
+  margin-top: 1.5rem;
+}
+
+/* Each kind of term has its own color, shared by its label and chips. */
+.bt-group[data-kind='method'] {
+  --bt-color: #ff8fb0;
+}
+
+.bt-group[data-kind='technique'] {
+  --bt-color: #7fe3c6;
+}
+
+.bt-group[data-kind='measure'] {
+  --bt-color: #ffd36e;
+}
+
+.bt-group[data-kind='tool'] {
+  --bt-color: #8fc4ff;
+}
+
+.bt-group[data-kind='glass'] {
+  --bt-color: #c9a2ff;
+}
+
+.bt-group[data-kind='ingredient'] {
+  --bt-color: #ffab7d;
+}
+
+.bt-group h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  color: var(--bt-color);
+  font: 700 0.95rem 'Figtree', sans-serif;
+}
+
+.bt-group h2::before {
+  content: '';
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--bt-color);
+}
+
+.bt-group ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bt-group button {
+  min-height: 2.5rem;
+  padding: 0 1rem;
+  border: 1px solid color-mix(in srgb, var(--bt-color) 55%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bt-color) 16%, var(--dp-paper));
+  color: var(--dp-ink);
+  font: 600 1rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
+
+.bt-group button:focus-visible {
+  outline-color: var(--bt-color);
+}
+
+.bt-empty {
+  padding: 1.5rem 0;
+}
+
+.bt-empty p {
+  margin: 0;
+}
+
+.bt-empty button {
+  margin-top: 1rem;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  border: 1px solid rgba(191, 174, 220, 0.45);
+  border-radius: 999px;
+  background: none;
+  color: var(--dp-ink);
+  font: 600 0.95rem 'Figtree', sans-serif;
+  cursor: pointer;
+}

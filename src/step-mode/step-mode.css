@@ -192,29 +192,52 @@
   margin: 0.5rem 0 1.5rem;
 }
 
-/* A step: big number, big words. */
-.sm-step {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
+/* The steps: one list, slid so the current step sits near the top. The
+   stage doesn't scroll here, and the list fades out at the top and bottom. */
+.sm-stage[data-screen='steps'] {
+  overflow: hidden;
+  touch-action: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 2.5rem, #000 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 2.5rem, #000 80%, transparent 100%);
+}
+
+.sm-stack {
+  margin: 0;
+  padding: 0 1.25rem 50vh;
+  list-style: none;
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: sm-fade 0.35s ease-out both;
+}
+
+@keyframes sm-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.sm-item {
+  display: grid;
+  grid-template-columns: 2.6rem 1fr;
+  gap: 0.25rem;
+  padding-bottom: 2.25rem;
+  transition: opacity 0.45s ease;
 }
 
 .sm-number {
   margin: 0;
   font-family: 'Bricolage Grotesque Variable', sans-serif;
   font-weight: 800;
-  font-size: 5rem;
-  line-height: 0.9;
+  font-size: 2.4rem;
+  line-height: 1;
   color: var(--dp-cherry);
 }
 
 .sm-text {
-  margin: 0.75rem 0 0;
+  margin: 0;
   font-family: 'Bricolage Grotesque Variable', sans-serif;
   font-weight: 500;
-  font-size: clamp(1.7rem, 7.5vw, 2.3rem);
+  font-size: clamp(1.6rem, 7vw, 2.1rem);
   line-height: 1.25;
-  user-select: text;
 }
 
 .sm-step-tools {
@@ -342,8 +365,14 @@
 
 @media (prefers-reduced-motion: reduce) {
   .sm-screen,
+  .sm-stack,
   .sm-clock.is-done .sm-clock-time {
     animation: none;
+  }
+
+  .sm-stack,
+  .sm-item {
+    transition: none;
   }
 
   .sm-progress span {
