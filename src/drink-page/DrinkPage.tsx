@@ -4,6 +4,7 @@ import type { ListState } from '../drink-list/DrinkList'
 import { findHouseDrink } from '../house-drinks/catalog'
 import { GLASS_SIZES_OZ, resolveRiff, type Drink, type Picks } from '../riff-engine'
 import { NotFound } from '../NotFound'
+import { useSettings } from '../settings/use-settings'
 import { StepMode } from '../step-mode/StepMode'
 import { Bubbles, ColorSpots, IceCubes } from './Ambience'
 import { hasIceInGlass, isFizzy } from './ambience-for'
@@ -30,9 +31,10 @@ function DrinkView({ drink }: { drink: Drink }) {
   // The Slot whose word should rise into place, or 'all' after a reset.
   const [justPicked, setJustPicked] = useState<string | null>(null)
 
+  const { units } = useSettings()
   const riff = useMemo(
-    () => resolveRiff(drink, picks, { servings, glassOz: customOz ?? undefined }),
-    [drink, picks, servings, customOz],
+    () => resolveRiff(drink, picks, { servings, units, glassOz: customOz ?? undefined }),
+    [drink, picks, servings, units, customOz],
   )
 
   const location = useLocation()
