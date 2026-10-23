@@ -6,6 +6,7 @@ import type { DrinkPageState } from '../drink-page/DrinkPage'
 import { findHouseDrink } from '../house-drinks/catalog'
 import { resolveRiff, riffLink } from '../riff-engine'
 import { favoritePicks, type Favorite } from './favorite'
+import { Heart } from './SaveFavorite'
 import { deleteFavorite, putFavorite, useFavorites } from './store'
 import '../drink-page/drink-page.css'
 import './favorites.css'
@@ -37,7 +38,13 @@ export function FavoritesPage() {
         )}
         {favorites.status === 'ready' && favorites.favorites.length === 0 && (
           <div className="fv-message">
-            <p>No Favorites yet. Open a drink, pick what you like, and tap Save to Favorites.</p>
+            <p>
+              No Favorites yet. Open a drink, pick what you like, and tap the heart{' '}
+              <span className="fv-heart">
+                <Heart />
+              </span>{' '}
+              at the top.
+            </p>
             <Link to="/">See all drinks</Link>
           </div>
         )}

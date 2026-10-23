@@ -139,9 +139,20 @@ function resolve(drink: Drink, requested: Picks, { servings = 1, units = 'oz', g
   const options = [...picked.values()].filter((option): option is Option => option !== null)
 
   const method = options.reduce<Method>((current, option) => option.method ?? current, drink.method)
-  const ingredients = [...drink.ingredients, ...options.flatMap((option) => option.ingredients)].map((ingredient) =>
-    measure(ingredient, servings, units, glassRatio),
-  )
+  // What you pour comes first, then the ice, then the garnish, keeping the
+  // Drink's order within each. A garnish is anything from the garnish Slot
+  // or named "for garnish".
+  const sources = [
+    ...drink.ingredients.map((ingredient) => ({ ingredient, garnish: false })),
+    ...drink.slots.flatMap((slot) =>
+      (picked.get(slot.id)?.ingredients ?? []).map((ingredient) => ({ ingredient, garnish: slot.id === 'garnish' })),
+    ),
+  ]
+  const place = ({ ingredient, garnish }: (typeof sources)[number]) =>
+    garnish || /\bfor garnish\b/.test(ingredient.name) ? 2 : /\bice\b/.test(ingredient.name) ? 1 : 0
+  const ingredients = sources
+    .sort((a, b) => place(a) - place(b))
+    .map(({ ingredient }) => measure(ingredient, servings, units, glassRatio))
   const batch = BATCH_LIMITS[method]
   const batchNotes = batch && servings > batch.size ? [batch.note(Math.ceil(servings / batch.size))] : []
 
@@ -189,7 +200,15 @@ function resolve(drink: Drink, requested: Picks, { servings = 1, units = 'oz', g
     dietaryTags: DIETARY_TAGS.filter((tag) => tags.has(tag)),
     colors: options.map((option) => option.color),
     isHouseSpec: drink.slots.every((slot) => picks[slot.id] === drink.houseSpec[slot.id]),
-    defaultFavoriteName: [drink.name, options.map((option) => option.label.toLowerCase()).join(', ')]
+    // Only what differs from the House Spec ("Cherry Limeade · soda water"),
+    // so a list of Favorites of one Drink reads as their differences.
+    defaultFavoriteName: [
+      drink.name,
+      drink.slots
+        .filter((slot) => picks[slot.id] !== drink.houseSpec[slot.id])
+        .map((slot) => picked.get(slot.id)?.label.toLowerCase() ?? `no ${slot.label.toLowerCase()}`)
+        .join(', '),
+    ]
       .filter(Boolean)
       .join(' · '),
   }

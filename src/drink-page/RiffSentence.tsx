@@ -51,9 +51,16 @@ export function RiffSentence({
   })
   const joiner = (i: number) => (i < words.length - 2 ? ', ' : i === words.length - 2 ? ' and ' : '.')
 
+  // The hint is for someone who hasn't swapped yet. After the first swap it
+  // fades where it is (so nothing moves), and later visits leave it out.
+  const [hintNeeded] = useState(() => !hasSwapped())
+  const [hintDone, setHintDone] = useState(false)
+
   const choose = (slotId: string, optionId: string | null) => {
     onPick(slotId, optionId)
     setOpenSlot(null)
+    setHintDone(true)
+    rememberSwapped()
   }
 
   return (
@@ -91,7 +98,11 @@ export function RiffSentence({
           </span>
         ))}
       </p>
-      <p className="dp-hint">Tap an underlined word to swap it.</p>
+      {hintNeeded && (
+        <p className={hintDone ? 'dp-hint is-done' : 'dp-hint'} aria-hidden={hintDone || undefined}>
+          Tap an underlined word to swap it.
+        </p>
+      )}
 
       {openSlot && (
         <Sheet label={`Choose ${openSlot.label.toLowerCase()}`} onClose={() => setOpenSlot(null)}>
@@ -126,4 +137,24 @@ export function RiffSentence({
       )}
     </>
   )
+}
+
+// Whether this device has swapped an Option before. Storage can be missing
+// or blocked; then the hint just shows each time.
+const SWAPPED_KEY = 'fizzwick.swapped'
+
+function hasSwapped(): boolean {
+  try {
+    return localStorage.getItem(SWAPPED_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+function rememberSwapped() {
+  try {
+    localStorage.setItem(SWAPPED_KEY, '1')
+  } catch {
+    // Nothing to do: the hint shows again next time.
+  }
 }

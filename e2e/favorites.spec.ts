@@ -12,7 +12,7 @@ test('a saved Favorite survives a reload and opens its exact Riff', async ({ pag
   await page.getByRole('link', { name: 'Favorites', exact: true }).click()
   const favorites = page.getByRole('list', { name: 'Favorites' })
   await expect(favorites.getByRole('listitem')).toHaveCount(1)
-  await favorites.getByRole('link', { name: /Cherry Limeade · cherry syrup, soda water/ }).click()
+  await favorites.getByRole('link', { name: /Cherry Limeade · soda water/ }).click()
 
   await expect(page.getByRole('button', { name: /^Fizz: soda water/ })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Remove from Favorites' })).toBeVisible()

@@ -108,7 +108,14 @@ export function Sheet({ label, onClose, children }: { label: string; onClose: ()
       }}
     >
       <div className="dp-sheet-handle" aria-hidden="true" />
-      <div className="dp-sheet-body">{children}</div>
+      <div className="dp-sheet-body">
+        {children}
+        {/* A plain way out at the bottom, where a thumb is, for anyone who
+            doesn't swipe or reach for the backdrop. */}
+        <button type="button" className="dp-sheet-close" onClick={onClose}>
+          Close
+        </button>
+      </div>
     </dialog>
   )
 }
