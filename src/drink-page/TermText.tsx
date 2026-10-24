@@ -39,6 +39,16 @@ export function TermSheet({ term, linkToPage, onClose }: { term: BarTerm; linkTo
       <Sheet label={term.name} onClose={onClose}>
         <h2>{term.name}</h2>
         <p className="dp-term-definition">{term.definition}</p>
+        {term.prep && (
+          <>
+            <h3 className="dp-term-prep">{term.prep.heading}</h3>
+            <ol className="dp-steps dp-term-steps" aria-label={term.prep.heading}>
+              {term.prep.steps.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+          </>
+        )}
         {linkToPage && (
           <Link to={`/bar-terms#${term.id}`} className="dp-term-all">
             All Bar Terms
