@@ -137,4 +137,23 @@ describe('House Drink Bar Terms', () => {
       expect([...new Set(missing)]).toEqual([])
     },
   )
+
+  // A syrup you make at home needs a Bar Term with its recipe. Bought ones
+  // are listed here instead.
+  const BOUGHT_SYRUPS = new Set(['maple syrup'])
+
+  test.each(houseDrinks.map((drink) => [drink.id, drink] as const))(
+    '%s uses no homemade syrup without a Bar Term that says how to make it',
+    (_id, drink) => {
+      const options = drink.slots.flatMap((slot) => slot.options)
+      const syrups = [...drink.ingredients, ...options.flatMap((option) => option.ingredients)]
+        .map((ingredient) => ingredient.name)
+        .filter((name) => /syrup$/i.test(name) && !BOUGHT_SYRUPS.has(name))
+      const missing = syrups.filter((name) => {
+        const [segments] = markBarTerms([name])
+        return !(segments.length === 1 && segments[0].term?.prep)
+      })
+      expect([...new Set(missing)]).toEqual([])
+    },
+  )
 })

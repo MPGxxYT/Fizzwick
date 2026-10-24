@@ -1,5 +1,6 @@
 // The curated Bar Terms: every bartending word the House Drinks use, with a
-// plain definition of one or two sentences.
+// plain definition of one or two sentences. Things you get ready before a
+// Drink, such as syrups and cut garnishes, also say how to prepare them.
 
 export const BAR_TERM_KINDS = ['method', 'technique', 'measure', 'tool', 'glass', 'ingredient'] as const
 export type BarTermKind = (typeof BAR_TERM_KINDS)[number]
@@ -9,6 +10,10 @@ export interface BarTerm {
   name: string
   kind: BarTermKind
   definition: string
+  prep?: {
+    heading: 'How to make it' | 'How to cut it' | 'How to do it'
+    steps: string[]
+  }
   // Words or phrases to find, each with its plural and verb forms. Defaults
   // to the name. A phrase's forms change only its last word.
   forms?: string[]
@@ -83,6 +88,15 @@ export const BAR_TERMS: BarTerm[] = [
     kind: 'technique',
     definition:
       'Squeezing a strip of citrus peel, skin side down, over a drink so its oils spray across the top. It adds a strong citrus smell.',
+    prep: {
+      heading: 'How to do it',
+      steps: [
+        'Cut a wide strip of peel with a vegetable peeler, taking as little of the bitter white pith as you can.',
+        'Hold it skin side down a few inches above the drink, between your thumb and fingers.',
+        'Squeeze it sharply so the oils spray across the top of the drink.',
+        'Rub the skin around the rim if the recipe says to, then drop it in or rest it on the rim.',
+      ],
+    },
   },
   {
     id: 'float',
@@ -206,18 +220,135 @@ export const BAR_TERMS: BarTerm[] = [
     name: 'Simple syrup',
     kind: 'ingredient',
     definition: "Sugar dissolved in an equal amount of hot water, then cooled. It mixes into cold drinks where plain sugar won't.",
+    prep: {
+      heading: 'How to make it',
+      steps: [
+        'Heat 1 cup of water until hot but not boiling, then take it off the heat.',
+        'Stir in 1 cup of white sugar until it dissolves and the syrup turns clear.',
+        'Let it cool, then pour it into a clean jar with a lid.',
+        'Keep it in the fridge for up to a month.',
+      ],
+    },
   },
   {
     id: 'demerara-syrup',
     name: 'Demerara syrup',
     kind: 'ingredient',
     definition: 'Simple syrup made with demerara, a light brown sugar, for a deeper, toffee-like sweetness.',
+    prep: {
+      heading: 'How to make it',
+      steps: [
+        'Heat 1 cup of water until hot but not boiling, then take it off the heat.',
+        'Stir in 1 cup of demerara sugar until it dissolves. The bigger crystals take a little longer than white sugar.',
+        'Let it cool, then pour it into a clean jar with a lid.',
+        'Keep it in the fridge for up to a month.',
+      ],
+    },
   },
   {
     id: 'honey-syrup',
     name: 'Honey syrup',
     kind: 'ingredient',
     definition: 'Honey thinned with an equal amount of warm water so it mixes into cold drinks.',
+    prep: {
+      heading: 'How to make it',
+      steps: [
+        'Warm 1/2 cup of water until hot to the touch but not boiling.',
+        'Stir in 1/2 cup of honey until the two are fully mixed.',
+        'Let it cool, then pour it into a clean jar with a lid.',
+        'Keep it in the fridge for up to 2 weeks.',
+      ],
+    },
+  },
+  {
+    id: 'blueberry-syrup',
+    name: 'Blueberry syrup',
+    kind: 'ingredient',
+    definition: 'Simple syrup cooked with blueberries, for a deep purple, fruity sweetness.',
+    prep: {
+      heading: 'How to make it',
+      steps: [
+        'Put 1 cup of blueberries, fresh or frozen, in a small pan with 1/2 cup of sugar and 1/2 cup of water.',
+        'Simmer gently for about 10 minutes, pressing the berries with a spoon to burst them.',
+        'Pour it through a fine strainer into a bowl, pressing the berries to get all the juice out.',
+        'Let it cool, then keep it in a clean jar in the fridge for up to 2 weeks.',
+      ],
+    },
+  },
+  {
+    id: 'cherry-syrup',
+    name: 'Cherry syrup',
+    kind: 'ingredient',
+    definition: 'Simple syrup cooked with cherries, sweet and a little tart.',
+    prep: {
+      heading: 'How to make it',
+      steps: [
+        'Put 1 cup of pitted cherries, fresh or frozen, in a small pan with 1/2 cup of sugar and 1/2 cup of water.',
+        'Simmer gently for about 10 minutes, mashing the cherries with a spoon as they soften.',
+        'Pour it through a fine strainer into a bowl, pressing the fruit to get all the juice out.',
+        'Let it cool, then keep it in a clean jar in the fridge for up to 2 weeks.',
+      ],
+    },
+  },
+  {
+    id: 'chai-syrup',
+    name: 'Chai syrup',
+    kind: 'ingredient',
+    definition: 'Simple syrup made with strong chai tea, so it tastes of warm spices like cinnamon, cardamom and ginger.',
+    prep: {
+      heading: 'How to make it',
+      steps: [
+        'Bring 1 cup of water to a boil, take it off the heat and add 2 chai tea bags.',
+        'Steep for 10 minutes, then lift out the tea bags and squeeze them over the pan.',
+        'Stir in 1 cup of sugar while the tea is still warm, until it dissolves.',
+        'Let it cool, then keep it in a clean jar in the fridge for up to 2 weeks.',
+      ],
+    },
+  },
+  {
+    id: 'cinnamon-syrup',
+    name: 'Cinnamon syrup',
+    kind: 'ingredient',
+    definition: 'Simple syrup steeped with cinnamon sticks, for a warm, spiced sweetness.',
+    prep: {
+      heading: 'How to make it',
+      steps: [
+        'Put 1 cup of water, 1 cup of sugar and 3 cinnamon sticks, broken in half, in a small pan.',
+        'Simmer gently for 5 minutes, stirring until the sugar dissolves.',
+        'Take it off the heat and let it steep for 30 minutes. Leave it longer for a stronger flavor.',
+        'Strain out the cinnamon, then keep the syrup in a clean jar in the fridge for up to 2 weeks.',
+      ],
+    },
+  },
+  {
+    id: 'ginger-syrup',
+    name: 'Ginger syrup',
+    kind: 'ingredient',
+    definition: 'Simple syrup made with fresh ginger, sweet with a spicy bite.',
+    prep: {
+      heading: 'How to make it',
+      steps: [
+        'Peel a piece of fresh ginger about the size of your thumb and slice it thinly.',
+        'Simmer the ginger in 1 cup of water for 15 minutes, then take it off the heat.',
+        'Stir in 1 cup of sugar until it dissolves, then let it cool.',
+        'Strain out the ginger, then keep the syrup in a clean jar in the fridge for up to 2 weeks.',
+      ],
+    },
+  },
+  {
+    id: 'lavender-syrup',
+    name: 'Lavender syrup',
+    kind: 'ingredient',
+    definition: 'Simple syrup steeped with dried lavender, sweet and floral. A little goes a long way.',
+    prep: {
+      heading: 'How to make it',
+      steps: [
+        'Heat 1 cup of water and 1 cup of sugar in a small pan, stirring until the sugar dissolves.',
+        'Take it off the heat and stir in 1 tablespoon of dried culinary lavender.',
+        'Steep for 15 minutes, no longer, or it starts to taste of soap.',
+        'Pour it through a fine strainer, let it cool, then keep it in a clean jar in the fridge for up to 2 weeks.',
+      ],
+    },
   },
   {
     id: 'bitters',
@@ -238,11 +369,28 @@ export const BAR_TERMS: BarTerm[] = [
     name: 'Wheel',
     kind: 'ingredient',
     definition: 'A thin round slice cut across a citrus fruit, used as a garnish.',
+    prep: {
+      heading: 'How to cut it',
+      steps: [
+        'Cut the two ends off the fruit.',
+        'Slice across the fruit into rounds about 1/4 inch thick.',
+        'To sit one on the rim, cut from the middle out through the peel on one side, then slide the cut onto the glass.',
+      ],
+    },
   },
   {
     id: 'wedge',
     name: 'Wedge',
     kind: 'ingredient',
     definition: 'A piece of citrus cut lengthways, to squeeze into the drink or perch on the rim.',
+    prep: {
+      heading: 'How to cut it',
+      steps: [
+        'Cut the two ends off the fruit.',
+        'Cut it in half lengthways, from end to end.',
+        'Lay each half flat side down and cut it lengthways into 3 or 4 wedges.',
+        'To perch one on the rim, cut a short slit across the middle of the flesh and slide it onto the glass.',
+      ],
+    },
   },
 ]

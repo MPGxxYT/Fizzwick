@@ -760,6 +760,23 @@
   line-height: 1.5;
 }
 
+/* Prep steps under a term's definition, a size down from a Drink's steps. */
+.dp-term-prep {
+  margin: 1.25rem 0 0.25rem;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-size: 1.1rem;
+}
+
+.dp-term-steps li {
+  padding: 0.35rem 0 0.35rem 2rem;
+  line-height: 1.45;
+}
+
+.dp-term-steps li::before {
+  top: 0.15rem;
+  font-size: 1.2rem;
+}
+
 .dp-term-all {
   display: inline-block;
   margin-top: 1rem;

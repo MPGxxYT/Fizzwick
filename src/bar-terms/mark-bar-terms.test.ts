@@ -26,6 +26,13 @@ describe('markBarTerms', () => {
     expect(one('into a shaker tin')).toBe('into a [shaker tin|shaker]')
   })
 
+  it('tells the syrups apart by their first word', () => {
+    expect(one('Pour the blueberry syrup into a shaker tin.')).toBe('Pour the [blueberry syrup|blueberry-syrup] into a [shaker tin|shaker].')
+    expect(one('Put the {milk}, cinnamon syrup, vanilla')).toBe('Put the {milk}, [cinnamon syrup|cinnamon-syrup], vanilla')
+    expect(one('Simple syrup or honey syrup')).toBe('[Simple syrup|simple-syrup] or [honey syrup|honey-syrup]')
+    expect(one('Maple syrup')).toBe('Maple syrup')
+  })
+
   it('never matches inside a longer word', () => {
     expect(one('Use the muddler')).toBe('Use the [muddler|muddler]')
     expect(one('a fine strainer')).toBe('a [fine strainer|fine-strainer]')

@@ -49,6 +49,21 @@ test('the home page links to the Bar Terms, which open on tap', async ({ page })
   await expect(page.getByRole('dialog', { name: 'Coupe' })).toContainText('A shallow, wide bowl on a stem')
 })
 
+test('a homemade syrup in a Drink says how to make it', async ({ page }) => {
+  await page.goto('/drinks/cinnamon-cream')
+  await page.getByRole('region', { name: "You'll need" }).getByRole('button', { name: 'cinnamon syrup' }).click()
+  const sheet = page.getByRole('dialog', { name: 'Cinnamon syrup' })
+  await expect(sheet.getByRole('heading', { name: 'How to make it' })).toBeVisible()
+  const steps = sheet.getByRole('list', { name: 'How to make it' }).getByRole('listitem')
+  await expect(steps).toHaveCount(4)
+  await expect(steps.first()).toContainText('3 cinnamon sticks')
+
+  // A term with nothing to prepare has no steps.
+  await page.goto('/bar-terms#coupe')
+  await expect(page.getByRole('dialog', { name: 'Coupe' })).toContainText('A shallow, wide bowl on a stem')
+  await expect(page.getByRole('dialog', { name: 'Coupe' }).getByRole('list')).toHaveCount(0)
+})
+
 test('searching Bar Terms finds words in definitions and verb forms', async ({ page }) => {
   await page.goto('/bar-terms')
   const search = page.getByRole('searchbox', { name: 'Search Bar Terms' })
@@ -61,5 +76,5 @@ test('searching Bar Terms finds words in definitions and verb forms', async ({ p
   await search.fill('pineapple')
   await expect(page.getByText('No Bar Terms match "pineapple".')).toBeVisible()
   await page.getByRole('button', { name: 'Clear search' }).click()
-  await expect(chips).toHaveCount(36)
+  await expect(chips).toHaveCount(42)
 })
