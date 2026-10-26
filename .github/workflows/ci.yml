@@ -27,7 +27,15 @@ jobs:
           BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
       - name: Check House Spec photo sizes
         run: npm run check:photos
-      - run: npx playwright install --with-deps chromium
+      # Only the browser: the runner already has the system libraries
+      # Chromium needs, and installing them with --with-deps runs apt, which
+      # can stall for ten minutes on a slow mirror. If the runner image ever
+      # drops one, the e2e step fails naming it; add --with-deps back then.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - run: npx playwright install chromium
       - run: npm run test:e2e
       - name: Check the server config
         run: npm run check:server
