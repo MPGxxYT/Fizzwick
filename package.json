@@ -14,7 +14,8 @@
     "test:e2e": "playwright test",
     "check:ids": "node scripts/check-drink-ids.mjs",
     "check:photos": "node scripts/check-photos.mjs",
-    "check:server": "node scripts/check-server.mjs"
+    "check:server": "node scripts/check-server.mjs",
+    "photo": "node scripts/prep-photo.mjs"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",
