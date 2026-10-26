@@ -1,0 +1,20 @@
+# Runs on the home server in ~/fizzwick. The deploy job copies this folder
+# and the build (into ./dist) there, then reloads nginx. Folders are mounted
+# rather than single files, so files replaced by a deploy show up inside the
+# container.
+services:
+  web:
+    image: nginx:1.29-alpine
+    container_name: fizzwick
+    restart: unless-stopped
+    volumes:
+      - ./dist:/usr/share/nginx/html:ro
+      - ./conf:/etc/nginx/conf.d:ro
+    networks:
+      - proxy
+
+# The network Nginx Proxy Manager is on, so it can reach this container by name.
+networks:
+  proxy:
+    external: true
+    name: server-stack_servernet
