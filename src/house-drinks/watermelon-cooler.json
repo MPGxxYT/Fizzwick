@@ -1,0 +1,105 @@
+{
+  "formatVersion": 1,
+  "id": "watermelon-cooler",
+  "name": "Watermelon Cooler",
+  "glass": "collins",
+  "method": "build",
+  "flavorTags": ["fruity", "herbal"],
+  "photo": "photos/watermelon-cooler.jpg",
+  "ingredients": [
+    { "name": "fresh lime juice", "amount": 0.5, "unit": "oz" },
+    { "name": "ice", "unit": "fill" }
+  ],
+  "slots": [
+    {
+      "id": "watermelon",
+      "label": "Watermelon",
+      "options": [
+        {
+          "id": "watermelon-juice",
+          "label": "Watermelon juice",
+          "phrase": "watermelon juice",
+          "ingredients": [{ "name": "watermelon juice", "amount": 3, "unit": "oz" }],
+          "color": "#fb7185"
+        },
+        {
+          "id": "watermelon-chunks",
+          "label": "Muddled watermelon",
+          "phrase": "muddled watermelon",
+          "ingredients": [{ "name": "seedless watermelon chunks", "amount": 0.75, "unit": "cup" }],
+          "removeSteps": ["add-juice"],
+          "addSteps": [
+            {
+              "step": {
+                "id": "muddle-watermelon",
+                "text": "Put the watermelon chunks and lime juice in a Collins glass and press them with the muddler until the watermelon turns to juice.",
+                "tools": ["jigger", "muddler"]
+              }
+            }
+          ],
+          "color": "#f43f5e"
+        }
+      ]
+    },
+    {
+      "id": "fizz",
+      "label": "Fizz",
+      "options": [
+        {
+          "id": "soda-water",
+          "label": "Soda water",
+          "phrase": "soda water",
+          "ingredients": [{ "name": "soda water", "unit": "top" }],
+          "color": "#e0f2fe"
+        },
+        {
+          "id": "lemon-lime-soda",
+          "label": "Lemon-lime soda",
+          "phrase": "lemon-lime soda",
+          "ingredients": [{ "name": "lemon-lime soda", "unit": "top" }],
+          "color": "#ecfccb"
+        }
+      ]
+    },
+    {
+      "id": "herb",
+      "label": "Herb",
+      "optional": true,
+      "options": [
+        {
+          "id": "mint",
+          "label": "Mint sprig",
+          "phrase": "mint sprig",
+          "ingredients": [{ "name": "mint sprig", "amount": 1, "unit": "count" }],
+          "color": "#4ade80"
+        },
+        {
+          "id": "basil",
+          "label": "Basil sprig",
+          "phrase": "basil sprig",
+          "ingredients": [{ "name": "basil sprig", "amount": 1, "unit": "count" }],
+          "color": "#3f9d4a"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "add-juice",
+      "text": "Pour the watermelon juice and lime juice into a Collins glass.",
+      "tools": ["jigger"]
+    },
+    { "id": "fill-glass", "text": "Fill the glass with ice." },
+    { "id": "top", "text": "Top with {fizz} and stir once." },
+    {
+      "id": "garnish",
+      "text": "Slap the {herb} between your palms to wake up its smell and tuck it into the ice.",
+      "when": { "slot": "herb" }
+    }
+  ],
+  "houseSpec": {
+    "watermelon": "watermelon-juice",
+    "fizz": "soda-water",
+    "herb": "mint"
+  }
+}

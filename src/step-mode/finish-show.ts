@@ -51,6 +51,7 @@ const GARNISHES: { kind: GarnishKind; word: RegExp; colors: [RegExp, string][]; 
       [/\bbasil\b/, '#3f9d4a'],
       [/\bthyme\b/, '#9aa86a'],
       [/\brosemary\b/, '#6b8f71'],
+      [/\blavender\b/, '#a78bfa'],
     ],
     color: '#4ade80',
   },
@@ -70,6 +71,7 @@ const GARNISHES: { kind: GarnishKind; word: RegExp; colors: [RegExp, string][]; 
     word: /\b(slice|strawberry)\b/,
     colors: [
       [/\bpear\b/, '#d9e47a'],
+      [/\bapple\b/, '#f3e3a1'],
       [/\bstrawberry\b/, '#ef4444'],
     ],
     color: '#d9e47a',

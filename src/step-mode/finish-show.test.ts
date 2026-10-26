@@ -69,6 +69,8 @@ describe('the finish show', () => {
     ])
     expect(garnishesOf('Pickle spear')).toEqual([{ kind: 'stick', color: '#5f7d2e' }])
     expect(garnishesOf('Raspberries on a pick')).toEqual([{ kind: 'pick', color: '#e11d48' }])
+    expect(garnishesOf('Thin apple slice')).toEqual([{ kind: 'slice', color: '#f3e3a1' }])
+    expect(garnishesOf('Lavender sprig')).toEqual([{ kind: 'sprig', color: '#a78bfa' }])
   })
 
   it('finds a garnish for every House Drink that has one', () => {

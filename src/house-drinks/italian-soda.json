@@ -1,0 +1,101 @@
+{
+  "formatVersion": 1,
+  "id": "italian-soda",
+  "name": "Italian Soda",
+  "glass": "collins",
+  "method": "build",
+  "flavorTags": ["fruity", "creamy"],
+  "photo": "photos/italian-soda.jpg",
+  "ingredients": [{ "name": "ice", "unit": "fill" }],
+  "slots": [
+    {
+      "id": "syrup",
+      "label": "Syrup",
+      "options": [
+        {
+          "id": "raspberry-syrup",
+          "label": "Raspberry syrup",
+          "phrase": "raspberry syrup",
+          "ingredients": [{ "name": "raspberry syrup", "amount": 1, "unit": "oz" }],
+          "color": "#e11d48"
+        },
+        {
+          "id": "strawberry-syrup",
+          "label": "Strawberry syrup",
+          "phrase": "strawberry syrup",
+          "ingredients": [{ "name": "strawberry syrup", "amount": 1, "unit": "oz" }],
+          "color": "#ef4444"
+        },
+        {
+          "id": "vanilla-syrup",
+          "label": "Vanilla syrup",
+          "phrase": "vanilla syrup",
+          "ingredients": [{ "name": "vanilla syrup", "amount": 1, "unit": "oz" }],
+          "color": "#e9d8b4"
+        }
+      ]
+    },
+    {
+      "id": "fizz",
+      "label": "Fizz",
+      "options": [
+        {
+          "id": "soda-water",
+          "label": "Soda water",
+          "phrase": "soda water",
+          "ingredients": [{ "name": "soda water", "unit": "top" }],
+          "color": "#e0f2fe"
+        },
+        {
+          "id": "lemon-lime-soda",
+          "label": "Lemon-lime soda",
+          "phrase": "lemon-lime soda",
+          "ingredients": [{ "name": "lemon-lime soda", "unit": "top" }],
+          "color": "#ecfccb"
+        }
+      ]
+    },
+    {
+      "id": "cream",
+      "label": "Cream",
+      "optional": true,
+      "options": [
+        {
+          "id": "half-and-half",
+          "label": "Half-and-half",
+          "phrase": "half-and-half",
+          "ingredients": [{ "name": "half-and-half", "amount": 1, "unit": "oz" }],
+          "dietaryTags": ["dairy"],
+          "color": "#fbf7ef"
+        },
+        {
+          "id": "coconut-cream",
+          "label": "Coconut cream",
+          "phrase": "coconut cream",
+          "ingredients": [{ "name": "coconut cream", "amount": 1, "unit": "oz" }],
+          "color": "#f4efe6"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    { "id": "fill-glass", "text": "Fill a Collins glass with ice." },
+    {
+      "id": "add-syrup",
+      "text": "Pour in the {syrup}.",
+      "tools": ["jigger"]
+    },
+    { "id": "top", "text": "Top with {fizz}, leaving about an inch at the top, and stir gently." },
+    {
+      "id": "float-cream",
+      "text": "Float the {cream} on top: pour it slowly over the back of a barspoon so it drifts down through the drink in clouds.",
+      "tools": ["jigger", "barspoon"],
+      "when": { "slot": "cream" }
+    }
+  ],
+  "houseSpec": {
+    "syrup": "raspberry-syrup",
+    "fizz": "soda-water",
+    "cream": "half-and-half"
+  }
+}
