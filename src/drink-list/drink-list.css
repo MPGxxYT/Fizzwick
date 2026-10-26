@@ -114,6 +114,27 @@
   scroll-snap-align: start;
 }
 
+/* A mouse wheel can't scroll the row sideways, so with a mouse the chips
+   wrap onto more lines instead. */
+@media (hover: hover) and (pointer: fine) {
+  .dl-filter {
+    align-items: flex-start;
+  }
+
+  .dl-filter-label {
+    line-height: 2.75rem;
+  }
+
+  .dl-chips {
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
 .dl-filter button {
   min-height: 2.75rem;
   padding: 0 0.95rem;
