@@ -1,0 +1,126 @@
+{
+  "formatVersion": 1,
+  "id": "nada-colada",
+  "name": "Nada Colada",
+  "glass": "hurricane",
+  "method": "shake",
+  "flavorTags": ["creamy", "fruity"],
+  "photo": "photos/nada-colada.jpg",
+  "ingredients": [
+    { "name": "pineapple juice", "amount": 3, "unit": "oz" },
+    { "name": "fresh lime juice", "amount": 0.5, "unit": "oz" }
+  ],
+  "slots": [
+    {
+      "id": "creamy",
+      "label": "Creamy",
+      "options": [
+        {
+          "id": "coconut-cream",
+          "label": "Coconut cream",
+          "phrase": "coconut cream",
+          "ingredients": [{ "name": "coconut cream", "amount": 1.5, "unit": "oz" }],
+          "color": "#fbf7ef"
+        },
+        {
+          "id": "coconut-milk",
+          "label": "Coconut milk",
+          "phrase": "coconut milk",
+          "ingredients": [{ "name": "coconut milk", "amount": 2, "unit": "oz" }],
+          "color": "#f4efe6"
+        }
+      ]
+    },
+    {
+      "id": "texture",
+      "label": "Texture",
+      "options": [
+        {
+          "id": "shaken",
+          "label": "Shaken over ice",
+          "ingredients": [{ "name": "crushed ice", "unit": "fill" }],
+          "color": "#f3e3b5"
+        },
+        {
+          "id": "blended",
+          "label": "Blended with ice",
+          "ingredients": [{ "name": "ice", "amount": 1, "unit": "cup" }],
+          "method": "blend",
+          "removeSteps": ["add-base", "shake", "fill-glass", "strain"],
+          "addSteps": [
+            {
+              "step": {
+                "id": "blend-base",
+                "text": "Put the pineapple juice, lime juice, {creamy} and 1 cup of ice in a blender.",
+                "tools": ["jigger", "blender"]
+              }
+            },
+            {
+              "after": "strain",
+              "step": {
+                "id": "blend",
+                "text": "Blend until smooth and thick, then pour into a hurricane glass.",
+                "tools": ["blender"],
+                "durationSeconds": 30
+              }
+            }
+          ],
+          "color": "#f7ecc8"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "pineapple-cherry",
+          "label": "Pineapple wedge and cherry",
+          "phrase": "a pineapple wedge and a cocktail cherry on the rim",
+          "ingredients": [
+            { "name": "pineapple wedge", "amount": 1, "unit": "count" },
+            { "name": "cocktail cherry", "amount": 1, "unit": "count" }
+          ],
+          "color": "#f2c230"
+        },
+        {
+          "id": "toasted-coconut",
+          "label": "Toasted coconut",
+          "phrase": "a pinch of toasted coconut over the top",
+          "ingredients": [{ "name": "toasted coconut flakes", "unit": "to-taste" }],
+          "color": "#c8955a"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "add-base",
+      "text": "Pour the pineapple juice, lime juice and {creamy} into a shaker tin.",
+      "tools": ["jigger", "shaker"]
+    },
+    {
+      "id": "shake",
+      "text": "Fill the tin with ice and shake hard, so the coconut turns smooth and frothy.",
+      "tools": ["shaker"],
+      "durationSeconds": 15
+    },
+    { "id": "fill-glass", "text": "Fill a hurricane glass with crushed ice." },
+    {
+      "id": "strain",
+      "text": "Strain the drink over the crushed ice.",
+      "tools": ["strainer"]
+    },
+    {
+      "id": "garnish",
+      "text": "Finish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "creamy": "coconut-cream",
+    "texture": "shaken",
+    "garnish": "pineapple-cherry"
+  }
+}

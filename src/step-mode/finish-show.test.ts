@@ -30,6 +30,12 @@ describe('the finish show', () => {
     expect(show('spiced-pear').ice).toBeNull()
     expect(show('frozen-lemonade').ice).toBeNull()
     expect(show('cinnamon-cream', { texture: 'blended' }).ice).toBeNull()
+    expect(show('nada-colada').ice).toBe('crushed')
+    expect(show('hibiscus-stir').ice).toBeNull()
+  })
+
+  it('fizzes a drink topped with tonic, even with coffee floated on it', () => {
+    expect(show('espresso-tonic').body).toBe('fizz')
   })
 
   it('puts on the picked garnish, or the one the garnish step names', () => {
@@ -49,6 +55,11 @@ describe('the finish show', () => {
   it('colors a garnish by the words that name it', () => {
     expect(garnishesOf('Expressed grapefruit peel')).toEqual([{ kind: 'peel', color: '#f87171' }])
     expect(garnishesOf('Lime wedge and mint sprig').map((garnish) => garnish.color)).toEqual(['#84cc16', '#4ade80'])
+    expect(garnishesOf('Pineapple wedge and cherry')).toEqual([
+      { kind: 'wedge', color: '#facc15' },
+      { kind: 'cherry', color: '#be123c' },
+    ])
+    expect(garnishesOf('Toasted coconut')).toEqual([{ kind: 'dust', color: '#c8955a' }])
   })
 
   it('finds a garnish for every House Drink that has one', () => {

@@ -56,10 +56,11 @@ const GARNISHES: { kind: GarnishKind; word: RegExp; colors: [RegExp, string][]; 
   },
   {
     kind: 'dust',
-    word: /\b(nutmeg|cinnamon)\b/,
+    word: /\b(nutmeg|cinnamon|coconut)\b/,
     colors: [
       [/\bnutmeg\b/, '#9a6a3f'],
       [/\bcinnamon\b/, '#b45f2c'],
+      [/\bcoconut\b/, '#c8955a'],
     ],
     color: '#9a6a3f',
   },
@@ -89,6 +90,7 @@ function CITRUS(): [RegExp, string][] {
     [/\blemon\b/, '#fde047'],
     [/\bgrapefruit\b/, '#f87171'],
     [/\borange\b/, '#fb923c'],
+    [/\bpineapple\b/, '#facc15'],
   ]
 }
 
