@@ -1,0 +1,90 @@
+{
+  "formatVersion": 1,
+  "id": "lavender-lemon-fizz",
+  "name": "Lavender Lemon Fizz",
+  "glass": "collins",
+  "method": "build",
+  "flavorTags": ["herbal", "citrus"],
+  "photo": "photos/lavender-lemon-fizz.jpg",
+  "ingredients": [
+    { "name": "fresh lemon juice", "amount": 0.75, "unit": "oz" },
+    { "name": "ice", "unit": "fill" }
+  ],
+  "slots": [
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "lavender-syrup",
+          "label": "Lavender syrup",
+          "phrase": "lavender syrup",
+          "ingredients": [{ "name": "lavender syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#c4b5fd"
+        },
+        {
+          "id": "honey-syrup",
+          "label": "Honey syrup",
+          "phrase": "honey syrup",
+          "ingredients": [{ "name": "honey syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#e8b04a"
+        }
+      ]
+    },
+    {
+      "id": "fizz",
+      "label": "Fizz",
+      "options": [
+        {
+          "id": "soda-water",
+          "label": "Soda water",
+          "phrase": "soda water",
+          "ingredients": [{ "name": "soda water", "unit": "top" }],
+          "color": "#e0f2fe"
+        },
+        {
+          "id": "tonic",
+          "label": "Tonic",
+          "phrase": "tonic",
+          "ingredients": [{ "name": "tonic", "unit": "top" }],
+          "color": "#eef6f8"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "options": [
+        {
+          "id": "lemon-wheel",
+          "label": "Lemon wheel",
+          "phrase": "a lemon wheel on the rim",
+          "ingredients": [{ "name": "lemon wheel", "amount": 1, "unit": "count" }],
+          "color": "#facc15"
+        },
+        {
+          "id": "lavender-sprig",
+          "label": "Lavender sprig",
+          "phrase": "a lavender sprig tucked into the ice",
+          "ingredients": [{ "name": "lavender sprig", "amount": 1, "unit": "count" }],
+          "color": "#a78bfa"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "add-base",
+      "text": "Pour the lemon juice and {sweetener} into a Collins glass and stir until they mix.",
+      "tools": ["jigger", "barspoon"]
+    },
+    { "id": "fill-glass", "text": "Fill the glass with ice." },
+    { "id": "top", "text": "Top with {fizz} and stir once." },
+    { "id": "garnish", "text": "Finish with {garnish}." }
+  ],
+  "houseSpec": {
+    "sweetener": "lavender-syrup",
+    "fizz": "soda-water",
+    "garnish": "lemon-wheel"
+  }
+}

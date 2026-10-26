@@ -1,0 +1,97 @@
+{
+  "formatVersion": 1,
+  "id": "orchard-spritz",
+  "name": "Orchard Spritz",
+  "glass": "highball",
+  "method": "build",
+  "flavorTags": ["fruity", "spicy"],
+  "photo": "photos/orchard-spritz.jpg",
+  "ingredients": [
+    { "name": "fresh lemon juice", "amount": 0.25, "unit": "oz" },
+    { "name": "ice", "unit": "fill" }
+  ],
+  "slots": [
+    {
+      "id": "apple",
+      "label": "Apple",
+      "options": [
+        {
+          "id": "apple-juice",
+          "label": "Cloudy apple juice",
+          "phrase": "apple juice",
+          "ingredients": [{ "name": "cloudy apple juice", "amount": 2, "unit": "oz" }],
+          "color": "#e3b04b"
+        },
+        {
+          "id": "pear-juice",
+          "label": "Pear juice",
+          "phrase": "pear juice",
+          "ingredients": [{ "name": "pear juice", "amount": 2, "unit": "oz" }],
+          "color": "#e8dc9a"
+        }
+      ]
+    },
+    {
+      "id": "fizz",
+      "label": "Fizz",
+      "options": [
+        {
+          "id": "ginger-ale",
+          "label": "Ginger ale",
+          "phrase": "ginger ale",
+          "ingredients": [{ "name": "ginger ale", "unit": "top" }],
+          "color": "#f3dfa2"
+        },
+        {
+          "id": "soda-water",
+          "label": "Soda water",
+          "phrase": "soda water",
+          "ingredients": [{ "name": "soda water", "unit": "top" }],
+          "color": "#e0f2fe"
+        },
+        {
+          "id": "sparkling-cider",
+          "label": "Sparkling apple cider",
+          "phrase": "sparkling apple cider",
+          "ingredients": [{ "name": "sparkling apple cider", "unit": "top" }],
+          "color": "#f0c35a"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "options": [
+        {
+          "id": "apple-slice",
+          "label": "Thin apple slice",
+          "phrase": "a thin apple slice tucked against the inside of the glass",
+          "ingredients": [{ "name": "thin apple slice", "amount": 1, "unit": "count" }],
+          "color": "#f3e3a1"
+        },
+        {
+          "id": "cinnamon-stick",
+          "label": "Cinnamon stick",
+          "phrase": "a cinnamon stick standing in the ice",
+          "ingredients": [{ "name": "cinnamon stick", "amount": 1, "unit": "count" }],
+          "color": "#8b4a24"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    { "id": "fill-glass", "text": "Fill a highball glass with ice." },
+    {
+      "id": "add-juice",
+      "text": "Pour in the {apple} and lemon juice.",
+      "tools": ["jigger"]
+    },
+    { "id": "top", "text": "Top with {fizz} and stir once." },
+    { "id": "garnish", "text": "Finish with {garnish}." }
+  ],
+  "houseSpec": {
+    "apple": "apple-juice",
+    "fizz": "ginger-ale",
+    "garnish": "apple-slice"
+  }
+}

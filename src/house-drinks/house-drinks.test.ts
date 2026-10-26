@@ -163,6 +163,48 @@ describe('House Drink Riffs', () => {
     expect(riff.steps.find((step) => step.id === 'add-base')?.text).toContain('horseradish')
   })
 
+  test('the Italian Soda floats its cream last, and leaving the cream out drops the float and the dairy', () => {
+    const italianSoda = houseDrink('italian-soda')
+    const houseSpec = resolveRiff(italianSoda)
+    expect(houseSpec.steps.map((step) => step.id)).toEqual(['fill-glass', 'add-syrup', 'top', 'float-cream'])
+    expect(houseSpec.dietaryTags).toEqual(['dairy'])
+    const riff = resolveRiff(italianSoda, { syrup: 'vanilla-syrup', cream: null })
+    expect(riff.steps.map((step) => step.id)).toEqual(['fill-glass', 'add-syrup', 'top'])
+    expect(riff.dietaryTags).toEqual([])
+  })
+
+  test('the Orchard Spritz pours its juice over ice before the fizz, with either garnish', () => {
+    const spritz = houseDrink('orchard-spritz')
+    expect(resolveRiff(spritz).steps.map((step) => step.id)).toEqual(['fill-glass', 'add-juice', 'top', 'garnish'])
+    const riff = resolveRiff(spritz, { apple: 'pear-juice', fizz: 'sparkling-cider', garnish: 'cinnamon-stick' })
+    expect(riff.steps.find((step) => step.id === 'add-juice')?.text).toContain('pear juice')
+    expect(riff.steps.find((step) => step.id === 'garnish')?.text).toContain('cinnamon stick')
+  })
+
+  test('muddled watermelon in the Watermelon Cooler replaces pouring the juice, and the herb is optional', () => {
+    const cooler = houseDrink('watermelon-cooler')
+    expect(resolveRiff(cooler).steps.map((step) => step.id)).toEqual(['add-juice', 'fill-glass', 'top', 'garnish'])
+    const riff = resolveRiff(cooler, { watermelon: 'watermelon-chunks', herb: null })
+    expect(riff.steps.map((step) => step.id)).toEqual(['muddle-watermelon', 'fill-glass', 'top'])
+    expect(riff.miseEnPlace.tools).toContain('muddler')
+  })
+
+  test('cucumber ribbons in the Cucumber Tonic need a peeler, and slices do not', () => {
+    const cucumberTonic = houseDrink('cucumber-tonic')
+    const houseSpec = resolveRiff(cucumberTonic)
+    expect(houseSpec.steps.map((step) => step.id)).toEqual(['ribbon-cucumber', 'fill-glass', 'top', 'garnish'])
+    expect(houseSpec.miseEnPlace.tools).toContain('peeler')
+    const riff = resolveRiff(cucumberTonic, { cucumber: 'cucumber-slices', citrus: 'lemon-wedge' })
+    expect(riff.steps.map((step) => step.id)).toEqual(['add-slices', 'fill-glass', 'top', 'garnish'])
+    expect(riff.miseEnPlace.tools).not.toContain('peeler')
+  })
+
+  test('the Lavender Lemon Fizz stirs its syrup in before the fizz goes on', () => {
+    const riff = resolveRiff(houseDrink('lavender-lemon-fizz'), { sweetener: 'honey-syrup', fizz: 'tonic' })
+    expect(riff.steps.map((step) => step.id)).toEqual(['add-base', 'fill-glass', 'top', 'garnish'])
+    expect(riff.steps[0].text).toContain('honey syrup')
+  })
+
   test('blueberry syrup in the Blueberry Fizz skips the muddling and starts in the tin', () => {
     const riff = resolveRiff(houseDrink('blueberry-fizz'), { blueberry: 'blueberry-syrup', herb: null })
     expect(riff.steps.map((step) => step.id)).toEqual(['add-syrup', 'add-base', 'shake', 'fill-glass', 'strain', 'top', 'garnish'])
@@ -225,7 +267,7 @@ describe('House Drink Bar Terms', () => {
 
   // A syrup you make at home needs a Bar Term with its recipe. Bought ones
   // are listed here instead.
-  const BOUGHT_SYRUPS = new Set(['maple syrup'])
+  const BOUGHT_SYRUPS = new Set(['maple syrup', 'strawberry syrup', 'vanilla syrup'])
 
   test.each(houseDrinks.map((drink) => [drink.id, drink] as const))(
     '%s uses no homemade syrup without a Bar Term that says how to make it',
