@@ -76,5 +76,5 @@ test('searching Bar Terms finds words in definitions and verb forms', async ({ p
   await search.fill('pineapple')
   await expect(page.getByText('No Bar Terms match "pineapple".')).toBeVisible()
   await page.getByRole('button', { name: 'Clear search' }).click()
-  await expect(chips).toHaveCount(43)
+  await expect(chips).toHaveCount(46)
 })

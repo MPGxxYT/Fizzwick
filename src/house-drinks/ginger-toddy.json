@@ -1,0 +1,112 @@
+{
+  "formatVersion": 1,
+  "id": "ginger-toddy",
+  "name": "Ginger Toddy",
+  "glass": "mug",
+  "method": "build",
+  "flavorTags": ["spicy", "citrus"],
+  "photo": "photos/ginger-toddy.jpg",
+  "ingredients": [{ "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" }],
+  "slots": [
+    {
+      "id": "base",
+      "label": "Base",
+      "options": [
+        {
+          "id": "hot-water",
+          "label": "Hot water",
+          "phrase": "hot water",
+          "ingredients": [{ "name": "just-boiled water", "amount": 6, "unit": "oz" }],
+          "removeSteps": ["steep-tea"],
+          "color": "#f2e6c9"
+        },
+        {
+          "id": "rooibos",
+          "label": "Hot rooibos",
+          "phrase": "rooibos",
+          "ingredients": [
+            { "name": "just-boiled water", "amount": 6, "unit": "oz" },
+            { "name": "rooibos tea bag", "amount": 1, "unit": "count" }
+          ],
+          "color": "#b5562b"
+        },
+        {
+          "id": "chamomile",
+          "label": "Hot chamomile",
+          "phrase": "chamomile",
+          "ingredients": [
+            { "name": "just-boiled water", "amount": 6, "unit": "oz" },
+            { "name": "chamomile tea bag", "amount": 1, "unit": "count" }
+          ],
+          "color": "#e9c46a"
+        }
+      ]
+    },
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "honey",
+          "label": "Honey",
+          "phrase": "honey",
+          "ingredients": [{ "name": "honey", "amount": 0.75, "unit": "oz" }],
+          "color": "#e8b04a"
+        },
+        {
+          "id": "ginger-syrup",
+          "label": "Ginger syrup",
+          "phrase": "ginger syrup",
+          "ingredients": [{ "name": "ginger syrup", "amount": 0.75, "unit": "oz" }],
+          "color": "#d9a441"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "options": [
+        {
+          "id": "clove-lemon",
+          "label": "Lemon wheel studded with cloves",
+          "phrase": "a lemon wheel studded with 4 cloves, floating on top",
+          "ingredients": [
+            { "name": "lemon wheel", "amount": 1, "unit": "count" },
+            { "name": "whole cloves", "amount": 4, "unit": "count" }
+          ],
+          "color": "#facc15"
+        },
+        {
+          "id": "cinnamon-stick",
+          "label": "Cinnamon stick",
+          "phrase": "a cinnamon stick to stir with",
+          "ingredients": [{ "name": "cinnamon stick", "amount": 1, "unit": "count" }],
+          "color": "#8b4a24"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "boil-water",
+      "text": "Boil the kettle and pour 6 oz of the just-boiled water into a mug.",
+      "tools": ["kettle"]
+    },
+    {
+      "id": "steep-tea",
+      "text": "Steep the {base} tea bag in the water, then lift it out.",
+      "durationSeconds": 300
+    },
+    {
+      "id": "add-base",
+      "text": "Stir the {sweetener} and lemon juice into the {base} until the {sweetener} dissolves.",
+      "tools": ["jigger", "barspoon"]
+    },
+    { "id": "garnish", "text": "Finish with {garnish}." }
+  ],
+  "houseSpec": {
+    "base": "hot-water",
+    "sweetener": "honey",
+    "garnish": "clove-lemon"
+  }
+}

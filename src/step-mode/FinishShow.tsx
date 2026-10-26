@@ -484,5 +484,15 @@ function GarnishDrawing({ garnish, shape, at }: { garnish: Garnish; shape: Glass
         </g>
       )
     }
+    // A cinnamon stick, celery stalk or pickle spear stands in the drink,
+    // leaning on the rim.
+    case 'stick':
+      return (
+        <g transform={`translate(${left + (right - left) * 0.7} ${top + 10})`}>
+          <g className="fs-tuck" style={delay(at)}>
+            <rect x="-2.5" y="-38" width="5" height="44" rx="2.5" fill={color} transform="rotate(12)" />
+          </g>
+        </g>
+      )
   }
 }

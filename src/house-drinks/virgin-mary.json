@@ -1,0 +1,84 @@
+{
+  "formatVersion": 1,
+  "id": "virgin-mary",
+  "name": "Virgin Mary",
+  "glass": "highball",
+  "method": "build",
+  "flavorTags": ["spicy", "savory"],
+  "photo": "photos/virgin-mary.jpg",
+  "ingredients": [
+    { "name": "tomato juice", "amount": 4, "unit": "oz" },
+    { "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" },
+    { "name": "celery salt", "unit": "to-taste" },
+    { "name": "ground black pepper", "unit": "to-taste" },
+    { "name": "ice", "unit": "fill" }
+  ],
+  "slots": [
+    {
+      "id": "heat",
+      "label": "Heat",
+      "options": [
+        {
+          "id": "hot-sauce",
+          "label": "Hot sauce",
+          "phrase": "3 dashes of hot sauce",
+          "ingredients": [{ "name": "hot sauce", "amount": 3, "unit": "dash" }],
+          "color": "#b91c1c"
+        },
+        {
+          "id": "horseradish",
+          "label": "Horseradish",
+          "phrase": "a barspoon of horseradish",
+          "ingredients": [{ "name": "prepared horseradish", "amount": 1, "unit": "barspoon" }],
+          "color": "#e7e1cf"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "options": [
+        {
+          "id": "celery-lemon",
+          "label": "Celery stalk and lemon wedge",
+          "phrase": "a celery stalk standing in the glass and a lemon wedge on the rim",
+          "ingredients": [
+            { "name": "celery stalk", "amount": 1, "unit": "count" },
+            { "name": "lemon wedge", "amount": 1, "unit": "count" }
+          ],
+          "color": "#86b04f"
+        },
+        {
+          "id": "pickle-spear",
+          "label": "Pickle spear",
+          "phrase": "a pickle spear standing in the glass",
+          "ingredients": [{ "name": "pickle spear", "amount": 1, "unit": "count" }],
+          "color": "#5f7d2e"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "add-base",
+      "text": "Pour the tomato juice and lemon juice into a shaker tin, then add {heat} and a pinch each of celery salt and black pepper.",
+      "tools": ["jigger", "shaker"]
+    },
+    {
+      "id": "roll",
+      "text": "Roll the drink: fill a second tin with ice and pour the drink back and forth between the tins 4 to 6 times, until the tin feels cold.",
+      "tools": ["shaker"]
+    },
+    { "id": "fill-glass", "text": "Fill a highball glass with fresh ice." },
+    {
+      "id": "strain",
+      "text": "Strain the drink into the glass, leaving the old ice behind.",
+      "tools": ["strainer"]
+    },
+    { "id": "garnish", "text": "Finish with {garnish}." }
+  ],
+  "houseSpec": {
+    "heat": "hot-sauce",
+    "garnish": "celery-lemon"
+  }
+}
