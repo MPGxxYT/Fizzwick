@@ -365,6 +365,22 @@ export const BAR_TERMS: BarTerm[] = [
     definition: 'The liquid from a can of chickpeas. It whips into a foam like egg white and tastes of almost nothing.',
   },
   {
+    id: 'grenadine',
+    name: 'Grenadine',
+    kind: 'ingredient',
+    definition:
+      'A deep red syrup made from pomegranate juice and sugar, sweet and a little tart. Most bottled grenadine is only red-colored sugar syrup.',
+    prep: {
+      heading: 'How to make it',
+      steps: [
+        'Put 1 cup of pomegranate juice and 1 cup of sugar in a small pan.',
+        'Warm it over low heat, stirring until the sugar dissolves, then simmer gently for 5 minutes without letting it boil.',
+        'Take it off the heat and stir in a squeeze of lemon juice.',
+        'Let it cool, then keep it in a clean jar in the fridge for up to 3 weeks.',
+      ],
+    },
+  },
+  {
     id: 'wheel',
     name: 'Wheel',
     kind: 'ingredient',

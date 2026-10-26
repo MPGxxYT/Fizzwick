@@ -1,0 +1,114 @@
+{
+  "formatVersion": 1,
+  "id": "hibiscus-stir",
+  "name": "Hibiscus Stir",
+  "glass": "coupe",
+  "method": "stir",
+  "flavorTags": ["fruity", "bitter"],
+  "photo": "photos/hibiscus-stir.jpg",
+  "ingredients": [
+    { "name": "fresh lime juice", "amount": 0.25, "unit": "oz" },
+    { "name": "alcohol-free aromatic bitters", "amount": 2, "unit": "dash" }
+  ],
+  "slots": [
+    {
+      "id": "base",
+      "label": "Base",
+      "options": [
+        {
+          "id": "hibiscus-tea",
+          "label": "Chilled strong hibiscus tea",
+          "phrase": "hibiscus tea",
+          "ingredients": [{ "name": "chilled strong hibiscus tea", "amount": 2.5, "unit": "oz" }],
+          "color": "#9d1640"
+        },
+        {
+          "id": "tart-cherry-juice",
+          "label": "Tart cherry juice",
+          "phrase": "tart cherry juice",
+          "ingredients": [{ "name": "tart cherry juice", "amount": 2, "unit": "oz" }],
+          "removeSteps": ["steep-tea"],
+          "color": "#6b1020"
+        }
+      ]
+    },
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "honey-syrup",
+          "label": "Honey syrup",
+          "phrase": "honey syrup",
+          "ingredients": [{ "name": "honey syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#e8b04a"
+        },
+        {
+          "id": "demerara-syrup",
+          "label": "Demerara syrup",
+          "phrase": "demerara syrup",
+          "ingredients": [{ "name": "demerara syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#a16207"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "options": [
+        {
+          "id": "orange-peel",
+          "label": "Expressed orange peel",
+          "ingredients": [{ "name": "orange peel", "amount": 1, "unit": "count" }],
+          "color": "#f97316"
+        },
+        {
+          "id": "lime-wheel",
+          "label": "Lime wheel",
+          "ingredients": [{ "name": "lime wheel", "amount": 1, "unit": "count" }],
+          "color": "#84cc16"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "steep-tea",
+      "text": "Steep the hibiscus strong in just-boiled water, using twice the usual amount of tea, then strain it and chill it in the fridge. Make it ahead if you can.",
+      "tools": ["kettle"],
+      "durationSeconds": 300
+    },
+    {
+      "id": "add-base",
+      "text": "Pour the {base}, {sweetener}, lime juice and 2 dashes of bitters into a mixing glass.",
+      "tools": ["jigger", "mixing-glass"]
+    },
+    {
+      "id": "stir",
+      "text": "Fill the mixing glass with ice and stir smoothly with a barspoon until the outside of the glass is cold.",
+      "tools": ["mixing-glass", "barspoon"],
+      "durationSeconds": 30
+    },
+    {
+      "id": "strain",
+      "text": "Strain into a coupe, with no ice in the glass.",
+      "tools": ["strainer"]
+    },
+    {
+      "id": "express-peel",
+      "text": "Squeeze the orange peel skin side down over the glass to spray its oils across the top, then rest it on the rim.",
+      "tools": ["peeler"],
+      "when": { "slot": "garnish", "option": "orange-peel" }
+    },
+    {
+      "id": "garnish-lime",
+      "text": "Cut a slit in the lime wheel and rest it on the rim.",
+      "when": { "slot": "garnish", "option": "lime-wheel" }
+    }
+  ],
+  "houseSpec": {
+    "base": "hibiscus-tea",
+    "sweetener": "honey-syrup",
+    "garnish": "orange-peel"
+  }
+}

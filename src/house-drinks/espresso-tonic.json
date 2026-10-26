@@ -1,0 +1,101 @@
+{
+  "formatVersion": 1,
+  "id": "espresso-tonic",
+  "name": "Espresso Tonic",
+  "glass": "highball",
+  "method": "build",
+  "flavorTags": ["bitter", "citrus"],
+  "photo": "photos/espresso-tonic.jpg",
+  "ingredients": [{ "name": "ice", "unit": "fill" }],
+  "slots": [
+    {
+      "id": "coffee",
+      "label": "Coffee",
+      "options": [
+        {
+          "id": "espresso",
+          "label": "Espresso",
+          "phrase": "espresso",
+          "ingredients": [{ "name": "espresso, cooled a little", "amount": 1.5, "unit": "oz" }],
+          "dietaryTags": ["caffeine"],
+          "color": "#3b2416"
+        },
+        {
+          "id": "cold-brew",
+          "label": "Cold brew concentrate",
+          "phrase": "cold brew",
+          "ingredients": [{ "name": "cold brew concentrate", "amount": 2, "unit": "oz" }],
+          "dietaryTags": ["caffeine"],
+          "color": "#4a2f1e"
+        }
+      ]
+    },
+    {
+      "id": "tonic",
+      "label": "Tonic",
+      "options": [
+        {
+          "id": "tonic",
+          "label": "Tonic",
+          "phrase": "tonic",
+          "ingredients": [{ "name": "tonic", "unit": "top" }],
+          "color": "#eef6f8"
+        },
+        {
+          "id": "elderflower-tonic",
+          "label": "Elderflower tonic",
+          "phrase": "elderflower tonic",
+          "ingredients": [{ "name": "elderflower tonic", "unit": "top" }],
+          "color": "#f4f1dc"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "orange-peel",
+          "label": "Expressed orange peel",
+          "ingredients": [{ "name": "orange peel", "amount": 1, "unit": "count" }],
+          "color": "#f97316"
+        },
+        {
+          "id": "rosemary",
+          "label": "Rosemary sprig",
+          "ingredients": [{ "name": "rosemary sprig", "amount": 1, "unit": "count" }],
+          "color": "#5b7a4a"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    { "id": "fill-glass", "text": "Fill a highball glass with ice." },
+    {
+      "id": "pour-tonic",
+      "text": "Top with {tonic}, leaving about an inch for the coffee."
+    },
+    {
+      "id": "float-coffee",
+      "text": "Float the {coffee} on top: pour it slowly over the back of a barspoon so it rests in a dark layer on the tonic.",
+      "tools": ["jigger", "barspoon"]
+    },
+    {
+      "id": "express-peel",
+      "text": "Squeeze the orange peel skin side down over the glass to spray its oils across the top, then drop it in.",
+      "tools": ["peeler"],
+      "when": { "slot": "garnish", "option": "orange-peel" }
+    },
+    {
+      "id": "garnish-rosemary",
+      "text": "Stand a rosemary sprig in the ice.",
+      "when": { "slot": "garnish", "option": "rosemary" }
+    }
+  ],
+  "houseSpec": {
+    "coffee": "espresso",
+    "tonic": "tonic",
+    "garnish": "orange-peel"
+  }
+}

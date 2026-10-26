@@ -75,7 +75,44 @@ describe('House Drink Riffs', () => {
 
   test('only the drinks with tea to brew and chill have a make-ahead step', () => {
     const withAhead = houseDrinks.filter((drink) => resolveRiff(drink).steps.some(isMakeAhead)).map((drink) => drink.id)
-    expect(withAhead).toEqual(['black-tea-old-fashioned', 'tea-sour'])
+    expect(withAhead).toEqual(['black-tea-old-fashioned', 'hibiscus-stir', 'porch-tea', 'tea-sour'])
+  })
+
+  test('tart cherry juice in the Hibiscus Stir has no tea to brew', () => {
+    const riff = resolveRiff(houseDrink('hibiscus-stir'), { base: 'tart-cherry-juice' })
+    expect(riff.steps.map((step) => step.id)).toEqual(['add-base', 'stir', 'strain', 'express-peel'])
+    expect(riff.miseEnPlace.tools).not.toContain('kettle')
+  })
+
+  test('sparkling lemonade in Porch Tea skips mixing the lemonade', () => {
+    const porchTea = houseDrink('porch-tea')
+    expect(resolveRiff(porchTea).steps.map((step) => step.id)).toContain('mix-lemonade')
+    const riff = resolveRiff(porchTea, { lemonade: 'sparkling-lemonade' })
+    expect(riff.steps.map((step) => step.id)).toEqual(['brew-tea', 'fill-glass', 'pour-tea', 'top', 'garnish'])
+    expect(riff.ingredients.map((ingredient) => ingredient.name)).not.toContain('simple syrup')
+  })
+
+  test('blending the Nada Colada switches to the blender and pours into the hurricane glass', () => {
+    const riff = resolveRiff(houseDrink('nada-colada'), { texture: 'blended' })
+    expect(riff.method).toBe('blend')
+    expect(riff.miseEnPlace.tools).toContain('blender')
+    expect(riff.miseEnPlace.tools).not.toContain('shaker')
+    expect(riff.steps.map((step) => step.id)).toEqual(['blend-base', 'blend', 'garnish'])
+  })
+
+  test('the Shirley Temple pours its grenadine last, and the grenadine says how to make it', () => {
+    const riff = resolveRiff(houseDrink('shirley-temple'))
+    expect(riff.steps.map((step) => step.id)).toEqual(['fill-glass', 'top', 'grenadine', 'garnish'])
+    const [segments] = markBarTerms(['grenadine'])
+    expect(segments[0].term?.prep?.heading).toBe('How to make it')
+  })
+
+  test('the Espresso Tonic floats the coffee on the tonic last, and cold brew keeps the caffeine tag', () => {
+    const espressoTonic = houseDrink('espresso-tonic')
+    expect(resolveRiff(espressoTonic).steps.map((step) => step.id)).toEqual(['fill-glass', 'pour-tonic', 'float-coffee', 'express-peel'])
+    const riff = resolveRiff(espressoTonic, { coffee: 'cold-brew', garnish: null })
+    expect(riff.steps.map((step) => step.id)).toEqual(['fill-glass', 'pour-tonic', 'float-coffee'])
+    expect(riff.dietaryTags).toEqual(['caffeine'])
   })
 
   test('blueberry syrup in the Blueberry Fizz skips the muddling and starts in the tin', () => {

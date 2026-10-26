@@ -1,0 +1,119 @@
+{
+  "formatVersion": 1,
+  "id": "porch-tea",
+  "name": "Porch Tea",
+  "glass": "highball",
+  "method": "build",
+  "flavorTags": ["citrus"],
+  "photo": "photos/porch-tea.jpg",
+  "ingredients": [{ "name": "ice", "unit": "fill" }],
+  "slots": [
+    {
+      "id": "tea",
+      "label": "Tea",
+      "options": [
+        {
+          "id": "black-tea",
+          "label": "Chilled black tea",
+          "phrase": "black tea",
+          "ingredients": [{ "name": "chilled black tea", "amount": 3, "unit": "oz" }],
+          "dietaryTags": ["caffeine"],
+          "color": "#8a4b1f"
+        },
+        {
+          "id": "green-tea",
+          "label": "Chilled green tea",
+          "phrase": "green tea",
+          "ingredients": [{ "name": "chilled green tea", "amount": 3, "unit": "oz" }],
+          "dietaryTags": ["caffeine"],
+          "durations": { "brew-tea": 180 },
+          "color": "#a3a043"
+        },
+        {
+          "id": "hibiscus-tea",
+          "label": "Chilled hibiscus tea",
+          "phrase": "hibiscus tea",
+          "ingredients": [{ "name": "chilled hibiscus tea", "amount": 3, "unit": "oz" }],
+          "durations": { "brew-tea": 300 },
+          "color": "#9d1640"
+        }
+      ]
+    },
+    {
+      "id": "lemonade",
+      "label": "Lemonade",
+      "options": [
+        {
+          "id": "fresh-lemonade",
+          "label": "Fresh lemonade",
+          "phrase": "lemonade",
+          "ingredients": [
+            { "name": "fresh lemon juice", "amount": 0.75, "unit": "oz" },
+            { "name": "simple syrup", "amount": 0.75, "unit": "oz" },
+            { "name": "cold water", "amount": 1.5, "unit": "oz" }
+          ],
+          "color": "#f7e98e"
+        },
+        {
+          "id": "sparkling-lemonade",
+          "label": "Sparkling lemonade",
+          "phrase": "sparkling lemonade",
+          "ingredients": [{ "name": "sparkling lemonade", "unit": "top" }],
+          "removeSteps": ["mix-lemonade"],
+          "addSteps": [
+            {
+              "after": "pour-tea",
+              "step": { "id": "top", "text": "Top with sparkling lemonade." }
+            }
+          ],
+          "color": "#f4ec9f"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "options": [
+        {
+          "id": "lemon-wheel",
+          "label": "Lemon wheel",
+          "phrase": "a lemon wheel on the rim",
+          "ingredients": [{ "name": "lemon wheel", "amount": 1, "unit": "count" }],
+          "color": "#facc15"
+        },
+        {
+          "id": "mint-sprig",
+          "label": "Mint sprig",
+          "phrase": "a mint sprig tucked into the ice",
+          "ingredients": [{ "name": "mint sprig", "amount": 1, "unit": "count" }],
+          "color": "#4d9a4a"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "brew-tea",
+      "text": "Steep the {tea} in just-boiled water, then strain it and chill it in the fridge. Make it ahead if you can.",
+      "tools": ["kettle"],
+      "durationSeconds": 240
+    },
+    {
+      "id": "mix-lemonade",
+      "text": "Pour the lemon juice, simple syrup and cold water into a highball glass and stir to mix.",
+      "tools": ["jigger", "barspoon"]
+    },
+    { "id": "fill-glass", "text": "Fill the glass with ice." },
+    {
+      "id": "pour-tea",
+      "text": "Pour the {tea} slowly over the ice.",
+      "tools": ["jigger"]
+    },
+    { "id": "garnish", "text": "Finish with {garnish}." }
+  ],
+  "houseSpec": {
+    "tea": "black-tea",
+    "lemonade": "fresh-lemonade",
+    "garnish": "lemon-wheel"
+  }
+}

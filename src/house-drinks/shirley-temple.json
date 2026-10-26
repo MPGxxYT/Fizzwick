@@ -1,0 +1,97 @@
+{
+  "formatVersion": 1,
+  "id": "shirley-temple",
+  "name": "Shirley Temple",
+  "glass": "collins",
+  "method": "build",
+  "flavorTags": ["fruity"],
+  "photo": "photos/shirley-temple.jpg",
+  "ingredients": [{ "name": "ice", "unit": "fill" }],
+  "slots": [
+    {
+      "id": "red",
+      "label": "Red",
+      "options": [
+        {
+          "id": "grenadine",
+          "label": "Homemade grenadine",
+          "phrase": "grenadine",
+          "ingredients": [{ "name": "grenadine", "amount": 0.75, "unit": "oz" }],
+          "color": "#b3123a"
+        },
+        {
+          "id": "pomegranate-juice",
+          "label": "Pomegranate juice",
+          "phrase": "pomegranate juice",
+          "ingredients": [{ "name": "pomegranate juice", "amount": 1.5, "unit": "oz" }],
+          "color": "#8f1d3a"
+        }
+      ]
+    },
+    {
+      "id": "fizz",
+      "label": "Fizz",
+      "options": [
+        {
+          "id": "ginger-ale",
+          "label": "Ginger ale",
+          "phrase": "ginger ale",
+          "ingredients": [{ "name": "ginger ale", "unit": "top" }],
+          "color": "#f3dfa2"
+        },
+        {
+          "id": "lemon-lime-soda",
+          "label": "Lemon-lime soda",
+          "phrase": "lemon-lime soda",
+          "ingredients": [{ "name": "lemon-lime soda", "unit": "top" }],
+          "color": "#ecfccb"
+        },
+        {
+          "id": "soda-water",
+          "label": "Soda water",
+          "phrase": "soda water",
+          "ingredients": [{ "name": "soda water", "unit": "top" }],
+          "color": "#e0f2fe"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "options": [
+        {
+          "id": "cherry",
+          "label": "Cocktail cherry",
+          "phrase": "a cocktail cherry",
+          "ingredients": [{ "name": "cocktail cherry", "amount": 1, "unit": "count" }],
+          "color": "#7f1d1d"
+        },
+        {
+          "id": "cherry-orange",
+          "label": "Cherry and orange wheel",
+          "phrase": "a cocktail cherry and an orange wheel",
+          "ingredients": [
+            { "name": "cocktail cherry", "amount": 1, "unit": "count" },
+            { "name": "orange wheel", "amount": 1, "unit": "count" }
+          ],
+          "color": "#f97316"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    { "id": "fill-glass", "text": "Fill a Collins glass with ice." },
+    { "id": "top", "text": "Pour in the {fizz}, leaving about an inch at the top." },
+    {
+      "id": "grenadine",
+      "text": "Pour the {red} slowly down the inside of the glass. It sinks and turns the bottom red.",
+      "tools": ["jigger"]
+    },
+    { "id": "garnish", "text": "Finish with {garnish}." }
+  ],
+  "houseSpec": {
+    "red": "grenadine",
+    "fizz": "ginger-ale",
+    "garnish": "cherry"
+  }
+}
