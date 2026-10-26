@@ -18,7 +18,7 @@ export const ICE_SECONDS = 0.6
 // large cube.
 export type IceKind = 'cubes' | 'crushed' | 'large'
 
-export type GarnishKind = 'wheel' | 'wedge' | 'cherry' | 'sprig' | 'peel' | 'dust' | 'slice' | 'pick'
+export type GarnishKind = 'wheel' | 'wedge' | 'cherry' | 'sprig' | 'peel' | 'dust' | 'slice' | 'pick' | 'stick'
 
 export interface Garnish {
   kind: GarnishKind
@@ -56,11 +56,12 @@ const GARNISHES: { kind: GarnishKind; word: RegExp; colors: [RegExp, string][]; 
   },
   {
     kind: 'dust',
-    word: /\b(nutmeg|cinnamon|coconut)\b/,
+    word: /\b(nutmeg|cinnamon|coconut|cardamom)\b(?! stick)/,
     colors: [
       [/\bnutmeg\b/, '#9a6a3f'],
       [/\bcinnamon\b/, '#b45f2c'],
       [/\bcoconut\b/, '#c8955a'],
+      [/\bcardamom\b/, '#a8a26a'],
     ],
     color: '#9a6a3f',
   },
@@ -78,9 +79,20 @@ const GARNISHES: { kind: GarnishKind; word: RegExp; colors: [RegExp, string][]; 
     word: /\b(pick|candied ginger)\b/,
     colors: [
       [/\bblueberr/, '#4f46e5'],
+      [/\braspberr/, '#e11d48'],
       [/\bginger\b/, '#e0a43a'],
     ],
     color: '#e0a43a',
+  },
+  {
+    kind: 'stick',
+    word: /\b(stick|stalk|spear)\b/,
+    colors: [
+      [/\bcinnamon\b/, '#8b4a24'],
+      [/\bcelery\b/, '#86b04f'],
+      [/\bpickle\b/, '#5f7d2e'],
+    ],
+    color: '#8b4a24',
   },
 ]
 

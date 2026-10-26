@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { markBarTerms } from '../bar-terms'
 import { GLASS_NAMES, isMakeAhead, METHOD_NAMES, TOOL_NAMES } from '../drink-page/format'
-import { checkEveryRiff, GLASSES, METHODS, parseDrinkFile, resolveRiff, type Drink, type Ingredient } from '../riff-engine'
+import { checkEveryRiff, GLASSES, METHODS, parseDrinkFile, resolveRiff, type Drink, type Ingredient, type Picks } from '../riff-engine'
 import { timedPart } from '../step-mode/timed-part'
 import { houseDrinks } from './catalog'
 
@@ -113,6 +113,54 @@ describe('House Drink Riffs', () => {
     const riff = resolveRiff(espressoTonic, { coffee: 'cold-brew', garnish: null })
     expect(riff.steps.map((step) => step.id)).toEqual(['fill-glass', 'pour-tonic', 'float-coffee'])
     expect(riff.dietaryTags).toEqual(['caffeine'])
+  })
+
+  test('hot rooibos in the Ginger Toddy steeps in the mug before the honey goes in', () => {
+    const toddy = houseDrink('ginger-toddy')
+    expect(resolveRiff(toddy).steps.map((step) => step.id)).toEqual(['boil-water', 'add-base', 'garnish'])
+    const riff = resolveRiff(toddy, { base: 'rooibos' })
+    expect(riff.steps.map((step) => step.id)).toEqual(['boil-water', 'steep-tea', 'add-base', 'garnish'])
+    expect(riff.steps.find((step) => step.id === 'steep-tea')?.durationSeconds).toBe(300)
+    expect(riff.miseEnPlace.tools).toContain('kettle')
+  })
+
+  test('fresh raspberries in the Raspberry Clover are muddled in the tin first, and aquafaba drops the egg tag', () => {
+    const clover = houseDrink('raspberry-clover')
+    const houseSpec = resolveRiff(clover)
+    expect(houseSpec.steps.map((step) => step.id)).toEqual(['chill-glass', 'add-base', 'dry-shake', 'shake', 'fine-strain', 'garnish'])
+    expect(houseSpec.dietaryTags).toEqual(['egg'])
+    const riff = resolveRiff(clover, { raspberry: 'fresh-raspberries', foam: 'aquafaba' })
+    expect(riff.steps.map((step) => step.id)).toEqual(['chill-glass', 'muddle-raspberries', 'add-base', 'dry-shake', 'shake', 'fine-strain', 'garnish'])
+    expect(riff.miseEnPlace.tools).toContain('muddler')
+    expect(riff.dietaryTags).toEqual([])
+  })
+
+  test('ripe mango in the Mango Lassi blends with ice, frozen mango without, and coconut yogurt drops the dairy tag', () => {
+    const lassi = houseDrink('mango-lassi')
+    const names = (picks: Picks) => resolveRiff(lassi, picks).ingredients.map((ingredient) => ingredient.name)
+    expect(names({})).toContain('ice cubes')
+    expect(names({ mango: 'frozen-mango' })).not.toContain('ice cubes')
+    expect(resolveRiff(lassi).dietaryTags).toEqual(['dairy'])
+    expect(resolveRiff(lassi, { yogurt: 'coconut-yogurt' }).dietaryTags).toEqual([])
+  })
+
+  test('the Salty Paloma salts the rim first, and soda water brings agave to sweeten it', () => {
+    const paloma = houseDrink('salty-paloma')
+    expect(resolveRiff(paloma).steps.map((step) => step.id)).toEqual(['rim-glass', 'fill-glass', 'add-juice', 'top', 'garnish'])
+    const riff = resolveRiff(paloma, { fizz: 'soda-water' })
+    expect(riff.ingredients).toContainEqual({ name: 'agave', amount: 0.5, unit: 'oz' })
+    expect(riff.steps.map((step) => step.id)).toEqual(['rim-glass', 'fill-glass', 'add-juice', 'add-agave', 'top', 'garnish'])
+    const [segments] = markBarTerms(['rim'])
+    expect(segments[0].term?.prep?.heading).toBe('How to do it')
+  })
+
+  test('the Virgin Mary is savory and rolled between the tins, not shaken', () => {
+    const virginMary = houseDrink('virgin-mary')
+    expect(virginMary.flavorTags).toContain('savory')
+    const riff = resolveRiff(virginMary, { heat: 'horseradish' })
+    expect(riff.steps.map((step) => step.id)).toEqual(['add-base', 'roll', 'fill-glass', 'strain', 'garnish'])
+    expect(riff.steps.find((step) => step.id === 'roll')?.tools).toEqual(['shaker'])
+    expect(riff.steps.find((step) => step.id === 'add-base')?.text).toContain('horseradish')
   })
 
   test('blueberry syrup in the Blueberry Fizz skips the muddling and starts in the tin', () => {

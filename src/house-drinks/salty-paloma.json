@@ -1,0 +1,95 @@
+{
+  "formatVersion": 1,
+  "id": "salty-paloma",
+  "name": "Salty Paloma",
+  "glass": "highball",
+  "method": "build",
+  "flavorTags": ["citrus", "smoky"],
+  "photo": "photos/salty-paloma.jpg",
+  "ingredients": [
+    { "name": "fresh grapefruit juice", "amount": 2, "unit": "oz" },
+    { "name": "fresh lime juice", "amount": 0.5, "unit": "oz" },
+    { "name": "ice", "unit": "fill" },
+    { "name": "grapefruit wedge", "amount": 1, "unit": "count" }
+  ],
+  "slots": [
+    {
+      "id": "rim",
+      "label": "Rim",
+      "options": [
+        {
+          "id": "smoked-salt",
+          "label": "Smoked salt",
+          "phrase": "smoked salt",
+          "ingredients": [{ "name": "smoked salt", "unit": "to-taste" }],
+          "color": "#8a7360"
+        },
+        {
+          "id": "tajin",
+          "label": "Tajín",
+          "phrase": "Tajín",
+          "ingredients": [{ "name": "Tajín chili-lime seasoning", "unit": "to-taste" }],
+          "color": "#c2410c"
+        },
+        {
+          "id": "flaky-salt",
+          "label": "Flaky salt",
+          "phrase": "flaky salt",
+          "ingredients": [{ "name": "flaky sea salt", "unit": "to-taste" }],
+          "color": "#f5f5f4"
+        }
+      ]
+    },
+    {
+      "id": "fizz",
+      "label": "Fizz",
+      "options": [
+        {
+          "id": "grapefruit-soda",
+          "label": "Grapefruit soda",
+          "phrase": "grapefruit soda",
+          "ingredients": [{ "name": "grapefruit soda", "unit": "top" }],
+          "color": "#fbcfe8"
+        },
+        {
+          "id": "soda-water",
+          "label": "Soda water and agave",
+          "phrase": "soda water",
+          "ingredients": [
+            { "name": "agave", "amount": 0.5, "unit": "oz" },
+            { "name": "soda water", "unit": "top" }
+          ],
+          "addSteps": [
+            {
+              "after": "add-juice",
+              "step": {
+                "id": "add-agave",
+                "text": "Add the agave and stir until it mixes in.",
+                "tools": ["jigger", "barspoon"]
+              }
+            }
+          ],
+          "color": "#e0f2fe"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "rim-glass",
+      "text": "Rim a highball glass with {rim}: wet the outside edge with the grapefruit wedge, then turn it through the {rim} on a plate."
+    },
+    { "id": "fill-glass", "text": "Fill the glass with ice, keeping it off the salted rim." },
+    {
+      "id": "add-juice",
+      "text": "Pour in the grapefruit juice and lime juice.",
+      "tools": ["jigger"]
+    },
+    { "id": "top", "text": "Top with {fizz} and stir once." },
+    { "id": "garnish", "text": "Rest the grapefruit wedge on the rim." }
+  ],
+  "houseSpec": {
+    "rim": "smoked-salt",
+    "fizz": "grapefruit-soda"
+  }
+}

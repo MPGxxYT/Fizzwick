@@ -99,6 +99,38 @@ export const BAR_TERMS: BarTerm[] = [
     },
   },
   {
+    id: 'rim',
+    name: 'Rim',
+    kind: 'technique',
+    definition:
+      'The top edge of a glass. A salted or sugared rim is a thin coat of salt or sugar stuck around the outside of that edge, so each sip picks some up.',
+    prep: {
+      heading: 'How to do it',
+      steps: [
+        'Spread the salt or sugar on a small plate in a thin, even layer.',
+        'Run a citrus wedge around the outside edge of the glass to wet it.',
+        'Hold the glass on its side and turn the wet edge through the salt, keeping it off the inside of the glass.',
+        'Tap off any loose grains before you add the ice.',
+      ],
+    },
+  },
+  {
+    id: 'roll',
+    name: 'Roll',
+    kind: 'technique',
+    definition:
+      'Pouring a drink back and forth between two shaker tins to mix and chill it gently. It suits thick drinks like tomato juice, which shaking would turn frothy.',
+    prep: {
+      heading: 'How to do it',
+      steps: [
+        'Put the drink in one tin and fill the other tin with ice.',
+        'Pour the drink over the ice, then pour everything back into the first tin.',
+        'Keep pouring from tin to tin, a few inches apart, 4 to 6 times until the tin feels cold.',
+        'Strain it into the glass, leaving the old ice behind.',
+      ],
+    },
+  },
+  {
     id: 'float',
     name: 'Float',
     kind: 'technique',
@@ -347,6 +379,21 @@ export const BAR_TERMS: BarTerm[] = [
         'Take it off the heat and stir in 1 tablespoon of dried culinary lavender.',
         'Steep for 15 minutes, no longer, or it starts to taste of soap.',
         'Pour it through a fine strainer, let it cool, then keep it in a clean jar in the fridge for up to 2 weeks.',
+      ],
+    },
+  },
+  {
+    id: 'raspberry-syrup',
+    name: 'Raspberry syrup',
+    kind: 'ingredient',
+    definition: 'Simple syrup cooked with raspberries, bright pink, sweet and sharp.',
+    prep: {
+      heading: 'How to make it',
+      steps: [
+        'Put 1 cup of raspberries, fresh or frozen, in a small pan with 1/2 cup of sugar and 1/2 cup of water.',
+        'Simmer gently for about 5 minutes, mashing the berries with a spoon as they soften.',
+        'Pour it through a fine strainer into a bowl, pressing the fruit but leaving the seeds behind.',
+        'Let it cool, then keep it in a clean jar in the fridge for up to 2 weeks.',
       ],
     },
   },

@@ -1,0 +1,96 @@
+{
+  "formatVersion": 1,
+  "id": "mango-lassi",
+  "name": "Mango Lassi",
+  "glass": "collins",
+  "method": "blend",
+  "flavorTags": ["creamy", "fruity"],
+  "photo": "photos/mango-lassi.jpg",
+  "ingredients": [
+    { "name": "cold water", "amount": 2, "unit": "oz" },
+    { "name": "honey", "amount": 0.5, "unit": "oz" }
+  ],
+  "slots": [
+    {
+      "id": "yogurt",
+      "label": "Yogurt",
+      "options": [
+        {
+          "id": "whole-milk-yogurt",
+          "label": "Whole-milk yogurt",
+          "phrase": "yogurt",
+          "ingredients": [{ "name": "plain whole-milk yogurt", "amount": 4, "unit": "oz" }],
+          "dietaryTags": ["dairy"],
+          "color": "#fbf7ef"
+        },
+        {
+          "id": "coconut-yogurt",
+          "label": "Coconut yogurt",
+          "phrase": "coconut yogurt",
+          "ingredients": [{ "name": "plain coconut yogurt", "amount": 4, "unit": "oz" }],
+          "color": "#f4efe6"
+        }
+      ]
+    },
+    {
+      "id": "mango",
+      "label": "Mango",
+      "options": [
+        {
+          "id": "ripe-mango",
+          "label": "Ripe mango",
+          "phrase": "mango with 3 ice cubes",
+          "ingredients": [
+            { "name": "chopped ripe mango", "amount": 1, "unit": "cup" },
+            { "name": "ice cubes", "amount": 3, "unit": "count" }
+          ],
+          "color": "#f59e0b"
+        },
+        {
+          "id": "frozen-mango",
+          "label": "Frozen mango",
+          "phrase": "frozen mango",
+          "ingredients": [{ "name": "frozen mango chunks", "amount": 1, "unit": "cup" }],
+          "color": "#fbbf24"
+        }
+      ]
+    },
+    {
+      "id": "spice",
+      "label": "Spice",
+      "optional": true,
+      "options": [
+        {
+          "id": "cardamom",
+          "label": "Ground cardamom",
+          "phrase": "a pinch of ground cardamom",
+          "ingredients": [{ "name": "ground cardamom", "unit": "to-taste" }],
+          "color": "#a8a26a"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "add-base",
+      "text": "Put the {yogurt}, cold water, honey and {mango} in a blender.",
+      "tools": ["jigger", "blender"]
+    },
+    {
+      "id": "blend",
+      "text": "Blend until smooth and frothy, then pour into a Collins glass.",
+      "tools": ["blender"],
+      "durationSeconds": 30
+    },
+    {
+      "id": "garnish",
+      "text": "Dust the top with {spice}.",
+      "when": { "slot": "spice" }
+    }
+  ],
+  "houseSpec": {
+    "yogurt": "whole-milk-yogurt",
+    "mango": "ripe-mango",
+    "spice": "cardamom"
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "formatVersion": 1,
+  "id": "raspberry-clover",
+  "name": "Raspberry Clover",
+  "glass": "coupe",
+  "method": "dry-shake",
+  "flavorTags": ["fruity", "citrus", "creamy"],
+  "photo": "photos/raspberry-clover.jpg",
+  "ingredients": [
+    { "name": "fresh lemon juice", "amount": 0.75, "unit": "oz" },
+    { "name": "raspberries on a pick", "amount": 3, "unit": "count" }
+  ],
+  "slots": [
+    {
+      "id": "raspberry",
+      "label": "Raspberry",
+      "options": [
+        {
+          "id": "raspberry-syrup",
+          "label": "Raspberry syrup",
+          "phrase": "raspberry syrup",
+          "ingredients": [{ "name": "raspberry syrup", "amount": 0.75, "unit": "oz" }],
+          "color": "#e11d48"
+        },
+        {
+          "id": "fresh-raspberries",
+          "label": "Fresh raspberries",
+          "phrase": "simple syrup",
+          "ingredients": [
+            { "name": "raspberries", "amount": 6, "unit": "count" },
+            { "name": "simple syrup", "amount": 0.75, "unit": "oz" }
+          ],
+          "addSteps": [
+            {
+              "after": "chill-glass",
+              "step": {
+                "id": "muddle-raspberries",
+                "text": "Drop the raspberries into a shaker tin and press them with the muddler until they break into a pulp.",
+                "tools": ["shaker", "muddler"]
+              }
+            }
+          ],
+          "color": "#f43f5e"
+        }
+      ]
+    },
+    {
+      "id": "foam",
+      "label": "Foam",
+      "options": [
+        {
+          "id": "egg-white",
+          "label": "Egg white",
+          "phrase": "egg white",
+          "ingredients": [{ "name": "egg white", "amount": 1, "unit": "count" }],
+          "dietaryTags": ["egg"],
+          "color": "#fffbeb"
+        },
+        {
+          "id": "aquafaba",
+          "label": "Aquafaba",
+          "phrase": "aquafaba",
+          "ingredients": [{ "name": "aquafaba", "amount": 1, "unit": "oz" }],
+          "color": "#f5ecd7"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    { "id": "chill-glass", "text": "Chill a coupe in the freezer, or fill it with ice water while you mix." },
+    {
+      "id": "add-base",
+      "text": "Pour the {raspberry}, lemon juice and {foam} into a shaker tin.",
+      "tools": ["jigger", "shaker"]
+    },
+    {
+      "id": "dry-shake",
+      "text": "Dry shake: seal the tin and shake hard without ice to whip up the foam.",
+      "tools": ["shaker"],
+      "durationSeconds": 15
+    },
+    {
+      "id": "shake",
+      "text": "Open the tin, fill it with ice and shake again until it is ice cold.",
+      "tools": ["shaker"],
+      "durationSeconds": 12
+    },
+    {
+      "id": "fine-strain",
+      "text": "Empty the coupe if it holds ice water, then fine strain the drink into it so the foam comes out smooth and seed-free.",
+      "tools": ["strainer", "fine-strainer"]
+    },
+    { "id": "garnish", "text": "Lay 3 raspberries on a pick across the rim." }
+  ],
+  "houseSpec": {
+    "raspberry": "raspberry-syrup",
+    "foam": "egg-white"
+  }
+}

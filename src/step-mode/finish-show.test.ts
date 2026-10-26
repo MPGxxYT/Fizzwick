@@ -44,6 +44,8 @@ describe('the finish show', () => {
     expect(kinds('ginger-mule')).toEqual(['wedge', 'sprig'])
     expect(kinds('garden-smash', { herb: 'basil' })).toEqual(['sprig'])
     expect(kinds('cinnamon-cream')).toEqual(['dust'])
+    expect(show('mango-lassi').garnishes).toEqual([{ kind: 'dust', color: '#a8a26a' }])
+    expect(kinds('mango-lassi', { spice: null })).toEqual([])
     expect(kinds('cherry-limeade', { garnish: null })).toEqual([])
   })
 
@@ -60,6 +62,13 @@ describe('the finish show', () => {
       { kind: 'cherry', color: '#be123c' },
     ])
     expect(garnishesOf('Toasted coconut')).toEqual([{ kind: 'dust', color: '#c8955a' }])
+    expect(garnishesOf('Cinnamon stick')).toEqual([{ kind: 'stick', color: '#8b4a24' }])
+    expect(garnishesOf('Celery stalk and lemon wedge')).toEqual([
+      { kind: 'stick', color: '#86b04f' },
+      { kind: 'wedge', color: '#fde047' },
+    ])
+    expect(garnishesOf('Pickle spear')).toEqual([{ kind: 'stick', color: '#5f7d2e' }])
+    expect(garnishesOf('Raspberries on a pick')).toEqual([{ kind: 'pick', color: '#e11d48' }])
   })
 
   it('finds a garnish for every House Drink that has one', () => {

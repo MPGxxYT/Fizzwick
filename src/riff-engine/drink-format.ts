@@ -6,7 +6,7 @@ export const FORMAT_VERSION = 1
 
 export const GLASSES = ['collins', 'highball', 'rocks', 'coupe', 'mug', 'hurricane'] as const
 export const METHODS = ['build', 'shake', 'stir', 'blend', 'dry-shake'] as const
-export const FLAVOR_TAGS = ['citrus', 'fruity', 'herbal', 'creamy', 'spicy', 'bitter', 'smoky'] as const
+export const FLAVOR_TAGS = ['citrus', 'fruity', 'herbal', 'creamy', 'spicy', 'bitter', 'smoky', 'savory'] as const
 export const DIETARY_TAGS = ['caffeine', 'dairy', 'nuts', 'egg'] as const
 export const TOOLS = [
   'jigger',

@@ -12,10 +12,11 @@ const PREPPED = {
     'cinnamon-syrup',
     'ginger-syrup',
     'lavender-syrup',
+    'raspberry-syrup',
     'grenadine',
   ],
   'How to cut it': ['wheel', 'wedge'],
-  'How to do it': ['express'],
+  'How to do it': ['express', 'rim', 'roll'],
 }
 
 describe('Bar Terms', () => {
