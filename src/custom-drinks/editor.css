@@ -1,0 +1,365 @@
+/* The Custom Drink editor: one scrolling page of sections on the Drink
+   page's ground, with Preview and Save fixed at the bottom like Make it. */
+
+.ed-back {
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ed-section {
+  margin-top: 2rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(191, 174, 220, 0.2);
+  border-radius: 1.25rem;
+  background: var(--dp-card);
+}
+
+.ed-section h2 {
+  margin: 0 0 0.75rem;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-size: 1.35rem;
+}
+
+.ed-label {
+  display: block;
+  margin: 1rem 0 0.4rem;
+  color: var(--dp-soft);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.ed-section h2 + .ed-label {
+  margin-top: 0;
+}
+
+.ed-hint {
+  margin: 0.5rem 0;
+  color: var(--dp-soft);
+  font-size: 0.9rem;
+}
+
+.ed-error {
+  margin: 0.4rem 0 0;
+  color: var(--dp-cherry);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.ed-general {
+  margin-top: 1.5rem;
+  white-space: pre-line;
+}
+
+.ed-input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0 0.75rem;
+  border: 1px solid rgba(191, 174, 220, 0.3);
+  border-radius: 0.6rem;
+  background: var(--dp-paper);
+  color: var(--dp-ink);
+  font: 500 1rem 'Figtree', sans-serif;
+}
+
+.ed-input:disabled {
+  opacity: 0.4;
+}
+
+.ed-input:focus-visible {
+  outline: 2px solid #7fe3c6;
+  outline-offset: 1px;
+}
+
+.ed-chips,
+.ed-insert {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.ed-chips button,
+.ed-insert button,
+.ed-add {
+  min-height: 2.75rem;
+  padding: 0 0.95rem;
+  border: 1px solid rgba(191, 174, 220, 0.35);
+  border-radius: 999px;
+  background: none;
+  color: var(--dp-ink);
+  font: 500 0.95rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
+
+.ed-chips button[aria-pressed='true'] {
+  border-color: #7fe3c6;
+  background: #7fe3c6;
+  color: var(--dp-paper);
+  font-weight: 600;
+}
+
+.ed-insert {
+  margin-top: 0.5rem;
+}
+
+.ed-insert button {
+  min-height: 2.25rem;
+  padding: 0 0.7rem;
+  color: #7fe3c6;
+  font-size: 0.85rem;
+}
+
+.ed-add {
+  margin-top: 0.75rem;
+  border-style: dashed;
+  color: #7fe3c6;
+  font-weight: 600;
+}
+
+.ed-rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ed-rows > li + li {
+  margin-top: 0.9rem;
+}
+
+.ed-ingredient-fields {
+  display: grid;
+  grid-template-columns: 4.5rem 6.5rem 1fr 2.75rem;
+  gap: 0.4rem;
+}
+
+/* Too narrow for one line: the name goes under the amount and unit. */
+@media (max-width: 26rem) {
+  .ed-ingredient-fields {
+    grid-template-columns: 4.5rem 1fr 2.75rem;
+  }
+
+  .ed-ingredient-name {
+    grid-column: 1 / 3;
+    grid-row: 2;
+  }
+}
+
+.ed-unit {
+  padding-right: 0.25rem;
+}
+
+.ed-icon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--dp-soft);
+  cursor: pointer;
+}
+
+.ed-icon:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.ed-icon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ed-step {
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid rgba(191, 174, 220, 0.15);
+}
+
+.ed-step-head {
+  display: flex;
+  align-items: center;
+}
+
+.ed-step-number {
+  flex: 1;
+  color: var(--dp-cherry);
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.ed-step-text {
+  min-height: 4.5rem;
+  padding: 0.6rem 0.75rem;
+  line-height: 1.4;
+  resize: vertical;
+}
+
+.ed-timer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+  color: var(--dp-soft);
+}
+
+.ed-timer label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.75rem;
+  color: var(--dp-ink);
+}
+
+.ed-timer input[type='checkbox'] {
+  width: 1.2rem;
+  height: 1.2rem;
+  accent-color: #7fe3c6;
+}
+
+.ed-time {
+  width: 4.5rem;
+}
+
+.ed-slots {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ed-slots li + li {
+  margin-top: 0.75rem;
+}
+
+.ed-slot-name {
+  margin: 0;
+  font-weight: 600;
+}
+
+.ed-slot-name code {
+  margin-left: 0.3rem;
+  color: #7fe3c6;
+  font-size: 0.85rem;
+}
+
+.ed-tag {
+  margin-left: 0.4rem;
+  color: var(--dp-soft);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.ed-slot-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.35rem 0 0;
+}
+
+.ed-slot-options span {
+  padding: 0.15rem 0.6rem;
+  border: 1px solid rgba(191, 174, 220, 0.25);
+  border-radius: 999px;
+  font-size: 0.9rem;
+}
+
+.ed-slot-options span.is-house {
+  border-color: #7fe3c6;
+  color: #7fe3c6;
+  font-weight: 600;
+}
+
+/* Preview and Save, fixed where Make it sits on the Drink page. */
+.ed-bar {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.75rem max(1.25rem, env(safe-area-inset-right)) calc(1rem + env(safe-area-inset-bottom))
+    max(1.25rem, env(safe-area-inset-left));
+  background: linear-gradient(to top, var(--dp-paper) 55%, transparent);
+}
+
+.ed-preview,
+.ed-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  max-width: 15.5rem;
+  min-height: 3.5rem;
+  border-radius: 999px;
+  font: 700 1.1rem 'Figtree', sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ed-preview {
+  border: 1px solid rgba(191, 174, 220, 0.45);
+  color: var(--dp-ink);
+}
+
+.ed-save {
+  border: 0;
+  background: #7fe3c6;
+  color: var(--dp-paper);
+  box-shadow: 0 0.5rem 1.5rem rgba(12, 6, 24, 0.45);
+}
+
+.ed-save:disabled,
+.ed-preview.is-off {
+  opacity: 0.4;
+  box-shadow: none;
+  cursor: default;
+}
+
+.ed-save-note {
+  position: fixed;
+  inset: auto 0 calc(5.5rem + env(safe-area-inset-bottom));
+  z-index: 3;
+  text-align: center;
+}
+
+.ed-sheet-note {
+  margin: 0 0 1rem;
+}
+
+.ed-chips button,
+.ed-insert button,
+.ed-add,
+.ed-icon,
+.ed-preview,
+.ed-save {
+  transition: transform 0.12s ease-out;
+}
+
+.ed-chips button:active,
+.ed-insert button:active,
+.ed-add:active,
+.ed-icon:active:not(:disabled),
+.ed-preview:not(.is-off):active,
+.ed-save:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ed-chips button:active,
+  .ed-insert button:active,
+  .ed-add:active,
+  .ed-icon:active:not(:disabled),
+  .ed-preview:not(.is-off):active,
+  .ed-save:active:not(:disabled) {
+    transform: none;
+  }
+}

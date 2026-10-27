@@ -74,3 +74,98 @@ test('House Drinks have no Delete button', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Cherry Limeade' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Delete this drink' })).toHaveCount(0)
 })
+
+async function copyCherryLimeade(page: import('@playwright/test').Page) {
+  await page.goto('/drinks/cherry-limeade/fizz=soda-water')
+  await page.getByRole('button', { name: 'Make a copy' }).click()
+  await expect(page.getByRole('heading', { name: 'Cherry Limeade · soda water' })).toBeVisible()
+}
+
+test('editing a Custom Drink changes its page and step mode', async ({ page }) => {
+  await copyCherryLimeade(page)
+  await page.getByRole('link', { name: 'Edit this drink' }).click()
+  await expect(page.getByRole('heading', { name: 'Edit drink' })).toBeVisible()
+
+  await page.getByLabel('Name', { exact: true }).fill('Sunday Limeade')
+  await page.getByRole('group', { name: 'Glass' }).getByRole('button', { name: 'Highball glass' }).click()
+  await page.getByRole('button', { name: 'Add an ingredient' }).click()
+  await page.getByLabel('Amount of ingredient 3', { exact: true }).fill('2')
+  await page.getByLabel('Unit of ingredient 3', { exact: true }).selectOption('dash')
+  await page.getByLabel('Ingredient 3', { exact: true }).fill('orange bitters')
+  await page.getByLabel('Step 4', { exact: true }).fill('Top with {fizz} and wait.')
+  await page.getByLabel('Step 4', { exact: true }).locator('..').getByRole('checkbox').check()
+  await page.getByLabel('Minutes for step 4', { exact: true }).fill('0')
+  await page.getByLabel('Seconds for step 4', { exact: true }).fill('30')
+  await page.getByRole('button', { name: 'Save' }).click()
+
+  await expect(page.getByRole('heading', { name: 'Sunday Limeade' })).toBeVisible()
+  await expect(page.getByText('in a highball glass', { exact: false })).toBeVisible()
+  await expect(page.getByText('orange bitters')).toBeVisible()
+  await expect(page.getByText('Top with soda water and wait.')).toBeVisible()
+
+  await page.reload()
+  await expect(page.getByRole('heading', { name: 'Sunday Limeade' })).toBeVisible()
+
+  // The timer shows in step mode: Start opens step 1, and the Top step is third.
+  await page.getByRole('button', { name: 'Make it' }).click()
+  const making = page.getByRole('dialog', { name: 'Making Sunday Limeade' })
+  await making.getByRole('button', { name: 'Start' }).click()
+  for (let step = 2; step <= 3; step++) await making.getByRole('button', { name: 'Next step' }).click()
+  await expect(making.getByRole('button', { name: 'Start 0:30 timer' })).toBeVisible()
+})
+
+test('Save stays off until the Drink is valid, with the reason beside the field', async ({ page }) => {
+  await copyCherryLimeade(page)
+  await page.getByRole('link', { name: 'Edit this drink' }).click()
+  const save = page.getByRole('button', { name: 'Save' })
+  await expect(save).toBeEnabled()
+
+  await page.getByLabel('Name', { exact: true }).fill('Cherry Limeade')
+  await expect(page.getByText('You already have a drink called that.')).toBeVisible()
+  await expect(save).toBeDisabled()
+
+  await page.getByLabel('Name', { exact: true }).fill('My Limeade')
+  await page.getByLabel('Step 3', { exact: true }).fill('Add the {fruit}.')
+  await expect(page.getByText('There is no Slot called {fruit}.', { exact: false })).toBeVisible()
+  await expect(save).toBeDisabled()
+  await page.getByLabel('Step 3', { exact: true }).fill('Top with {fizz}.')
+  await expect(save).toBeEnabled()
+})
+
+test('Preview shows the unsaved Drink and comes back to the editor with the changes', async ({ page }) => {
+  await copyCherryLimeade(page)
+  await page.getByRole('link', { name: 'Edit this drink' }).click()
+  await page.getByLabel('Name', { exact: true }).fill('Preview Limeade')
+  await page.getByRole('link', { name: 'Preview' }).click()
+
+  await expect(page.getByRole('heading', { name: 'Preview Limeade' })).toBeVisible()
+  await expect(page.getByText('Preview. Nothing is saved until you tap Save.')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Make a copy' })).toHaveCount(0)
+
+  await page.getByRole('link', { name: 'Back to editing' }).click()
+  await expect(page.getByLabel('Name', { exact: true })).toHaveValue('Preview Limeade')
+})
+
+test('leaving the editor with changes asks first', async ({ page }) => {
+  await copyCherryLimeade(page)
+  await page.getByRole('link', { name: 'Edit this drink' }).click()
+  await page.getByLabel('Name', { exact: true }).fill('Never Saved')
+  await page.getByRole('button', { name: 'Cancel' }).click()
+  await page.getByRole('dialog', { name: 'Leave without saving?' }).getByRole('button', { name: 'Leave' }).click()
+  await expect(page.getByRole('heading', { name: 'Cherry Limeade · soda water' })).toBeVisible()
+})
+
+test('a new drink from blank says what it still needs', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('link', { name: 'New drink' }).click()
+  await expect(page.getByRole('heading', { name: 'New drink' })).toBeVisible()
+  await expect(page.getByText('Give the drink a name.')).toBeVisible()
+  await expect(page.getByText('Pick at least one Flavor Tag.')).toBeVisible()
+  await expect(page.getByText('Add at least one Slot with an Option.')).toBeVisible()
+  await expect(page.getByText('Add at least one step.')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Save' })).toBeDisabled()
+
+  // Nothing changed yet, so Cancel leaves without asking.
+  await page.getByRole('button', { name: 'Cancel' }).click()
+  await expect(page.getByRole('heading', { name: 'Fizzwick' })).toBeVisible()
+})

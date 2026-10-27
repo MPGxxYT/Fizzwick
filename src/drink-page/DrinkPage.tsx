@@ -42,7 +42,15 @@ export interface DrinkPageState extends Partial<ListState> {
   copied?: boolean
 }
 
-function DrinkView({ drink, pairs }: { drink: Drink; pairs: string | undefined }) {
+// The editor's Preview shows an unsaved Drink on this page, at its own
+// address, with a way back to editing and none of the buttons that keep
+// or share a Drink.
+export interface DrinkPreview {
+  backTo: string
+  linkFor: (picks: Picks) => string
+}
+
+export function DrinkView({ drink, pairs, preview }: { drink: Drink; pairs: string | undefined; preview?: DrinkPreview }) {
   const location = useLocation()
   const navigate = useNavigate()
   const pageState = location.state as DrinkPageState | null
@@ -50,7 +58,8 @@ function DrinkView({ drink, pairs }: { drink: Drink; pairs: string | undefined }
   // The picks live in the address, so a reload or a shared link opens the
   // same Riff. Swapping an Option rewrites the address in place.
   const { picks, fellBack } = useMemo(() => readRiffLink(drink, pairs), [drink, pairs])
-  const setPicks = (next: Picks) => navigate(riffLink(drink, next), { replace: true, state: pageState })
+  const linkFor = preview?.linkFor ?? ((next: Picks) => riffLink(drink, next))
+  const setPicks = (next: Picks) => navigate(linkFor(next), { replace: true, state: pageState })
   const [servings, setServings] = useState(1)
   const [customOz, setCustomOz] = useState<number | null>(null)
   const [glassOpen, setGlassOpen] = useState(false)
@@ -65,9 +74,11 @@ function DrinkView({ drink, pairs }: { drink: Drink; pairs: string | undefined }
 
   // Back to the list as it was (same search and filters), or to Favorites.
   const listSearch = pageState?.listSearch
-  const back = pageState?.fromFavorites
-    ? { to: '/favorites', label: 'Favorites' }
-    : { to: listSearch ? `/?${listSearch}` : '/', label: 'All drinks' }
+  const back = preview
+    ? { to: preview.backTo, label: 'Back to editing' }
+    : pageState?.fromFavorites
+      ? { to: '/favorites', label: 'Favorites' }
+      : { to: listSearch ? `/?${listSearch}` : '/', label: 'All drinks' }
 
   // Step mode is its own history entry, so the back gesture leaves it. After
   // a reload the drink count and glass size are gone, so a leftover entry
@@ -122,9 +133,21 @@ function DrinkView({ drink, pairs }: { drink: Drink; pairs: string | undefined }
           </svg>
           {back.label}
         </Link>
-        <CopyDrink drink={drink} riff={riff} pageState={pageState} />
-        <ShareRiff drink={drink} riff={riff} />
-        <SaveFavorite riff={riff} />
+        {!preview && (
+          <>
+            {isCustomDrinkId(drink.id) && (
+              <Link to={`/edit/${drink.id}`} className="dp-edit" aria-label="Edit this drink">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z" />
+                  <path d="M13.5 6.5l4 4" />
+                </svg>
+              </Link>
+            )}
+            <CopyDrink drink={drink} riff={riff} pageState={pageState} />
+            <ShareRiff drink={drink} riff={riff} />
+            <SaveFavorite riff={riff} />
+          </>
+        )}
 
         <header className="dp-head">
           <Title drink={drink} picks={riff.picks} />
@@ -144,6 +167,11 @@ function DrinkView({ drink, pairs }: { drink: Drink; pairs: string | undefined }
           onReset={riff.isHouseSpec ? undefined : reset}
         />
         {fellBack.length > 0 && <LinkNotice drink={drink} slotIds={fellBack} />}
+        {preview && (
+          <p className="dp-note dp-link-note" role="status">
+            Preview. Nothing is saved until you tap Save.
+          </p>
+        )}
         {pageState?.copied && (
           <p className="dp-note dp-link-note" role="status">
             Saved as a copy. Find it in the drink list under Yours.
@@ -155,7 +183,7 @@ function DrinkView({ drink, pairs }: { drink: Drink; pairs: string | undefined }
         </div>
 
         <RecipeCard riff={riff} onServings={setServings} changeColor={changeColor} />
-        {isCustomDrinkId(drink.id) && <DeleteDrink drink={drink} />}
+        {isCustomDrinkId(drink.id) && !preview && <DeleteDrink drink={drink} />}
       </main>
 
       {!making && (
