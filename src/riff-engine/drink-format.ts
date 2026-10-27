@@ -79,7 +79,8 @@ export const drinkSchema = z.strictObject({
   glass: oneOf(GLASSES, 'glass'),
   method: oneOf(METHODS, 'Method'),
   flavorTags: z.array(oneOf(FLAVOR_TAGS, 'Flavor Tag')).min(1),
-  photo: z.string().min(1),
+  // House Drinks ship a photo path; a Custom Drink's photo lives on the phone.
+  photo: z.string().min(1).optional(),
   // Fixed ingredients, outside any Slot.
   ingredients: z.array(ingredient),
   slots: z.array(slot).min(1),

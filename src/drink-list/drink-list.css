@@ -282,6 +282,17 @@
   color: var(--muted);
 }
 
+/* A Custom Drink's mark. */
+.dl-card-yours {
+  align-self: flex-start;
+  padding: 0.1rem 0.55rem;
+  border: 1px solid var(--link);
+  border-radius: 999px;
+  color: var(--link);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
 /* What a found Riff swaps from the House Spec. */
 .dl-card-riff {
   color: var(--link);

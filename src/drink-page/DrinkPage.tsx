@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import type { ListState } from '../drink-list/DrinkList'
 import { SaveFavorite } from '../favorites/SaveFavorite'
-import { findHouseDrink } from '../house-drinks/catalog'
+import { CopyDrink } from '../custom-drinks/CopyDrink'
+import { useDrinks } from '../custom-drinks/store'
 import { GLASS_SIZES_OZ, readRiffLink, resolveRiff, riffLink, type Drink, type Picks } from '../riff-engine'
 import { NotFound } from '../NotFound'
 import { useSettings } from '../settings/use-settings'
@@ -22,8 +23,10 @@ import './drink-page.css'
 // pairs it's the House Spec.
 export function DrinkPage() {
   const { drinkId = '', riff: pairs } = useParams()
-  const drink = findHouseDrink(drinkId)
-  if (!drink) return <NotFound />
+  const { status, drinks } = useDrinks()
+  const drink = drinks.find((other) => other.id === drinkId)
+  // A Custom Drink shows up once the device's drinks have loaded.
+  if (!drink) return status === 'loading' ? <div className="dp" /> : <NotFound />
   // Keyed so that moving to another Drink starts it afresh.
   return <DrinkView key={drink.id} drink={drink} pairs={pairs} />
 }
@@ -33,6 +36,8 @@ export function DrinkPage() {
 export interface DrinkPageState extends Partial<ListState> {
   fromFavorites?: boolean
   making?: boolean
+  // Just made with "Make a copy".
+  copied?: boolean
 }
 
 function DrinkView({ drink, pairs }: { drink: Drink; pairs: string | undefined }) {
@@ -115,6 +120,7 @@ function DrinkView({ drink, pairs }: { drink: Drink; pairs: string | undefined }
           </svg>
           {back.label}
         </Link>
+        <CopyDrink drink={drink} riff={riff} pageState={pageState} />
         <ShareRiff drink={drink} riff={riff} />
         <SaveFavorite riff={riff} />
 
@@ -136,6 +142,11 @@ function DrinkView({ drink, pairs }: { drink: Drink; pairs: string | undefined }
           onReset={riff.isHouseSpec ? undefined : reset}
         />
         {fellBack.length > 0 && <LinkNotice drink={drink} slotIds={fellBack} />}
+        {pageState?.copied && (
+          <p className="dp-note dp-link-note" role="status">
+            Saved as a copy. Find it in the drink list under Yours.
+          </p>
+        )}
 
         <div className="dp-row">
           {riff.dietaryTags.length > 0 && <p className="dp-dietary">Contains {riff.dietaryTags.join(', ')}</p>}

@@ -7,7 +7,8 @@ import { glassInSentence, GLASS_NAMES, METHOD_NAMES, TOOL_NAMES } from '../drink
 import { GlassSketch } from '../drink-page/GlassSketch'
 import { Sheet } from '../drink-page/Sheet'
 import { Heart } from '../favorites/SaveFavorite'
-import { houseDrinks } from '../house-drinks/catalog'
+import { isCustomDrinkId } from '../custom-drinks/copy-drink'
+import { useDrinks } from '../custom-drinks/store'
 import {
   filterChoices,
   groupIngredients,
@@ -19,9 +20,6 @@ import {
 import { FLAVOR_TAGS, METHODS, resolveRiff, riffLink, TOOLS, type FlavorTag, type Method, type Tool } from '../riff-engine'
 import './drink-list.css'
 
-const CHOICES = filterChoices(houseDrinks)
-const TOOL_CHOICES = toolChoices(houseDrinks)
-const INGREDIENT_CHOICES = ingredientChoices(houseDrinks)
 // The card's ground, so the Drink names on it stay readable.
 const CARD = '#2e2049'
 
@@ -40,6 +38,13 @@ const isTool = (value: string): value is Tool => (TOOLS as readonly string[]).in
 // the same list.
 export function DrinkList() {
   const [params, setParams] = useSearchParams()
+  const { drinks } = useDrinks()
+  const choices = useMemo(
+    () => ({ ...filterChoices(drinks), tools: toolChoices(drinks), ingredients: ingredientChoices(drinks) }),
+    [drinks],
+  )
+  const hasCustom = drinks.some((drink) => isCustomDrinkId(drink.id))
+  const yours = params.get('yours') === '1'
   const query = params.get('q') ?? ''
   const method = isMethod(params.get('method')) ? (params.get('method') as Method) : undefined
   const flavor = isFlavor(params.get('flavor')) ? (params.get('flavor') as FlavorTag) : undefined
@@ -49,12 +54,19 @@ export function DrinkList() {
   const tools = useMemo(() => (toolParam ? toolParam.split(',').filter(isTool) : []), [toolParam])
   const ingredients = useMemo(() => (ingredientParam ? ingredientParam.split('\n') : []), [ingredientParam])
   const found = useMemo(
-    () => searchDrinks(houseDrinks, { query, method, flavor, ingredients, tools: tools.length > 0 ? tools : undefined }),
-    [query, method, flavor, ingredients, tools],
+    () =>
+      searchDrinks(yours ? drinks.filter((drink) => isCustomDrinkId(drink.id)) : drinks, {
+        query,
+        method,
+        flavor,
+        ingredients,
+        tools: tools.length > 0 ? tools : undefined,
+      }),
+    [drinks, yours, query, method, flavor, ingredients, tools],
   )
   const [sheet, setSheet] = useState<'tools' | 'ingredients' | null>(null)
 
-  const update = (key: 'q' | 'method' | 'flavor', value: string | undefined) => {
+  const update = (key: 'q' | 'method' | 'flavor' | 'yours', value: string | undefined) => {
     const next = new URLSearchParams(params)
     if (value) next.set(key, value)
     else next.delete(key)
@@ -66,7 +78,7 @@ export function DrinkList() {
     for (const value of values) next.append(key, value)
     setParams(next, { replace: true })
   }
-  const filters = Boolean(method || flavor || tools.length > 0 || ingredients.length > 0)
+  const filters = Boolean(yours || method || flavor || tools.length > 0 || ingredients.length > 0)
   const filtered = Boolean(query.trim()) || filters
   const searchId = useId()
 
@@ -109,15 +121,25 @@ export function DrinkList() {
           />
         </div>
 
+        {hasCustom && (
+          <div className="dl-filter" role="group" aria-label="Show">
+            <span className="dl-filter-label">Show</span>
+            <div className="dl-chips">
+              <button type="button" aria-pressed={yours} onClick={() => update('yours', yours ? undefined : '1')}>
+                Yours
+              </button>
+            </div>
+          </div>
+        )}
         <FilterRow
           label="Method"
-          choices={byName(CHOICES.methods.map((value) => ({ value, name: METHOD_NAMES[value] })))}
+          choices={byName(choices.methods.map((value) => ({ value, name: METHOD_NAMES[value] })))}
           picked={method}
           onPick={(value) => update('method', value)}
         />
         <FilterRow
           label="Flavor"
-          choices={byName(CHOICES.flavors.map((value) => ({ value, name: value[0].toUpperCase() + value.slice(1) })))}
+          choices={byName(choices.flavors.map((value) => ({ value, name: value[0].toUpperCase() + value.slice(1) })))}
           picked={flavor}
           onPick={(value) => update('flavor', value)}
         />
@@ -170,10 +192,16 @@ export function DrinkList() {
       </main>
 
       {sheet === 'tools' && (
-        <ToolSheet picked={tools} onChange={(next) => updateAll('tool', next)} onClose={() => setSheet(null)} />
+        <ToolSheet
+          choices={choices.tools}
+          picked={tools}
+          onChange={(next) => updateAll('tool', next)} onClose={() => setSheet(null)} />
       )}
       {sheet === 'ingredients' && (
-        <IngredientSheet picked={ingredients} onChange={(next) => updateAll('ing', next)} onClose={() => setSheet(null)} />
+        <IngredientSheet
+          choices={choices.ingredients}
+          picked={ingredients}
+          onChange={(next) => updateAll('ing', next)} onClose={() => setSheet(null)} />
       )}
     </div>
   )
@@ -184,9 +212,19 @@ const capitalize = (text: string) => text[0].toUpperCase() + text.slice(1)
 // Tick the tools you have, and the list keeps the Drinks with a Riff you can
 // make with them. A barspoon and a strainer aren't offered: any long spoon
 // stirs, and a shaker's lid strains.
-function ToolSheet({ picked, onChange, onClose }: { picked: Tool[]; onChange: (tools: Tool[]) => void; onClose: () => void }) {
+function ToolSheet({
+  choices,
+  picked,
+  onChange,
+  onClose,
+}: {
+  choices: Tool[]
+  picked: Tool[]
+  onChange: (tools: Tool[]) => void
+  onClose: () => void
+}) {
   const toggle = (tool: Tool) =>
-    onChange(TOOL_CHOICES.filter((choice) => (choice === tool ? !picked.includes(tool) : picked.includes(choice))))
+    onChange(choices.filter((choice) => (choice === tool ? !picked.includes(tool) : picked.includes(choice))))
   return (
     <Sheet label="Tools you have" onClose={onClose}>
       <h2>Tools you have</h2>
@@ -195,7 +233,7 @@ function ToolSheet({ picked, onChange, onClose }: { picked: Tool[]; onChange: (t
         strainer.
       </p>
       <div className="dl-sheet-chips" role="group" aria-label="Tools">
-        {TOOL_CHOICES.map((tool) => (
+        {choices.map((tool) => (
           <button key={tool} type="button" aria-pressed={picked.includes(tool)} onClick={() => toggle(tool)}>
             {TOOL_NAMES[tool]}
           </button>
@@ -214,10 +252,12 @@ function ToolSheet({ picked, onChange, onClose }: { picked: Tool[]; onChange: (t
 // uses any of them. Picked ones stay at the top; the rest are grouped by
 // kind, and a search narrows them.
 function IngredientSheet({
+  choices,
   picked,
   onChange,
   onClose,
 }: {
+  choices: string[]
   picked: string[]
   onChange: (ingredients: string[]) => void
   onClose: () => void
@@ -225,7 +265,7 @@ function IngredientSheet({
   const [query, setQuery] = useState('')
   const searchId = useId()
   const words = query.toLowerCase().split(/\s+/).filter(Boolean)
-  const rest = INGREDIENT_CHOICES.filter(
+  const rest = choices.filter(
     (ingredient) => !picked.includes(ingredient) && words.every((word) => ingredient.includes(word)),
   )
   const toggle = (ingredient: string) =>
@@ -334,7 +374,7 @@ function DrinkCard({ found: { drink, picks }, listSearch }: { found: FoundDrink;
   return (
     <Link to={riffLink(drink, picks)} state={{ listSearch } satisfies ListState} className="dl-card">
       <span className="dl-card-art">
-        {photoFailed || swaps.length > 0 ? (
+        {!drink.photo || photoFailed || swaps.length > 0 ? (
           <GlassSketch glass={drink.glass} colors={riff.colors} className="dl-card-sketch" />
         ) : (
           <img src={`${import.meta.env.BASE_URL}${drink.photo}`} alt="" onError={() => setPhotoFailed(true)} />
@@ -344,6 +384,7 @@ function DrinkCard({ found: { drink, picks }, listSearch }: { found: FoundDrink;
         <span className="dl-card-name" style={firstColor ? { color: readable(firstColor, CARD) } : undefined}>
           {drink.name}
         </span>
+        {isCustomDrinkId(drink.id) && <span className="dl-card-yours">Yours</span>}
         {swaps.length > 0 && <span className="dl-card-riff">With {swaps.join(', ')}</span>}
         <span className="dl-card-meta">
           {METHOD_NAMES[riff.method]}, {glassInSentence(GLASS_NAMES[drink.glass])}
