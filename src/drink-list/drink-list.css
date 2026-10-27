@@ -42,6 +42,12 @@
   white-space: nowrap;
 }
 
+.dl-head-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
 .dl-search {
   position: relative;
   margin-top: 1rem;
