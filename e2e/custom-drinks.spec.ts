@@ -88,7 +88,7 @@ test('editing a Custom Drink changes its page and step mode', async ({ page }) =
 
   await page.getByLabel('Name', { exact: true }).fill('Sunday Limeade')
   await page.getByRole('group', { name: 'Glass' }).getByRole('button', { name: 'Highball glass' }).click()
-  await page.getByRole('button', { name: 'Add an ingredient' }).click()
+  await page.getByRole('button', { name: 'Add an ingredient' }).first().click()
   await page.getByLabel('Amount of ingredient 3', { exact: true }).fill('2')
   await page.getByLabel('Unit of ingredient 3', { exact: true }).selectOption('dash')
   await page.getByLabel('Ingredient 3', { exact: true }).fill('orange bitters')
@@ -168,4 +168,129 @@ test('a new drink from blank says what it still needs', async ({ page }) => {
   // Nothing changed yet, so Cancel leaves without asking.
   await page.getByRole('button', { name: 'Cancel' }).click()
   await expect(page.getByRole('heading', { name: 'Fizzwick' })).toBeVisible()
+})
+
+// Waits for the Drink page, so the save has finished before moving on.
+async function save(page: import('@playwright/test').Page) {
+  await page.getByRole('button', { name: 'Save' }).click()
+  await expect(page.getByRole('link', { name: 'Edit this drink' })).toBeVisible()
+}
+
+async function editCopy(page: import('@playwright/test').Page) {
+  await copyCherryLimeade(page)
+  await page.getByRole('link', { name: 'Edit this drink' }).click()
+  await expect(page.getByRole('heading', { name: 'Edit drink' })).toBeVisible()
+}
+
+async function saveAFavorite(page: import('@playwright/test').Page) {
+  await page.getByRole('button', { name: 'Save to Favorites' }).click()
+  await expect(page.getByRole('button', { name: 'Remove from Favorites' })).toBeVisible()
+}
+
+async function pickFizz(page: import('@playwright/test').Page, from: RegExp, to: string) {
+  await page.getByRole('button', { name: from }).click()
+  await page.getByRole('dialog', { name: 'Choose fizz' }).getByRole('button', { name: to }).click()
+}
+
+async function openFirstFavorite(page: import('@playwright/test').Page) {
+  await page.goto('/favorites')
+  await page.getByRole('list', { name: 'Favorites' }).getByRole('link').first().click()
+}
+
+test('a new Slot with two Options can be swapped after saving', async ({ page }) => {
+  await editCopy(page)
+  await page.getByLabel('New Slot, such as Fizz', { exact: true }).fill('Herb')
+  await page.getByRole('button', { name: 'Add a Slot' }).click()
+  await page.getByLabel('Herb Option 1', { exact: true }).fill('Mint')
+  const herb = page.getByRole('listitem').filter({ has: page.getByLabel('Herb Option 1', { exact: true }) }).last()
+  await herb.getByRole('button', { name: 'Add an ingredient' }).click()
+  await page.getByLabel('Amount of Herb Option 1 ingredient 1', { exact: true }).fill('6')
+  await page.getByLabel('Unit of Herb Option 1 ingredient 1', { exact: true }).selectOption('count')
+  await page.getByLabel('Herb Option 1 ingredient 1', { exact: true }).fill('mint leaves')
+  await page.getByLabel('New Herb Option', { exact: true }).fill('Basil')
+  await page.getByRole('button', { name: 'Add an Option' }).last().click()
+  await page.getByRole('button', { name: 'Add a step' }).click()
+  await page.getByLabel('Step 7', { exact: true }).fill('Slap the {herb} and drop it in.')
+  await save(page)
+
+  await expect(page.getByText('Slap the mint and drop it in.')).toBeVisible()
+  await expect(page.getByText('mint leaves')).toBeVisible()
+  await page.getByRole('button', { name: /^Herb: mint/ }).click()
+  await page.getByRole('dialog', { name: 'Choose herb' }).getByRole('button', { name: 'Basil' }).click()
+  await expect(page.getByText('Slap the basil and drop it in.')).toBeVisible()
+})
+
+test('renaming an Option keeps the Favorites that use it', async ({ page }) => {
+  await copyCherryLimeade(page)
+  await pickFizz(page, /^Fizz: soda water/, 'Sparkling limeade')
+  await saveAFavorite(page)
+
+  await page.getByRole('link', { name: 'Edit this drink' }).click()
+  await page.getByLabel('Fizz Option 3', { exact: true }).fill('Limeade, sparkling')
+  await save(page)
+
+  await openFirstFavorite(page)
+  await expect(page.getByRole('button', { name: /^Fizz: limeade, sparkling/ })).toBeVisible()
+})
+
+test('removing an Option a Favorite uses retires it, and the Favorite still opens', async ({ page }) => {
+  await copyCherryLimeade(page)
+  await pickFizz(page, /^Fizz: soda water/, 'Sparkling limeade')
+  await saveAFavorite(page)
+
+  await page.getByRole('link', { name: 'Edit this drink' }).click()
+  await page.getByRole('button', { name: 'Remove Fizz Option 3', exact: true }).click()
+  await expect(page.getByText('Retired, kept for Favorites: Sparkling limeade.')).toBeVisible()
+  const houseSpec = page.getByRole('group', { name: 'House Spec for Fizz' })
+  await expect(houseSpec.getByRole('button', { name: 'Sparkling limeade' })).toHaveCount(0)
+  await save(page)
+
+  await openFirstFavorite(page)
+  await expect(page.getByRole('button', { name: /^Fizz: sparkling limeade, retired/ })).toBeVisible()
+})
+
+test('removing a Slot a Favorite picks from warns first, and the Favorite opens without it', async ({ page }) => {
+  await copyCherryLimeade(page)
+  await saveAFavorite(page)
+
+  await page.getByRole('link', { name: 'Edit this drink' }).click()
+  await page.getByRole('button', { name: 'Remove Garnish', exact: true }).click()
+  const sheet = page.getByRole('dialog', { name: 'Remove Garnish?' })
+  await expect(sheet).toContainText('1 Favorite picks from this Slot.')
+  await expect(sheet).toContainText('open without it.')
+  await sheet.getByRole('button', { name: 'Remove', exact: true }).click()
+  // The garnish step still names {garnish}, so it has to go too.
+  await expect(page.getByText('There is no Slot called {garnish}.', { exact: false })).toBeVisible()
+  await page.getByRole('button', { name: 'Remove step 6' }).click()
+  await save(page)
+
+  await openFirstFavorite(page)
+  await expect(page.getByRole('heading', { name: 'Cherry Limeade · soda water' })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^Garnish:/ })).toHaveCount(0)
+})
+
+test('a drink from blank can be saved once it has a Slot and a step', async ({ page }) => {
+  await page.goto('/new')
+  await page.getByLabel('Name', { exact: true }).fill('Plain Fizz')
+  await page.getByRole('group', { name: 'Flavor Tags' }).getByRole('button', { name: 'Citrus' }).click()
+  await page.getByLabel('New Slot, such as Fizz', { exact: true }).fill('Fizz')
+  await page.getByRole('button', { name: 'Add a Slot' }).click()
+  await page.getByLabel('Fizz Option 1', { exact: true }).fill('Soda water')
+  await page.getByRole('button', { name: 'Add a step' }).click()
+  await page.getByLabel('Step 1', { exact: true }).fill('Top with {fizz}.')
+  await save(page)
+
+  await expect(page.getByRole('heading', { name: 'Plain Fizz' })).toBeVisible()
+  await expect(page.getByText('Top with soda water.')).toBeVisible()
+})
+
+test('a copied Option that adds steps still works after an edit elsewhere', async ({ page }) => {
+  await editCopy(page)
+  await expect(page.getByText('This Option changes the steps or Method', { exact: false })).toBeVisible()
+  await page.getByLabel('Name', { exact: true }).fill('Muddle Limeade')
+  await save(page)
+
+  await page.getByRole('button', { name: /^Cherry: cherry syrup/ }).click()
+  await page.getByRole('dialog', { name: 'Choose cherry' }).getByRole('button', { name: 'Muddled fresh cherries' }).click()
+  await expect(page.getByText('Muddle the cherries with the lime juice in a shaker tin.')).toBeVisible()
 })

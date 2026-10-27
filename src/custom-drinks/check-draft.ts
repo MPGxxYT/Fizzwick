@@ -1,11 +1,12 @@
-import { checkEveryRiff, FORMAT_VERSION, MEASURED_UNITS, parseDrinkFile, type Drink, type Step } from '../riff-engine'
+import { checkEveryRiff, FORMAT_VERSION, MEASURED_UNITS, parseDrinkFile, type Drink, type Ingredient, type Step } from '../riff-engine'
 import { nameTaken } from './copy-drink'
 
 // A Drink being edited may be half finished: no name yet, an ingredient with
 // no amount. checkDraft says what's missing, keyed by the field to show it
 // beside, or gives back the Drink ready to save. Field keys: name,
-// flavorTags, slots, steps, ingredients.<i>, steps.<i>, and drink for
-// anything that belongs to no one field.
+// flavorTags, slots, steps, ingredients.<i>, steps.<i>, slots.<s>,
+// slots.<s>.options.<o>, slots.<s>.options.<o>.ingredients.<i>, and drink
+// for anything that belongs to no one field.
 export type FieldErrors = Record<string, string>
 
 export function blankDrink(randomId: string): Drink {
@@ -23,6 +24,8 @@ export function blankDrink(randomId: string): Drink {
   }
 }
 
+const finishIngredient = ({ name, amount, unit }: Ingredient): Ingredient =>
+  measured(unit) ? { name: name.trim(), amount, unit } : { name: name.trim(), unit }
 const measured = (unit: string) => (MEASURED_UNITS as readonly string[]).includes(unit)
 const placeholders = (text: string) => [...text.matchAll(/\{([^}]*)\}/g)].map(([, name]) => name)
 
@@ -41,9 +44,23 @@ export function checkDraft(draft: Drink, otherNames: string[]): { drink?: Drink;
   if (draft.slots.length === 0) errors.slots = 'Add at least one Slot with an Option.'
   if (draft.steps.length === 0) errors.steps = 'Add at least one step.'
 
-  draft.ingredients.forEach((ingredient, i) => {
-    if (!ingredient.name.trim()) errors[`ingredients.${i}`] = 'Name the ingredient.'
-    else if (measured(ingredient.unit) && !(ingredient.amount! > 0)) errors[`ingredients.${i}`] = 'Add an amount.'
+  const checkIngredients = (ingredients: Ingredient[], key: string) =>
+    ingredients.forEach((ingredient, i) => {
+      if (!ingredient.name.trim()) errors[`${key}.${i}`] = 'Name the ingredient.'
+      else if (measured(ingredient.unit) && !(ingredient.amount! > 0)) errors[`${key}.${i}`] = 'Add an amount.'
+    })
+  checkIngredients(draft.ingredients, 'ingredients')
+
+  draft.slots.forEach((slot, s) => {
+    if (!slot.label.trim()) errors[`slots.${s}`] = 'Name the Slot.'
+    else if (slot.options.every((option) => option.retired)) errors[`slots.${s}`] = 'Add an Option to this Slot.'
+    else if (draft.houseSpec[slot.id] == null && !slot.optional) {
+      errors[`slots.${s}`] = 'Pick the House Spec Option, or make the Slot optional.'
+    }
+    slot.options.forEach((option, o) => {
+      if (!option.retired && !option.label.trim()) errors[`slots.${s}.options.${o}`] = 'Name the Option.'
+      checkIngredients(option.ingredients, `slots.${s}.options.${o}.ingredients`)
+    })
   })
 
   const slotIds = draft.slots.map((slot) => slot.id)
@@ -67,9 +84,17 @@ export function checkDraft(draft: Drink, otherNames: string[]): { drink?: Drink;
   const finished: Drink = {
     ...draft,
     name,
-    ingredients: draft.ingredients.map(({ name, amount, unit }) =>
-      measured(unit) ? { name: name.trim(), amount, unit } : { name: name.trim(), unit },
-    ),
+    ingredients: draft.ingredients.map(finishIngredient),
+    slots: draft.slots.map((slot) => ({
+      ...slot,
+      label: slot.label.trim(),
+      options: slot.options.map(({ phrase, ...option }) => ({
+        ...option,
+        label: option.label.trim(),
+        ...(phrase?.trim() ? { phrase: phrase.trim() } : {}),
+        ingredients: option.ingredients.map(finishIngredient),
+      })),
+    })),
     steps: draft.steps.map((step) => {
       const text = step.text.trim()
       const emptyable = placeholders(text).find((slot) => optional.has(slot))
