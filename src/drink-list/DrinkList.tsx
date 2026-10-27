@@ -8,7 +8,14 @@ import { GlassSketch } from '../drink-page/GlassSketch'
 import { Sheet } from '../drink-page/Sheet'
 import { Heart } from '../favorites/SaveFavorite'
 import { houseDrinks } from '../house-drinks/catalog'
-import { filterChoices, ingredientChoices, searchDrinks, toolChoices, type FoundDrink } from '../house-drinks/search'
+import {
+  filterChoices,
+  groupIngredients,
+  ingredientChoices,
+  searchDrinks,
+  toolChoices,
+  type FoundDrink,
+} from '../house-drinks/search'
 import { FLAVOR_TAGS, METHODS, resolveRiff, riffLink, TOOLS, type FlavorTag, type Method, type Tool } from '../riff-engine'
 import './drink-list.css'
 
@@ -204,7 +211,8 @@ function ToolSheet({ picked, onChange, onClose }: { picked: Tool[]; onChange: (t
 }
 
 // Pick ingredients to use up, and the list keeps the Drinks with a Riff that
-// uses any of them. Picked ones stay at the top; a search narrows the rest.
+// uses any of them. Picked ones stay at the top; the rest are grouped by
+// kind, and a search narrows them.
 function IngredientSheet({
   picked,
   onChange,
@@ -253,9 +261,12 @@ function IngredientSheet({
         />
       </div>
       {rest.length > 0 ? (
-        <div className="dl-sheet-chips" role="group" aria-label="Ingredients">
-          {rest.map(chip)}
-        </div>
+        groupIngredients(rest).map(({ group, names }) => (
+          <section key={group} className="dl-sheet-group" aria-label={group}>
+            <h3>{group}</h3>
+            <div className="dl-sheet-chips">{names.map(chip)}</div>
+          </section>
+        ))
       ) : (
         <p className="dl-sheet-note">No other ingredients match "{query.trim()}".</p>
       )}

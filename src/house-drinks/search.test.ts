@@ -1,7 +1,8 @@
 import { describe, expect, test } from 'vitest'
 import { parseDrinkFile, type Drink } from '../riff-engine'
 import cherryLimeadeFile from './cherry-limeade.json'
-import { filterChoices, ingredientChoices, searchDrinks, toolChoices } from './search'
+import { houseDrinks } from './catalog'
+import { filterChoices, groupIngredients, ingredientChoices, searchDrinks, toolChoices } from './search'
 
 function parse(input: unknown): Drink {
   const result = parseDrinkFile(input)
@@ -168,6 +169,38 @@ describe('ingredientChoices', () => {
     expect(choices).not.toContain('kiwi purée')
     expect(choices.filter((name) => name === 'lime wheel')).toHaveLength(1)
     expect(choices).toEqual([...choices].sort((a, b) => a.localeCompare(b)))
+  })
+})
+
+describe('groupIngredients', () => {
+  const group = (name: string) => groupIngredients([name])[0].group
+
+  test('sorts ingredients into groups by kind', () => {
+    expect(group('raspberry syrup')).toBe('Syrups and sweeteners')
+    expect(group('agave')).toBe('Syrups and sweeteners')
+    expect(group('tart cherry juice')).toBe('Juices')
+    expect(group('soda water')).toBe('Sodas and tonics')
+    expect(group('crushed ice')).toBe('Ice and water')
+    expect(group('chilled rooibos')).toBe('Tea and coffee')
+    expect(group('oat milk')).toBe('Milk, cream and egg')
+    expect(group('mint leaves')).toBe('Herbs, spices and bitters')
+    expect(group('mint sprig, for garnish')).toBe('Garnishes')
+    expect(group('lime wheel')).toBe('Garnishes')
+    expect(group('raspberries')).toBe('Fruit and vegetables')
+    expect(group('durian foam')).toBe('Other')
+  })
+
+  test('keeps the groups in a fixed order and names in the order given', () => {
+    expect(groupIngredients(['raspberries', 'agave', 'lime wheel', 'honey'])).toEqual([
+      { group: 'Syrups and sweeteners', names: ['agave', 'honey'] },
+      { group: 'Fruit and vegetables', names: ['raspberries'] },
+      { group: 'Garnishes', names: ['lime wheel'] },
+    ])
+  })
+
+  test('every House Drink ingredient has a group', () => {
+    const other = groupIngredients(ingredientChoices(houseDrinks)).find(({ group }) => group === 'Other')
+    expect(other?.names ?? []).toEqual([])
   })
 })
 
