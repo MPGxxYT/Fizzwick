@@ -230,52 +230,82 @@
   width: 4.5rem;
 }
 
-.ed-slots {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.ed-slots li + li {
-  margin-top: 0.75rem;
-}
-
-.ed-slot-name {
-  margin: 0;
-  font-weight: 600;
-}
-
-.ed-slot-name code {
-  margin-left: 0.3rem;
-  color: #7fe3c6;
-  font-size: 0.85rem;
-}
-
-.ed-tag {
-  margin-left: 0.4rem;
-  color: var(--dp-soft);
-  font-size: 0.8rem;
-  font-weight: 500;
-}
-
-.ed-slot-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin: 0.35rem 0 0;
-}
-
-.ed-slot-options span {
-  padding: 0.15rem 0.6rem;
+.ed-slot {
+  padding: 1rem;
   border: 1px solid rgba(191, 174, 220, 0.25);
-  border-radius: 999px;
-  font-size: 0.9rem;
+  border-radius: 1rem;
+  background: var(--dp-paper);
 }
 
-.ed-slot-options span.is-house {
-  border-color: #7fe3c6;
+.ed-slot .ed-input {
+  background: var(--dp-card);
+}
+
+.ed-slot-head,
+.ed-option-head {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.ed-slot-head .ed-input,
+.ed-option-head .ed-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.ed-slot-label {
+  font-weight: 700;
+}
+
+.ed-hint code,
+.ed-phrase code {
   color: #7fe3c6;
+}
+
+.ed-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+}
+
+.ed-check input {
+  width: 1.2rem;
+  height: 1.2rem;
+  accent-color: #7fe3c6;
+}
+
+.ed-options > li {
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(191, 174, 220, 0.15);
+}
+
+.ed-option-fixed {
+  flex: 1;
+  margin: 0;
   font-weight: 600;
+}
+
+.ed-phrase {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.ed-add-named {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.ed-add-named .ed-add {
+  flex: none;
+  margin-top: 0;
+}
+
+.ed-add:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 /* Preview and Save, fixed where Make it sits on the Drink page. */

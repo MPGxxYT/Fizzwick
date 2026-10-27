@@ -12,13 +12,18 @@ import {
   UNMEASURED_UNITS,
   type Drink,
   type Ingredient,
+  type Option,
   type Picks,
+  type Slot,
   type Step,
 } from '../riff-engine'
 import { DrinkView } from '../drink-page/DrinkPage'
 import { isCustomDrinkId } from './copy-drink'
 import { blankDrink, checkDraft, newStepId, stepInUse, type FieldErrors } from './check-draft'
+import type { Favorite } from '../favorites/favorite'
+import { useFavorites } from '../favorites/store'
 import { changed, dropDraft, getDraft, setDraft, type Draft } from './drafts'
+import { addOption, addSlot, favoritesPickingFrom, removeOption, removeSlot } from './edit-slots'
 import { putCustomDrink, shortId, useDrinks } from './store'
 import '../drink-page/drink-page.css'
 import './editor.css'
@@ -72,6 +77,8 @@ export function EditorPage() {
 function Editor({ entry }: { entry: Draft }) {
   const navigate = useNavigate()
   const { drinks } = useDrinks()
+  const favoritesState = useFavorites()
+  const favorites = favoritesState.status === 'ready' ? favoritesState.favorites : []
   const [draft, setDraftState] = useState(entry.draft)
   const [leaving, setLeaving] = useState(false)
   const [saveFailed, setSaveFailed] = useState(false)
@@ -128,7 +135,7 @@ function Editor({ entry }: { entry: Draft }) {
 
         <Basics draft={draft} errors={errors} onChange={update} />
         <Ingredients draft={draft} errors={errors} onChange={update} />
-        <Slots draft={draft} error={errors.slots} />
+        <Slots draft={draft} errors={errors} favorites={favorites} onChange={update} />
         <Steps draft={draft} errors={errors} onChange={update} />
 
         {errors.drink && (
@@ -259,108 +266,413 @@ function Basics({ draft, errors, onChange }: SectionProps) {
 
 // The fixed ingredients, outside any Slot.
 function Ingredients({ draft, errors, onChange }: SectionProps) {
-  const setAt = (i: number, ingredient: Ingredient) =>
-    onChange({ ...draft, ingredients: draft.ingredients.map((other, j) => (j === i ? ingredient : other)) })
   return (
     <section className="ed-section" aria-labelledby="ed-ingredients">
       <h2 id="ed-ingredients">Ingredients</h2>
-      <p className="ed-hint">The ones every version uses. Ingredients that swap belong to a Slot.</p>
-      <ul className="ed-rows">
-        {draft.ingredients.map((ingredient, i) => (
-          <li key={i} className="ed-ingredient">
-            <div className="ed-ingredient-fields">
-              <input
-                className="ed-input ed-amount"
-                type="number"
-                inputMode="decimal"
-                min="0"
-                step="any"
-                aria-label={`Amount of ingredient ${i + 1}`}
-                disabled={!isMeasured(ingredient.unit)}
-                value={isMeasured(ingredient.unit) ? (ingredient.amount ?? '') : ''}
-                onChange={(event) =>
-                  setAt(i, {
-                    ...ingredient,
-                    amount: event.target.value === '' ? undefined : Number(event.target.value),
-                  })
-                }
-              />
-              <select
-                className="ed-input ed-unit"
-                aria-label={`Unit of ingredient ${i + 1}`}
-                value={ingredient.unit}
-                onChange={(event) => setAt(i, { ...ingredient, unit: event.target.value as Ingredient['unit'] })}
-              >
-                {UNITS.map((unit) => (
-                  <option key={unit} value={unit}>
-                    {UNIT_NAMES[unit]}
-                  </option>
-                ))}
-              </select>
-              <input
-                className="ed-input ed-ingredient-name"
-                aria-label={`Ingredient ${i + 1}`}
-                placeholder="fresh lime juice"
-                value={ingredient.name}
-                onChange={(event) => setAt(i, { ...ingredient, name: event.target.value })}
-              />
-              <button
-                type="button"
-                className="ed-icon"
-                aria-label={`Remove ingredient ${i + 1}`}
-                onClick={() => onChange({ ...draft, ingredients: draft.ingredients.filter((_, j) => j !== i) })}
-              >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M6 6l12 12M18 6L6 18" />
-                </svg>
-              </button>
-            </div>
-            <FieldError message={errors[`ingredients.${i}`]} />
-          </li>
-        ))}
-      </ul>
-      <button
-        type="button"
-        className="ed-add"
-        onClick={() => onChange({ ...draft, ingredients: [...draft.ingredients, { name: '', amount: undefined, unit: 'oz' }] })}
-      >
-        Add an ingredient
-      </button>
+      <p className="ed-hint">The ones every version uses. Ingredients that swap belong to a Slot's Options.</p>
+      <IngredientRows
+        name="ingredient"
+        ingredients={draft.ingredients}
+        errors={errors}
+        errorKey="ingredients"
+        onChange={(ingredients) => onChange({ ...draft, ingredients })}
+      />
     </section>
   )
 }
 
-// The Slots and their Options, with the House Spec's Option marked. Not
-// editable yet.
-function Slots({ draft, error }: { draft: Drink; error: string | undefined }) {
+// Ingredient rows with an amount, a unit and a name, and a button to add
+// one. `name` makes each field's label unique on the page.
+function IngredientRows({
+  name,
+  ingredients,
+  errors,
+  errorKey,
+  onChange,
+}: {
+  name: string
+  ingredients: Ingredient[]
+  errors: FieldErrors
+  errorKey: string
+  onChange: (ingredients: Ingredient[]) => void
+}) {
+  const setAt = (i: number, ingredient: Ingredient) =>
+    onChange(ingredients.map((other, j) => (j === i ? ingredient : other)))
   return (
-    <section className="ed-section" aria-labelledby="ed-slots">
-      <h2 id="ed-slots">Slots</h2>
-      <p className="ed-hint">The parts that swap. Steps name a Slot in braces, such as {'{fizz}'}.</p>
-      {draft.slots.length > 0 ? (
-        <ul className="ed-slots">
-          {draft.slots.map((slot) => (
-            <li key={slot.id}>
-              <p className="ed-slot-name">
-                {slot.label} <code>{`{${slot.id}}`}</code>
-                {slot.optional && <span className="ed-tag">optional</span>}
-              </p>
-              <p className="ed-slot-options">
-                {slot.options
-                  .filter((option) => !option.retired)
-                  .map((option) => (
-                    <span key={option.id} className={draft.houseSpec[slot.id] === option.id ? 'is-house' : undefined}>
-                      {option.label}
-                    </span>
+    <>
+      {ingredients.length > 0 && (
+        <ul className="ed-rows">
+          {ingredients.map((ingredient, i) => (
+            <li key={i} className="ed-ingredient">
+              <div className="ed-ingredient-fields">
+                <input
+                  className="ed-input ed-amount"
+                  type="number"
+                  inputMode="decimal"
+                  min="0"
+                  step="any"
+                  aria-label={`Amount of ${name} ${i + 1}`}
+                  disabled={!isMeasured(ingredient.unit)}
+                  value={isMeasured(ingredient.unit) ? (ingredient.amount ?? '') : ''}
+                  onChange={(event) =>
+                    setAt(i, {
+                      ...ingredient,
+                      amount: event.target.value === '' ? undefined : Number(event.target.value),
+                    })
+                  }
+                />
+                <select
+                  className="ed-input ed-unit"
+                  aria-label={`Unit of ${name} ${i + 1}`}
+                  value={ingredient.unit}
+                  onChange={(event) => setAt(i, { ...ingredient, unit: event.target.value as Ingredient['unit'] })}
+                >
+                  {UNITS.map((unit) => (
+                    <option key={unit} value={unit}>
+                      {UNIT_NAMES[unit]}
+                    </option>
                   ))}
-              </p>
+                </select>
+                <input
+                  className="ed-input ed-ingredient-name"
+                  aria-label={`${capitalize(name)} ${i + 1}`}
+                  placeholder="fresh lime juice"
+                  value={ingredient.name}
+                  onChange={(event) => setAt(i, { ...ingredient, name: event.target.value })}
+                />
+                <button
+                  type="button"
+                  className="ed-icon"
+                  aria-label={`Remove ${name} ${i + 1}`}
+                  onClick={() => onChange(ingredients.filter((_, j) => j !== i))}
+                >
+                  <CrossIcon />
+                </button>
+              </div>
+              <FieldError message={errors[`${errorKey}.${i}`]} />
             </li>
           ))}
         </ul>
-      ) : null}
-      <p className="ed-hint">The highlighted Option is the House Spec. Changing Slots and Options isn't here yet.</p>
-      <FieldError message={error} />
+      )}
+      <button
+        type="button"
+        className="ed-add"
+        onClick={() => onChange([...ingredients, { name: '', amount: undefined, unit: 'oz' }])}
+      >
+        Add an ingredient
+      </button>
+    </>
+  )
+}
+
+function CrossIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  )
+}
+
+function ArrowIcon({ up }: { up: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d={up ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6'} />
+    </svg>
+  )
+}
+
+// A text box and a button that adds something named by it. The name has to
+// come first, since the new Slot's or Option's ID is made from it.
+function AddNamed({ label, button, onAdd }: { label: string; button: string; onAdd: (name: string) => void }) {
+  const [name, setName] = useState('')
+  const add = () => {
+    if (!name.trim()) return
+    onAdd(name.trim())
+    setName('')
+  }
+  return (
+    <div className="ed-add-named">
+      <input
+        className="ed-input"
+        aria-label={label}
+        placeholder={label}
+        value={name}
+        onChange={(event) => setName(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') add()
+        }}
+      />
+      <button type="button" className="ed-add" disabled={!name.trim()} onClick={add}>
+        {button}
+      </button>
+    </div>
+  )
+}
+
+// The Slots, each with its Options and House Spec pick. Removing a Slot that
+// Favorites pick from asks first; removing an Option a Favorite uses retires
+// it instead (removeOption).
+function Slots({ draft, errors, favorites, onChange }: SectionProps & { favorites: Favorite[] }) {
+  const [removing, setRemoving] = useState<Slot | null>(null)
+  const picking = removing ? favoritesPickingFrom(draft.id, removing.id, favorites) : 0
+  const move = (i: number, by: number) => {
+    const slots = [...draft.slots]
+    ;[slots[i], slots[i + by]] = [slots[i + by], slots[i]]
+    onChange({ ...draft, slots })
+  }
+  const askToRemove = (slot: Slot) =>
+    favoritesPickingFrom(draft.id, slot.id, favorites) > 0 ? setRemoving(slot) : onChange(removeSlot(draft, slot.id))
+
+  return (
+    <section className="ed-section" aria-labelledby="ed-slots">
+      <h2 id="ed-slots">Slots</h2>
+      <p className="ed-hint">
+        The parts that swap, each with its Options. The House Spec is the Option the drink opens with.
+      </p>
+      <ol className="ed-rows">
+        {draft.slots.map((slot, s) => (
+          <li key={slot.id} className="ed-slot">
+            <SlotEditor
+              draft={draft}
+              slot={slot}
+              index={s}
+              errors={errors}
+              favorites={favorites}
+              onChange={onChange}
+              onMove={(by) => move(s, by)}
+              onRemove={() => askToRemove(slot)}
+            />
+          </li>
+        ))}
+      </ol>
+      <FieldError message={errors.slots} />
+      <AddNamed label="New Slot, such as Fizz" button="Add a Slot" onAdd={(label) => onChange(addSlot(draft, label))} />
+
+      {removing && (
+        <Sheet label={`Remove ${removing.label}?`} onClose={() => setRemoving(null)}>
+          <h2>Remove {removing.label}?</h2>
+          <p className="ed-sheet-note">
+            {picking} {picking === 1 ? 'Favorite picks' : 'Favorites pick'} from this Slot.{' '}
+            {picking === 1 ? "It'll" : "They'll"} open without it.
+          </p>
+          <button
+            type="button"
+            className="dp-delete-confirm"
+            onClick={() => {
+              onChange(removeSlot(draft, removing.id))
+              setRemoving(null)
+            }}
+          >
+            Remove
+          </button>
+        </Sheet>
+      )}
     </section>
+  )
+}
+
+function SlotEditor({
+  draft,
+  slot,
+  index,
+  errors,
+  favorites,
+  onChange,
+  onMove,
+  onRemove,
+}: SectionProps & {
+  slot: Slot
+  index: number
+  favorites: Favorite[]
+  onMove: (by: number) => void
+  onRemove: () => void
+}) {
+  const setSlot = (next: Slot) => onChange({ ...draft, slots: draft.slots.map((other) => (other.id === slot.id ? next : other)) })
+  const setHouseSpec = (optionId: string | null) => onChange({ ...draft, houseSpec: { ...draft.houseSpec, [slot.id]: optionId } })
+  const pickable = slot.options.filter((option) => !option.retired)
+  const retired = slot.options.filter((option) => option.retired)
+  const label = slot.label.trim() || `Slot ${index + 1}`
+
+  return (
+    <>
+      <div className="ed-slot-head">
+        <input
+          className="ed-input ed-slot-label"
+          aria-label={`Slot ${index + 1} name`}
+          value={slot.label}
+          onChange={(event) => setSlot({ ...slot, label: event.target.value })}
+        />
+        <button type="button" className="ed-icon" aria-label={`Move ${label} up`} disabled={index === 0} onClick={() => onMove(-1)}>
+          <ArrowIcon up />
+        </button>
+        <button
+          type="button"
+          className="ed-icon"
+          aria-label={`Move ${label} down`}
+          disabled={index === draft.slots.length - 1}
+          onClick={() => onMove(1)}
+        >
+          <ArrowIcon up={false} />
+        </button>
+        <button type="button" className="ed-icon" aria-label={`Remove ${label}`} onClick={onRemove}>
+          <CrossIcon />
+        </button>
+      </div>
+      <p className="ed-hint">
+        Steps name it <code>{`{${slot.id}}`}</code>.
+      </p>
+      <label className="ed-check">
+        <input
+          type="checkbox"
+          checked={slot.optional === true}
+          onChange={(event) => {
+            const { optional: _optional, ...rest } = slot
+            setSlot(event.target.checked ? { ...rest, optional: true } : rest)
+            // A Slot that must be filled can't open empty.
+            if (!event.target.checked && draft.houseSpec[slot.id] == null && pickable[0]) {
+              onChange({
+                ...draft,
+                slots: draft.slots.map((other) => (other.id === slot.id ? rest : other)),
+                houseSpec: { ...draft.houseSpec, [slot.id]: pickable[0].id },
+              })
+            }
+          }}
+        />
+        Can be left empty
+      </label>
+      <FieldError message={errors[`slots.${index}`]} />
+
+      <p className="ed-label">House Spec</p>
+      <div className="ed-chips" role="group" aria-label={`House Spec for ${label}`}>
+        {pickable.map((option) => (
+          <button
+            key={option.id}
+            type="button"
+            aria-pressed={draft.houseSpec[slot.id] === option.id}
+            onClick={() => setHouseSpec(option.id)}
+          >
+            {option.label.trim() || 'Unnamed'}
+          </button>
+        ))}
+        {slot.optional && (
+          <button type="button" aria-pressed={draft.houseSpec[slot.id] == null} onClick={() => setHouseSpec(null)}>
+            None
+          </button>
+        )}
+      </div>
+
+      <p className="ed-label">Options</p>
+      <ol className="ed-rows ed-options">
+        {slot.options.map((option, o) =>
+          option.retired ? null : (
+            <li key={option.id} className="ed-option">
+              <OptionEditor
+                draft={draft}
+                slot={slot}
+                slotIndex={index}
+                option={option}
+                optionIndex={o}
+                errors={errors}
+                onChange={onChange}
+                onRemove={() => onChange(removeOption(draft, slot.id, option.id, favorites))}
+              />
+            </li>
+          ),
+        )}
+      </ol>
+      {retired.length > 0 && (
+        <p className="ed-hint">
+          Retired, kept for Favorites: {retired.map((option) => option.label).join(', ')}.
+        </p>
+      )}
+      <AddNamed
+        label={`New ${label} Option`}
+        button="Add an Option"
+        onAdd={(name) => onChange(addOption(draft, slot.id, name))}
+      />
+    </>
+  )
+}
+
+// Options that change steps or the Method came with a copied House Drink.
+// The editor shows them but can't change them, and saves them as they are.
+const changesSteps = (option: Option) =>
+  Boolean(option.method || option.addSteps?.length || option.removeSteps?.length || option.durations)
+
+function OptionEditor({
+  draft,
+  slot,
+  slotIndex,
+  option,
+  optionIndex,
+  errors,
+  onChange,
+  onRemove,
+}: SectionProps & {
+  slot: Slot
+  slotIndex: number
+  option: Option
+  optionIndex: number
+  onRemove: () => void
+}) {
+  const setOption = (next: Option) =>
+    onChange({
+      ...draft,
+      slots: draft.slots.map((other) =>
+        other.id === slot.id ? { ...other, options: other.options.map((o) => (o.id === option.id ? next : o)) } : other,
+      ),
+    })
+  const name = `${slot.label.trim() || 'Slot'} Option ${optionIndex + 1}`
+  const remove = (
+    <button type="button" className="ed-icon" aria-label={`Remove ${name}`} onClick={onRemove}>
+      <CrossIcon />
+    </button>
+  )
+
+  if (changesSteps(option)) {
+    return (
+      <>
+        <div className="ed-option-head">
+          <p className="ed-option-fixed">{option.label}</p>
+          {remove}
+        </div>
+        <p className="ed-hint">This Option changes the steps or Method, so it can't be edited here.</p>
+      </>
+    )
+  }
+
+  return (
+    <>
+      <div className="ed-option-head">
+        <input
+          className="ed-input"
+          aria-label={name}
+          value={option.label}
+          onChange={(event) => setOption({ ...option, label: event.target.value })}
+        />
+        {remove}
+      </div>
+      <FieldError message={errors[`slots.${slotIndex}.options.${optionIndex}`]} />
+      <label className="ed-label ed-phrase">
+        <span>
+          In steps, <code>{`{${slot.id}}`}</code> reads
+        </span>
+        <input
+          className="ed-input"
+          aria-label={`${name} step words`}
+          placeholder={option.label.trim().toLowerCase()}
+          value={option.phrase ?? ''}
+          onChange={(event) => setOption({ ...option, phrase: event.target.value })}
+        />
+      </label>
+      <IngredientRows
+        name={`${name} ingredient`}
+        ingredients={option.ingredients}
+        errors={errors}
+        errorKey={`slots.${slotIndex}.options.${optionIndex}.ingredients`}
+        onChange={(ingredients) => setOption({ ...option, ingredients })}
+      />
+    </>
   )
 }
 
@@ -389,9 +701,7 @@ function Steps({ draft, errors, onChange }: SectionProps) {
               <div className="ed-step-head">
                 <span className="ed-step-number">{i + 1}</span>
                 <button type="button" className="ed-icon" aria-label={`Move step ${i + 1} up`} disabled={i === 0} onClick={() => move(i, -1)}>
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M6 15l6-6 6 6" />
-                  </svg>
+                  <ArrowIcon up />
                 </button>
                 <button
                   type="button"
@@ -400,9 +710,7 @@ function Steps({ draft, errors, onChange }: SectionProps) {
                   disabled={i === draft.steps.length - 1}
                   onClick={() => move(i, 1)}
                 >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M6 9l6 6 6-6" />
-                  </svg>
+                  <ArrowIcon up={false} />
                 </button>
                 <button
                   type="button"
@@ -412,9 +720,7 @@ function Steps({ draft, errors, onChange }: SectionProps) {
                   title={inUse ? 'An Option uses this step' : undefined}
                   onClick={() => onChange({ ...draft, steps: draft.steps.filter((_, j) => j !== i) })}
                 >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M6 6l12 12M18 6L6 18" />
-                  </svg>
+                  <CrossIcon />
                 </button>
               </div>
               <textarea

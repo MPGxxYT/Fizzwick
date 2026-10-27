@@ -82,6 +82,54 @@ describe('checkDraft', () => {
   })
 })
 
+describe('checkDraft on Slots and Options', () => {
+  const withSlot = (change: (slot: Drink['slots'][number]) => Drink['slots'][number]) => ({
+    ...copy,
+    slots: copy.slots.map((slot) => (slot.id === 'fizz' ? change(slot) : slot)),
+  })
+
+  test('each Slot and Option needs a name', () => {
+    const draft = withSlot((slot) => ({
+      ...slot,
+      label: ' ',
+      options: slot.options.map((option, i) => (i === 1 ? { ...option, label: '' } : option)),
+    }))
+    expect(checkDraft(draft, []).errors).toEqual({
+      'slots.2': 'Name the Slot.',
+      'slots.2.options.1': 'Name the Option.',
+    })
+  })
+
+  test("an Option's ingredients are checked like the fixed ones", () => {
+    const draft = withSlot((slot) => ({
+      ...slot,
+      options: slot.options.map((option, i) => (i === 0 ? { ...option, ingredients: [{ name: 'soda', unit: 'oz' as const }] } : option)),
+    }))
+    expect(checkDraft(draft, []).errors).toEqual({ 'slots.2.options.0.ingredients.0': 'Add an amount.' })
+  })
+
+  test('a Slot needs an Option that can still be picked', () => {
+    const draft = withSlot((slot) => ({ ...slot, options: slot.options.map((option) => ({ ...option, retired: true })) }))
+    expect(checkDraft(draft, []).errors).toEqual({ 'slots.2': 'Add an Option to this Slot.' })
+  })
+
+  test('a Slot that must be filled needs a House Spec Option', () => {
+    expect(checkDraft({ ...copy, houseSpec: { ...copy.houseSpec, fizz: null } }, []).errors).toEqual({
+      'slots.2': 'Pick the House Spec Option, or make the Slot optional.',
+    })
+  })
+
+  test('Option labels and phrases are trimmed on save, and an empty phrase is dropped', () => {
+    const draft = withSlot((slot) => ({
+      ...slot,
+      options: slot.options.map((option, i) => (i === 0 ? { ...option, label: ' Lemon-lime soda ', phrase: '  ' } : option)),
+    }))
+    const option = checkDraft(draft, []).drink?.slots[2].options[0]
+    expect(option?.label).toBe('Lemon-lime soda')
+    expect(option && 'phrase' in option).toBe(false)
+  })
+})
+
 describe('stepInUse', () => {
   test('a step an Option removes or adds after is in use', () => {
     expect(stepInUse(copy, 'add-base')).toBe(true) // muddled cherries remove it
