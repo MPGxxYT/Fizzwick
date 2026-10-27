@@ -107,7 +107,7 @@ export function BarTermsPage() {
         )}
       </main>
 
-      {open && <TermSheet term={open} linkToPage={false} onClose={() => setOpen(null)} />}
+      {open && <TermSheet term={open} linkToPage={false} linkToDrinks onClose={() => setOpen(null)} />}
     </div>
   )
 }

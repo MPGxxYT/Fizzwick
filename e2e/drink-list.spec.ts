@@ -63,3 +63,45 @@ test('opening a Drink from far down the list starts at the top, and going back r
   await expect(page.getByRole('heading', { name: 'Fizzwick' })).toBeVisible()
   await expect.poll(scrollY).toBeGreaterThan(listY - 50)
 })
+
+test('the tool filter keeps Drinks you can make, opened on a Riff that fits', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('group', { name: 'What you have' }).getByRole('button', { name: 'Tools' }).click()
+  const tools = page.getByRole('dialog', { name: 'Tools you have' })
+  await tools.getByRole('button', { name: 'Jigger' }).click()
+  await tools.getByRole('button', { name: 'Shaker', exact: true }).click()
+  await tools.getByRole('button', { name: 'Close' }).click()
+
+  await expect(page.getByRole('group', { name: 'What you have' }).getByRole('button', { name: '2 tools' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  // Garden Smash always needs a muddler; Citrus Spritz drops the peel garnish.
+  await expect(page.getByRole('link', { name: /Garden Smash/ })).toHaveCount(0)
+  const spritz = page.getByRole('link', { name: /Citrus Spritz/ })
+  await expect(spritz).toContainText('With rosemary sprig')
+  await spritz.click()
+  await expect(page).toHaveURL(/\/drinks\/citrus-spritz\/garnish=/)
+})
+
+test('the ingredient filter finds every Drink that can use what you made', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('group', { name: 'What you have' }).getByRole('button', { name: 'Ingredients' }).click()
+  const sheet = page.getByRole('dialog', { name: 'Ingredients' })
+  await sheet.getByRole('searchbox', { name: 'Search ingredients' }).fill('raspberr')
+  await sheet.getByRole('button', { name: 'Raspberry syrup' }).click()
+  await sheet.getByRole('button', { name: 'Raspberries', exact: true }).click()
+  await sheet.getByRole('button', { name: 'Close' }).click()
+
+  await expect(page.getByText('3 drinks', { exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: /Nojito/ })).toContainText('With muddled raspberries')
+})
+
+test('a syrup Bar Term links to the Drinks that use it', async ({ page }) => {
+  await page.goto('/bar-terms#raspberry-syrup')
+  await page.getByRole('link', { name: 'Drinks that use it' }).click()
+  await expect(page).toHaveURL(/\/\?ing=raspberry\+syrup/)
+  await expect(page.getByRole('link', { name: /Italian Soda/ })).toBeVisible()
+  await expect(page.getByRole('link', { name: /Raspberry Clover/ })).toBeVisible()
+  await expect(page.getByText('2 drinks', { exact: true })).toBeVisible()
+})

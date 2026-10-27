@@ -786,6 +786,10 @@
   text-decoration: none;
 }
 
+.dp-term-all + .dp-term-all {
+  margin-left: 1.5rem;
+}
+
 /* Underlines turned off in Settings: the term looks like the text around it
    and still opens its definition. */
 .dp-term.is-plain {
