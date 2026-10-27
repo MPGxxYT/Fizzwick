@@ -146,3 +146,42 @@ export function filterChoices(drinks: Drink[]): { methods: Method[]; flavors: Fl
     flavors: FLAVOR_TAGS.filter((flavor) => flavors.has(flavor)),
   }
 }
+
+// Groups for browsing ingredients, in the order the picker shows them.
+export const INGREDIENT_GROUPS = [
+  'Syrups and sweeteners',
+  'Juices',
+  'Fruit and vegetables',
+  'Herbs, spices and bitters',
+  'Milk, cream and egg',
+  'Tea and coffee',
+  'Sodas and tonics',
+  'Garnishes',
+  'Ice and water',
+  'Other',
+] as const
+export type IngredientGroup = (typeof INGREDIENT_GROUPS)[number]
+
+// Which group a name falls in: the first rule that matches. The order
+// matters, so "soda water" is a soda before it is water, and "mint sprig,
+// for garnish" is a garnish before it is an herb. A House Drink test fails
+// when a new ingredient lands in Other.
+const GROUP_RULES: [IngredientGroup, RegExp][] = [
+  ['Sodas and tonics', /soda|tonic|ginger ale|ginger beer|sparkling/],
+  ['Ice and water', /\bice\b|water$/],
+  ['Juices', /juice|purée/],
+  ['Syrups and sweeteners', /syrup|agave|honey|grenadine|sweetener/],
+  ['Tea and coffee', /\btea\b|rooibos|lapsang|coffee|espresso|cold brew/],
+  ['Garnishes', /garnish|wheel|wedge|peel|pick$|cherry$|slice$|ribbons|stalk|spear|candied|flakes|sprig$|stick$/],
+  ['Milk, cream and egg', /milk|cream|half-and-half|yogurt|egg|aquafaba/],
+  ['Herbs, spices and bitters', /leaves|sprigs|ground|cloves|salt|pepper|nutmeg|tajín|hot sauce|horseradish|bitters|extract/],
+  ['Fruit and vegetables', /berr|cherries|mango|watermelon|cucumber|apple|pear|lemon|lime|orange/],
+]
+
+// Ingredient names in their groups, groups in a fixed order, empty ones left out.
+export function groupIngredients(names: string[]): { group: IngredientGroup; names: string[] }[] {
+  const groupOf = (name: string) => GROUP_RULES.find(([, rule]) => rule.test(name))?.[0] ?? 'Other'
+  return INGREDIENT_GROUPS.map((group) => ({ group, names: names.filter((name) => groupOf(name) === group) })).filter(
+    ({ names }) => names.length > 0,
+  )
+}

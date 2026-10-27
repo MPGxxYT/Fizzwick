@@ -170,6 +170,13 @@
   margin: 0 0 1rem;
 }
 
+.dl-sheet-group h3 {
+  margin: 1.25rem 0 0.6rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 .dl-sheet-chips button,
 .dl-sheet-clear {
   min-height: 2.75rem;
