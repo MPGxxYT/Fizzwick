@@ -3,6 +3,7 @@ import { markBarTerms } from '../bar-terms'
 import { GLASS_NAMES, isMakeAhead, METHOD_NAMES, TOOL_NAMES } from '../drink-page/format'
 import { checkEveryRiff, GLASSES, METHODS, parseDrinkFile, resolveRiff, type Drink, type Ingredient, type Picks } from '../riff-engine'
 import { timedPart } from '../step-mode/timed-part'
+import { isCustomDrinkId } from '../custom-drinks/copy-drink'
 import { houseDrinks } from './catalog'
 
 // Every House Drink file in this folder must parse, and every combination of
@@ -29,6 +30,10 @@ describe('House Drink files', () => {
   test('Drink IDs are unique', () => {
     const ids = Object.values(files).map((contents) => (contents as { id: string }).id)
     expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  test('no House Drink ID starts with my-, which marks Custom Drinks', () => {
+    for (const drink of houseDrinks) expect(isCustomDrinkId(drink.id)).toBe(false)
   })
 
   test('each Drink points at its own photo', () => {

@@ -14,6 +14,7 @@ _Avoid_: Built-in drink, default drink
 
 **Custom Drink**:
 A Drink a user made or imported, which they can edit and delete. An import always becomes a new Custom Drink, never replacing an existing one.
+Its ID starts with `my-`, which no House Drink ID does, and never changes. The Drink list marks Custom Drinks "Yours".
 _Avoid_: User drink, imported drink
 
 **Slot**:
@@ -33,7 +34,7 @@ A Drink together with the Option picked for each of its Slots.
 _Avoid_: Mix, combo, build, variation
 
 **House Spec**:
-The Riff a House Drink opens with: Fizzwick's standard version of that drink.
+The Riff a Drink opens with: its standard version. A House Drink's is Fizzwick's; a Custom Drink's is whatever its maker set, and for a copy it starts as the Riff that was copied.
 _Avoid_: Default riff, original, classic
 
 **Riff link**:

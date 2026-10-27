@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import { GlassSketch } from '../drink-page/GlassSketch'
 import { Sheet } from '../drink-page/Sheet'
 import type { DrinkPageState } from '../drink-page/DrinkPage'
-import { findHouseDrink } from '../house-drinks/catalog'
+import { useDrinks } from '../custom-drinks/store'
 import { resolveRiff, riffLink } from '../riff-engine'
 import { favoritePicks, type Favorite } from './favorite'
 import { Heart } from './SaveFavorite'
@@ -65,7 +65,8 @@ export function FavoritesPage() {
 }
 
 function FavoriteCard({ favorite, onEdit }: { favorite: Favorite; onEdit: () => void }) {
-  const drink = findHouseDrink(favorite.drinkId)
+  const { status, drinks } = useDrinks()
+  const drink = drinks.find((other) => other.id === favorite.drinkId)
   const picks = drink ? favoritePicks(drink, favorite.picks) : null
   const riff = drink && picks ? resolveRiff(drink, picks) : null
 
@@ -89,7 +90,8 @@ function FavoriteCard({ favorite, onEdit }: { favorite: Favorite; onEdit: () => 
         <div className="fv-open">
           <span className="fv-text">
             <span className="fv-name">{favorite.name}</span>
-            <span className="fv-drink">This drink isn't in Fizzwick anymore.</span>
+            {/* A Custom Drink may still be loading. */}
+            {status === 'ready' && <span className="fv-drink">This drink isn't in Fizzwick anymore.</span>}
           </span>
         </div>
       )}
