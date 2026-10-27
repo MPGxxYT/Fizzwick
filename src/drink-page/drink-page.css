@@ -1070,6 +1070,37 @@
 }
 
 /* The Close button at the bottom of every sheet. */
+.dp-delete {
+  display: block;
+  min-height: 2.75rem;
+  margin: 2rem auto 0;
+  padding: 0 1rem;
+  border: 0;
+  background: none;
+  color: var(--dp-soft);
+  font: 500 0.95rem 'Figtree', sans-serif;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.dp-delete-warning {
+  margin: 0 0 1rem;
+}
+
+/* The one button in the app that destroys something: filled in cherry. */
+.dp-delete-confirm {
+  display: block;
+  width: 100%;
+  min-height: 3rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--dp-cherry);
+  color: var(--dp-paper);
+  font: 700 1rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
+
 .dp-sheet-close {
   display: block;
   width: 100%;

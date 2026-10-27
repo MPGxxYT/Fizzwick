@@ -45,3 +45,32 @@ test('a Favorite of a Custom Drink opens from Favorites', async ({ page }) => {
   await page.getByRole('link', { name: /Cherry Limeade · soda water/ }).first().click()
   await expect(page.getByRole('heading', { name: 'Cherry Limeade · soda water' })).toBeVisible()
 })
+
+test('deleting a Custom Drink asks first, then removes it and its Favorites', async ({ page }) => {
+  await page.goto('/drinks/cherry-limeade/fizz=soda-water')
+  await page.getByRole('button', { name: 'Make a copy' }).click()
+  await expect(page.getByRole('heading', { name: 'Cherry Limeade · soda water' })).toBeVisible()
+  await page.getByRole('button', { name: 'Save to Favorites' }).click()
+  await expect(page.getByRole('button', { name: 'Remove from Favorites' })).toBeVisible()
+
+  await page.getByRole('button', { name: 'Delete this drink' }).click()
+  const sheet = page.getByRole('dialog', { name: 'Delete Cherry Limeade · soda water?' })
+  await expect(sheet).toContainText('This also removes your 1 Favorite of it.')
+  await sheet.getByRole('button', { name: 'Close' }).click()
+  await expect(page.getByRole('heading', { name: 'Cherry Limeade · soda water' })).toBeVisible()
+
+  await page.getByRole('button', { name: 'Delete this drink' }).click()
+  await sheet.getByRole('button', { name: 'Delete', exact: true }).click()
+  await expect(page).toHaveURL(/\/$/)
+  await expect(page.getByRole('link', { name: /Cherry Limeade · soda water/ })).toHaveCount(0)
+  await expect(page.getByRole('group', { name: 'Show' })).toHaveCount(0)
+
+  await page.goto('/favorites')
+  await expect(page.getByText('No Favorites yet.')).toBeVisible()
+})
+
+test('House Drinks have no Delete button', async ({ page }) => {
+  await page.goto('/drinks/cherry-limeade')
+  await expect(page.getByRole('heading', { name: 'Cherry Limeade' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Delete this drink' })).toHaveCount(0)
+})
