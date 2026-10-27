@@ -2,7 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import type { ListState } from '../drink-list/DrinkList'
 import { SaveFavorite } from '../favorites/SaveFavorite'
+import { isCustomDrinkId } from '../custom-drinks/copy-drink'
 import { CopyDrink } from '../custom-drinks/CopyDrink'
+import { DeleteDrink } from '../custom-drinks/DeleteDrink'
 import { useDrinks } from '../custom-drinks/store'
 import { GLASS_SIZES_OZ, readRiffLink, resolveRiff, riffLink, type Drink, type Picks } from '../riff-engine'
 import { NotFound } from '../NotFound'
@@ -153,6 +155,7 @@ function DrinkView({ drink, pairs }: { drink: Drink; pairs: string | undefined }
         </div>
 
         <RecipeCard riff={riff} onServings={setServings} changeColor={changeColor} />
+        {isCustomDrinkId(drink.id) && <DeleteDrink drink={drink} />}
       </main>
 
       {!making && (

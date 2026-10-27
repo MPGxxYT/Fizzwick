@@ -54,6 +54,12 @@ export async function putCustomDrink(drink: Drink): Promise<void> {
   set({ status: 'ready', drinks: [...others, drink] })
 }
 
+export async function deleteCustomDrink(id: string): Promise<void> {
+  await load()
+  await run('drinks', 'readwrite', (store) => store.delete(id))
+  set({ status: 'ready', drinks: state.status === 'ready' ? state.drinks.filter((drink) => drink.id !== id) : [] })
+}
+
 // Eight lowercase letters and digits, for the random part of a Custom Drink ID.
 export function shortId(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(8))
