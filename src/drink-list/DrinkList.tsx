@@ -3,15 +3,18 @@ import { Link, useSearchParams } from 'react-router'
 import { APP_NAME } from '../app-name'
 import { Bubbles } from '../drink-page/Ambience'
 import { readable } from '../drink-page/colors'
-import { glassInSentence, GLASS_NAMES, METHOD_NAMES } from '../drink-page/format'
+import { glassInSentence, GLASS_NAMES, METHOD_NAMES, TOOL_NAMES } from '../drink-page/format'
 import { GlassSketch } from '../drink-page/GlassSketch'
+import { Sheet } from '../drink-page/Sheet'
 import { Heart } from '../favorites/SaveFavorite'
 import { houseDrinks } from '../house-drinks/catalog'
-import { filterChoices, searchDrinks } from '../house-drinks/search'
-import { FLAVOR_TAGS, METHODS, resolveRiff, type Drink, type FlavorTag, type Method } from '../riff-engine'
+import { filterChoices, ingredientChoices, searchDrinks, toolChoices, type FoundDrink } from '../house-drinks/search'
+import { FLAVOR_TAGS, METHODS, resolveRiff, riffLink, TOOLS, type FlavorTag, type Method, type Tool } from '../riff-engine'
 import './drink-list.css'
 
 const CHOICES = filterChoices(houseDrinks)
+const TOOL_CHOICES = toolChoices(houseDrinks)
+const INGREDIENT_CHOICES = ingredientChoices(houseDrinks)
 // The card's ground, so the Drink names on it stay readable.
 const CARD = '#2e2049'
 
@@ -22,16 +25,27 @@ export interface ListState {
 
 const isMethod = (value: string | null): value is Method => (METHODS as readonly string[]).includes(value ?? '')
 const isFlavor = (value: string | null): value is FlavorTag => (FLAVOR_TAGS as readonly string[]).includes(value ?? '')
+const isTool = (value: string): value is Tool => (TOOLS as readonly string[]).includes(value)
 
-// Home: every Drink, with search by name or ingredient and filters by Method
-// and Flavor Tag. The search and filters live in the address, so coming back
-// from a Drink shows the same list.
+// Home: every Drink, with search by name or ingredient and filters by Method,
+// Flavor Tag, the tools you have and the ingredients you want to use. The
+// search and filters live in the address, so coming back from a Drink shows
+// the same list.
 export function DrinkList() {
   const [params, setParams] = useSearchParams()
   const query = params.get('q') ?? ''
   const method = isMethod(params.get('method')) ? (params.get('method') as Method) : undefined
   const flavor = isFlavor(params.get('flavor')) ? (params.get('flavor') as FlavorTag) : undefined
-  const found = useMemo(() => searchDrinks(houseDrinks, { query, method, flavor }), [query, method, flavor])
+  // Joined into strings so the lists only change when the address does.
+  const toolParam = params.getAll('tool').join(',')
+  const ingredientParam = params.getAll('ing').join('\n')
+  const tools = useMemo(() => (toolParam ? toolParam.split(',').filter(isTool) : []), [toolParam])
+  const ingredients = useMemo(() => (ingredientParam ? ingredientParam.split('\n') : []), [ingredientParam])
+  const found = useMemo(
+    () => searchDrinks(houseDrinks, { query, method, flavor, ingredients, tools: tools.length > 0 ? tools : undefined }),
+    [query, method, flavor, ingredients, tools],
+  )
+  const [sheet, setSheet] = useState<'tools' | 'ingredients' | null>(null)
 
   const update = (key: 'q' | 'method' | 'flavor', value: string | undefined) => {
     const next = new URLSearchParams(params)
@@ -39,7 +53,14 @@ export function DrinkList() {
     else next.delete(key)
     setParams(next, { replace: true })
   }
-  const filtered = Boolean(query.trim() || method || flavor)
+  const updateAll = (key: 'tool' | 'ing', values: string[]) => {
+    const next = new URLSearchParams(params)
+    next.delete(key)
+    for (const value of values) next.append(key, value)
+    setParams(next, { replace: true })
+  }
+  const filters = Boolean(method || flavor || tools.length > 0 || ingredients.length > 0)
+  const filtered = Boolean(query.trim()) || filters
   const searchId = useId()
 
   return (
@@ -93,6 +114,26 @@ export function DrinkList() {
           picked={flavor}
           onPick={(value) => update('flavor', value)}
         />
+        <div className="dl-filter" role="group" aria-label="What you have">
+          <span className="dl-filter-label">Have</span>
+          <div className="dl-chips">
+            <button type="button" aria-pressed={tools.length > 0} aria-haspopup="dialog" onClick={() => setSheet('tools')}>
+              {tools.length === 0 ? 'Tools' : tools.length === 1 ? TOOL_NAMES[tools[0]] : `${tools.length} tools`}
+            </button>
+            <button
+              type="button"
+              aria-pressed={ingredients.length > 0}
+              aria-haspopup="dialog"
+              onClick={() => setSheet('ingredients')}
+            >
+              {ingredients.length === 0
+                ? 'Ingredients'
+                : ingredients.length === 1
+                  ? capitalize(ingredients[0])
+                  : `${ingredients.length} ingredients`}
+            </button>
+          </div>
+        </div>
 
         <p className="dl-count" aria-live="polite">
           {found.length} {found.length === 1 ? 'drink' : 'drinks'}
@@ -101,8 +142,8 @@ export function DrinkList() {
         {found.length > 0 ? (
           <ul className="dl-drinks">
             {found.map((drink) => (
-              <li key={drink.id}>
-                <DrinkCard drink={drink} listSearch={params.toString()} />
+              <li key={drink.drink.id}>
+                <DrinkCard found={drink} listSearch={params.toString()} />
               </li>
             ))}
           </ul>
@@ -110,7 +151,7 @@ export function DrinkList() {
           <div className="dl-empty">
             <p>
               No drinks match{query.trim() ? ` "${query.trim()}"` : ''}
-              {method || flavor ? ' with these filters' : ''}. Try fewer words or another filter.
+              {filters ? ' with these filters' : ''}. Try fewer words or another filter.
             </p>
             {filtered && (
               <button type="button" onClick={() => setParams(new URLSearchParams(), { replace: true })}>
@@ -120,7 +161,110 @@ export function DrinkList() {
           </div>
         )}
       </main>
+
+      {sheet === 'tools' && (
+        <ToolSheet picked={tools} onChange={(next) => updateAll('tool', next)} onClose={() => setSheet(null)} />
+      )}
+      {sheet === 'ingredients' && (
+        <IngredientSheet picked={ingredients} onChange={(next) => updateAll('ing', next)} onClose={() => setSheet(null)} />
+      )}
     </div>
+  )
+}
+
+const capitalize = (text: string) => text[0].toUpperCase() + text.slice(1)
+
+// Tick the tools you have, and the list keeps the Drinks with a Riff you can
+// make with them. A barspoon and a strainer aren't offered: any long spoon
+// stirs, and a shaker's lid strains.
+function ToolSheet({ picked, onChange, onClose }: { picked: Tool[]; onChange: (tools: Tool[]) => void; onClose: () => void }) {
+  const toggle = (tool: Tool) =>
+    onChange(TOOL_CHOICES.filter((choice) => (choice === tool ? !picked.includes(tool) : picked.includes(choice))))
+  return (
+    <Sheet label="Tools you have" onClose={onClose}>
+      <h2>Tools you have</h2>
+      <p className="dl-sheet-note">
+        Shows the drinks you can make with just these. Any long spoon works as a barspoon, and a shaker's lid as a
+        strainer.
+      </p>
+      <div className="dl-sheet-chips" role="group" aria-label="Tools">
+        {TOOL_CHOICES.map((tool) => (
+          <button key={tool} type="button" aria-pressed={picked.includes(tool)} onClick={() => toggle(tool)}>
+            {TOOL_NAMES[tool]}
+          </button>
+        ))}
+      </div>
+      {picked.length > 0 && (
+        <button type="button" className="dl-sheet-clear" onClick={() => onChange([])}>
+          Clear tools
+        </button>
+      )}
+    </Sheet>
+  )
+}
+
+// Pick ingredients to use up, and the list keeps the Drinks with a Riff that
+// uses any of them. Picked ones stay at the top; a search narrows the rest.
+function IngredientSheet({
+  picked,
+  onChange,
+  onClose,
+}: {
+  picked: string[]
+  onChange: (ingredients: string[]) => void
+  onClose: () => void
+}) {
+  const [query, setQuery] = useState('')
+  const searchId = useId()
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean)
+  const rest = INGREDIENT_CHOICES.filter(
+    (ingredient) => !picked.includes(ingredient) && words.every((word) => ingredient.includes(word)),
+  )
+  const toggle = (ingredient: string) =>
+    onChange(picked.includes(ingredient) ? picked.filter((i) => i !== ingredient) : [...picked, ingredient])
+  const chip = (ingredient: string) => (
+    <button key={ingredient} type="button" aria-pressed={picked.includes(ingredient)} onClick={() => toggle(ingredient)}>
+      {capitalize(ingredient)}
+    </button>
+  )
+  return (
+    <Sheet label="Ingredients" onClose={onClose}>
+      <h2>Ingredients</h2>
+      <p className="dl-sheet-note">Shows the drinks that use any of these, opened on a version with them.</p>
+      {picked.length > 0 && (
+        <div className="dl-sheet-chips" role="group" aria-label="Picked ingredients">
+          {picked.map(chip)}
+        </div>
+      )}
+      <div className="dl-search dl-sheet-search">
+        <label htmlFor={searchId} className="dl-visually-hidden">
+          Search ingredients
+        </label>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5" />
+          <path d="M16 16l4.5 4.5" />
+        </svg>
+        <input
+          id={searchId}
+          type="search"
+          placeholder="Search ingredients"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+        />
+      </div>
+      {rest.length > 0 ? (
+        <div className="dl-sheet-chips" role="group" aria-label="Ingredients">
+          {rest.map(chip)}
+        </div>
+      ) : (
+        <p className="dl-sheet-note">No other ingredients match "{query.trim()}".</p>
+      )}
+      {picked.length > 0 && (
+        <button type="button" className="dl-sheet-clear" onClick={() => onChange([])}>
+          Clear ingredients
+        </button>
+      )}
+    </Sheet>
   )
 }
 
@@ -159,20 +303,28 @@ function FilterRow<T extends string>({
   )
 }
 
-// A Drink as its House Spec: the photo, or until there is one, the glass
-// drawn in the House Spec's colors. The name takes the first Slot's color,
-// as it does on the Drink page. The list's search and filters travel along,
-// so the Drink page's "All drinks" link returns to the same list.
-function DrinkCard({ drink, listSearch }: { drink: Drink; listSearch: string }) {
-  const houseSpec = useMemo(() => resolveRiff(drink), [drink])
+// A Drink as the Riff the search found, usually its House Spec: the photo,
+// or the glass drawn in the Riff's colors when there's no photo or the Riff
+// isn't the House Spec. A Riff that isn't says what it swaps. The name takes
+// the first Slot's color, as it does on the Drink page. The list's search and
+// filters travel along, so the Drink page's "All drinks" link returns to the
+// same list.
+function DrinkCard({ found: { drink, picks }, listSearch }: { found: FoundDrink; listSearch: string }) {
+  const riff = useMemo(() => resolveRiff(drink, picks), [drink, picks])
   const [photoFailed, setPhotoFailed] = useState(false)
-  const firstColor = drink.slots[0].options.find((option) => option.id === houseSpec.picks[drink.slots[0].id])?.color
+  const firstColor = drink.slots[0].options.find((option) => option.id === riff.picks[drink.slots[0].id])?.color
+  const swaps = drink.slots.flatMap((slot) => {
+    const optionId = picks[slot.id]
+    if (optionId === drink.houseSpec[slot.id]) return []
+    if (optionId === null) return [`no ${slot.label.toLowerCase()}`]
+    return slot.options.filter((option) => option.id === optionId).map((option) => option.label.toLowerCase())
+  })
 
   return (
-    <Link to={`/drinks/${drink.id}`} state={{ listSearch } satisfies ListState} className="dl-card">
+    <Link to={riffLink(drink, picks)} state={{ listSearch } satisfies ListState} className="dl-card">
       <span className="dl-card-art">
-        {photoFailed ? (
-          <GlassSketch glass={drink.glass} colors={houseSpec.colors} className="dl-card-sketch" />
+        {photoFailed || swaps.length > 0 ? (
+          <GlassSketch glass={drink.glass} colors={riff.colors} className="dl-card-sketch" />
         ) : (
           <img src={`${import.meta.env.BASE_URL}${drink.photo}`} alt="" onError={() => setPhotoFailed(true)} />
         )}
@@ -181,8 +333,9 @@ function DrinkCard({ drink, listSearch }: { drink: Drink; listSearch: string }) 
         <span className="dl-card-name" style={firstColor ? { color: readable(firstColor, CARD) } : undefined}>
           {drink.name}
         </span>
+        {swaps.length > 0 && <span className="dl-card-riff">With {swaps.join(', ')}</span>}
         <span className="dl-card-meta">
-          {METHOD_NAMES[drink.method]}, {glassInSentence(GLASS_NAMES[drink.glass])}
+          {METHOD_NAMES[riff.method]}, {glassInSentence(GLASS_NAMES[drink.glass])}
         </span>
         <span className="dl-card-tags">{drink.flavorTags.join(', ')}</span>
       </span>

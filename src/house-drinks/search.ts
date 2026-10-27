@@ -1,10 +1,35 @@
-import { FLAVOR_TAGS, METHODS, type Drink, type FlavorTag, type Method } from '../riff-engine'
+import {
+  FLAVOR_TAGS,
+  METHODS,
+  resolveRiff,
+  TOOLS,
+  type Drink,
+  type FlavorTag,
+  type Method,
+  type Picks,
+  type Tool,
+} from '../riff-engine'
 
 export interface DrinkSearch {
   query?: string
   method?: Method
   flavor?: FlavorTag
+  // Show Drinks with a Riff that uses any of these ingredients.
+  ingredients?: string[]
+  // Show Drinks with a Riff that needs only these tools (and kitchen ones).
+  tools?: Tool[]
 }
+
+// A Drink the search found, with the Riff to open it on: the House Spec when
+// it fits the filters, otherwise the fitting Riff that swaps the fewest Slots.
+export interface FoundDrink {
+  drink: Drink
+  picks: Picks
+}
+
+// Tools the tool filter never hides a Drink for: any long spoon stirs, and a
+// shaker's lid strains.
+export const KITCHEN_TOOLS: readonly Tool[] = ['barspoon', 'strainer']
 
 // Options that can still be picked. Retired ones only live on in Favorites.
 const pickable = (drink: Drink) => drink.slots.flatMap((slot) => slot.options.filter((option) => !option.retired))
@@ -27,18 +52,88 @@ function searchableText(drink: Drink): string {
     .toLowerCase()
 }
 
-// The Drinks that match every word of the query and the chosen filters,
-// sorted by name.
-export function searchDrinks(drinks: Drink[], { query = '', method, flavor }: DrinkSearch): Drink[] {
-  const words = query.toLowerCase().split(/\s+/).filter(Boolean)
-  return drinks
-    .filter((drink) => {
-      if (method && !methodsOf(drink).has(method)) return false
-      if (flavor && !drink.flavorTags.includes(flavor)) return false
-      const text = searchableText(drink)
-      return words.every((word) => text.includes(word))
+interface RiffFacts {
+  picks: Picks
+  method: Method
+  tools: Tool[]
+  ingredients: Set<string>
+}
+
+const name = (ingredient: { name: string }) => ingredient.name.toLowerCase()
+
+// Every Riff of a Drink that can be picked (no Retired Options), closest to
+// the House Spec first. Worked out once per Drink, since the list searches
+// again on every keystroke.
+const riffCache = new WeakMap<Drink, RiffFacts[]>()
+
+function riffsOf(drink: Drink): RiffFacts[] {
+  const cached = riffCache.get(drink)
+  if (cached) return cached
+  let combinations: Picks[] = [{}]
+  for (const slot of drink.slots) {
+    const choices: (string | null)[] = slot.options.filter((option) => !option.retired).map((option) => option.id)
+    if (slot.optional) choices.push(null)
+    combinations = combinations.flatMap((picks) => choices.map((choice) => ({ ...picks, [slot.id]: choice })))
+  }
+  const swaps = (picks: Picks) => drink.slots.filter((slot) => picks[slot.id] !== drink.houseSpec[slot.id]).length
+  const riffs = combinations
+    .map((picks, order) => ({ picks, order, swaps: swaps(picks) }))
+    .sort((a, b) => a.swaps - b.swaps || a.order - b.order)
+    .map(({ picks }) => {
+      const riff = resolveRiff(drink, picks)
+      return {
+        picks: riff.picks,
+        method: riff.method,
+        tools: riff.miseEnPlace.tools,
+        ingredients: new Set(riff.ingredients.map(name)),
+      }
     })
-    .sort((a, b) => a.name.localeCompare(b.name))
+  riffCache.set(drink, riffs)
+  return riffs
+}
+
+// The Drinks that match every word of the query and the chosen filters,
+// sorted by name. The Method, ingredient and tool filters must all fit the
+// same Riff, which is the one the Drink opens on.
+export function searchDrinks(
+  drinks: Drink[],
+  { query = '', method, flavor, ingredients = [], tools }: DrinkSearch,
+): FoundDrink[] {
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean)
+  const wanted = new Set(ingredients.map((ingredient) => ingredient.toLowerCase()))
+  const owned = tools && new Set([...tools, ...KITCHEN_TOOLS])
+  const fits = (riff: RiffFacts) =>
+    (!method || riff.method === method) &&
+    (wanted.size === 0 || [...wanted].some((ingredient) => riff.ingredients.has(ingredient))) &&
+    (!owned || riff.tools.every((tool) => owned.has(tool)))
+
+  return drinks
+    .flatMap((drink) => {
+      if (flavor && !drink.flavorTags.includes(flavor)) return []
+      const text = searchableText(drink)
+      if (!words.every((word) => text.includes(word))) return []
+      const riff = riffsOf(drink).find(fits)
+      return riff ? [{ drink, picks: riff.picks }] : []
+    })
+    .sort((a, b) => a.drink.name.localeCompare(b.drink.name))
+}
+
+// Every ingredient a Riff can use, once each, by name.
+export function ingredientChoices(drinks: Drink[]): string[] {
+  const names = new Set(
+    drinks.flatMap((drink) => [
+      ...drink.ingredients.map(name),
+      ...pickable(drink).flatMap((option) => option.ingredients.map(name)),
+    ]),
+  )
+  return [...names].sort((a, b) => a.localeCompare(b))
+}
+
+// The tools worth offering in the tool filter: those some Riff needs, less
+// the kitchen ones, in a fixed order.
+export function toolChoices(drinks: Drink[]): Tool[] {
+  const needed = new Set(drinks.flatMap((drink) => riffsOf(drink).flatMap((riff) => riff.tools)))
+  return TOOLS.filter((tool) => needed.has(tool) && !KITCHEN_TOOLS.includes(tool))
 }
 
 // The Methods and Flavor Tags worth offering as filters: only those some

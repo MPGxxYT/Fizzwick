@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { parseDrinkFile, type Drink } from '../riff-engine'
 import cherryLimeadeFile from './cherry-limeade.json'
-import { filterChoices, searchDrinks } from './search'
+import { filterChoices, ingredientChoices, searchDrinks, toolChoices } from './search'
 
 function parse(input: unknown): Drink {
   const result = parseDrinkFile(input)
@@ -45,7 +45,9 @@ const mangoCream = parse({
 })
 
 const drinks = [mangoCream, cherryLimeade]
-const names = (found: Drink[]) => found.map((drink) => drink.name)
+const names = (found: { drink: Drink }[]) => found.map(({ drink }) => drink.name)
+const picksOf = (found: { drink: Drink; picks: Record<string, string | null> }[], name: string) =>
+  found.find(({ drink }) => drink.name === name)?.picks
 
 describe('searchDrinks', () => {
   test('with no search or filters, lists every Drink by name', () => {
@@ -94,6 +96,84 @@ describe('searchDrinks', () => {
   test('combines search and filters', () => {
     expect(names(searchDrinks(drinks, { query: 'ice', method: 'blend' }))).toEqual(['Mango Cream'])
     expect(names(searchDrinks(drinks, { query: 'cherry', flavor: 'creamy' }))).toEqual([])
+  })
+
+  test('opens each Drink on its House Spec when that fits the filters', () => {
+    expect(picksOf(searchDrinks(drinks, {}), 'Cherry Limeade')).toEqual(cherryLimeade.houseSpec)
+  })
+
+  test('a Method an Option switches to opens on that Riff', () => {
+    expect(picksOf(searchDrinks(drinks, { method: 'blend' }), 'Mango Cream')).toEqual({ fruit: 'mango', texture: 'frozen' })
+  })
+})
+
+describe('the ingredient filter', () => {
+  test('finds Drinks whose Riffs use any picked ingredient', () => {
+    expect(names(searchDrinks(drinks, { ingredients: ['agave'] }))).toEqual(['Cherry Limeade'])
+    expect(names(searchDrinks(drinks, { ingredients: ['agave', 'whole milk'] }))).toEqual(['Cherry Limeade', 'Mango Cream'])
+    expect(names(searchDrinks(drinks, { ingredients: ['durian'] }))).toEqual([])
+  })
+
+  test('matches whole ingredient names, ignoring case', () => {
+    expect(names(searchDrinks(drinks, { ingredients: ['Cherry Syrup'] }))).toEqual(['Cherry Limeade'])
+    expect(names(searchDrinks(drinks, { ingredients: ['syrup'] }))).toEqual([])
+  })
+
+  test('opens the Riff closest to the House Spec that uses the ingredient', () => {
+    expect(picksOf(searchDrinks(drinks, { ingredients: ['agave'] }), 'Cherry Limeade')).toEqual({
+      ...cherryLimeade.houseSpec,
+      sweetener: 'agave',
+    })
+    expect(picksOf(searchDrinks(drinks, { ingredients: ['fresh lime juice'] }), 'Cherry Limeade')).toEqual(
+      cherryLimeade.houseSpec,
+    )
+  })
+
+  test('never picks a Retired Option', () => {
+    expect(names(searchDrinks(drinks, { ingredients: ['kiwi purée'] }))).toEqual([])
+  })
+})
+
+describe('the tool filter', () => {
+  test('finds Drinks with a Riff that needs only the tools ticked', () => {
+    expect(names(searchDrinks(drinks, { tools: ['jigger'] }))).toEqual(['Cherry Limeade'])
+    expect(names(searchDrinks(drinks, { tools: ['jigger', 'shaker'] }))).toEqual(['Cherry Limeade', 'Mango Cream'])
+  })
+
+  test('counts a barspoon and a strainer as things any kitchen has', () => {
+    // Cherry Limeade stirs with a barspoon; Mango Cream strains its shake.
+    expect(picksOf(searchDrinks(drinks, { tools: ['jigger'] }), 'Cherry Limeade')).toEqual(cherryLimeade.houseSpec)
+    expect(picksOf(searchDrinks(drinks, { tools: ['shaker'] }), 'Mango Cream')).toEqual(mangoCream.houseSpec)
+  })
+
+  test('opens on a Riff the tools can make when the House Spec needs more', () => {
+    expect(picksOf(searchDrinks(drinks, { tools: ['blender'] }), 'Mango Cream')).toEqual({ fruit: 'mango', texture: 'frozen' })
+  })
+
+  test('the ingredient and tool filters must fit the same Riff', () => {
+    // Muddled cherries need a muddler and a fine strainer.
+    expect(names(searchDrinks(drinks, { ingredients: ['fresh cherries, pitted'], tools: ['jigger'] }))).toEqual([])
+    expect(
+      names(searchDrinks(drinks, { ingredients: ['fresh cherries, pitted'], tools: ['jigger', 'shaker', 'muddler', 'fine-strainer'] })),
+    ).toEqual(['Cherry Limeade'])
+    expect(names(searchDrinks(drinks, { method: 'blend', tools: ['shaker'] }))).toEqual([])
+  })
+})
+
+describe('ingredientChoices', () => {
+  test('lists every pickable ingredient once, by name', () => {
+    const choices = ingredientChoices(drinks)
+    expect(choices).toContain('agave')
+    expect(choices).toContain('whole milk')
+    expect(choices).not.toContain('kiwi purée')
+    expect(choices.filter((name) => name === 'lime wheel')).toHaveLength(1)
+    expect(choices).toEqual([...choices].sort((a, b) => a.localeCompare(b)))
+  })
+})
+
+describe('toolChoices', () => {
+  test('offers the tools some Riff needs, leaving out the barspoon and strainer', () => {
+    expect(toolChoices(drinks)).toEqual(['jigger', 'shaker', 'fine-strainer', 'muddler', 'blender'])
   })
 })
 
