@@ -1,10 +1,10 @@
-// The app's one IndexedDB database on this device (ADR 0002): Favorites, and
-// from version 2 Custom Drinks. An upgrade only adds the stores that are
+// The app's one IndexedDB database on this device (ADR 0002): Favorites,
+// from version 2 Custom Drinks, and from version 3 their photos. An upgrade only adds the stores that are
 // missing, so Favorites saved under version 1 stay.
 const DB_NAME = 'fizzwick'
-const VERSION = 2
-export type StoreName = 'favorites' | 'drinks'
-const STORES: StoreName[] = ['favorites', 'drinks']
+const VERSION = 3
+export type StoreName = 'favorites' | 'drinks' | 'photos'
+const STORES: StoreName[] = ['favorites', 'drinks', 'photos']
 
 let database: Promise<IDBDatabase> | null = null
 
