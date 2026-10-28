@@ -4,6 +4,7 @@ export {
   checkEveryRiff,
   GLASS_SIZES_OZ,
   MAX_SERVINGS,
+  METHOD_TOOLS,
   resolveRiff,
   type Picks,
   type Riff,

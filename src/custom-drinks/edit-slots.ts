@@ -1,11 +1,13 @@
 import type { Favorite } from '../favorites/favorite'
 import type { Drink, Option, Slot } from '../riff-engine'
+import { colorFor } from './suggest'
 
 // Changes the editor makes to a Drink's Slots and Options. Slot and Option
 // IDs come from their labels when they're made and never change after, since
 // Favorites and Riff links refer to them (ADR 0001).
 
-// Colors a new Option starts with, in turn, until one is picked for it.
+// Colors a new Option starts with, in turn, when its name has no color of
+// its own (colorFor).
 const START_COLORS = ['#7fe3c6', '#ff8fb0', '#f5c26b', '#9db4ff', '#c99bff', '#8fd18a', '#ff9e6d', '#e7f5c4']
 
 export function idFromLabel(label: string, taken: string[], fallback: string): string {
@@ -32,7 +34,7 @@ function newOption(slot: Slot | undefined, label: string): Option {
     id: idFromLabel(label, options.map((option) => option.id), 'option'),
     label,
     ingredients: [],
-    color: START_COLORS[options.length % START_COLORS.length],
+    color: colorFor(label) ?? START_COLORS[options.length % START_COLORS.length],
   }
 }
 

@@ -66,7 +66,7 @@ export interface Riff {
   defaultFavoriteName: string
 }
 
-const METHOD_TOOLS: Record<Method, Tool[]> = {
+export const METHOD_TOOLS: Record<Method, Tool[]> = {
   build: [],
   shake: ['shaker', 'strainer'],
   'dry-shake': ['shaker', 'strainer'],

@@ -393,3 +393,71 @@
     transform: none;
   }
 }
+
+/* Tools a step's words suggest, and Dietary Tags an Option's ingredients
+   suggest: waiting for a tap, with a dashed edge. */
+.ed-tools {
+  margin-top: 0.6rem;
+}
+
+.ed-tools button {
+  min-height: 2.25rem;
+  padding: 0 0.75rem;
+  font-size: 0.85rem;
+}
+
+.ed-tools button.is-suggested {
+  border-style: dashed;
+  border-color: #7fe3c6;
+  color: #7fe3c6;
+}
+
+.ed-tools .ed-more {
+  border-color: transparent;
+  color: var(--dp-soft);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.ed-tags {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.ed-tags legend {
+  width: 100%;
+  padding: 0;
+}
+
+.ed-suggested {
+  padding: 0.05rem 0.45rem;
+  border: 1px dashed #7fe3c6;
+  border-radius: 999px;
+  color: #7fe3c6;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.ed-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.ed-swatch {
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 2px solid rgba(191, 174, 220, 0.25);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.ed-swatch[aria-pressed='true'] {
+  border-color: var(--dp-ink);
+  box-shadow: 0 0 0 2px var(--dp-paper), 0 0 0 4px #7fe3c6;
+}
