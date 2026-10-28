@@ -3,6 +3,7 @@ import cherryLimeadeFile from '../house-drinks/cherry-limeade.json'
 import { parseDrinkFile, type Drink } from '../riff-engine'
 import type { Favorite } from '../favorites/favorite'
 import { copyDrink } from './copy-drink'
+import { colorFor } from './suggest'
 import { addOption, addSlot, favoritesPickingFrom, idFromLabel, removeOption, removeSlot, setOptionLabel } from './edit-slots'
 
 function parse(input: unknown): Drink {
@@ -52,6 +53,11 @@ describe('addOption and setOptionLabel', () => {
     expect(slot(drink, 'fizz').options.at(-1)?.id).toBe('ginger-ale')
     drink = setOptionLabel(drink, 'fizz', 'ginger-ale', 'Spicy ginger ale')
     expect(slot(drink, 'fizz').options.at(-1)).toMatchObject({ id: 'ginger-ale', label: 'Spicy ginger ale' })
+  })
+
+  test('a new Option takes its color from its name when it can', () => {
+    const drink = addOption(copy, 'cherry', 'Blueberry syrup')
+    expect(slot(drink, 'cherry').options.at(-1)?.color).toBe(colorFor('blueberry'))
   })
 })
 

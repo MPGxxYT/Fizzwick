@@ -1,21 +1,26 @@
 import { useEffect, useId, useMemo, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router'
-import { GLASS_NAMES, METHOD_NAMES } from '../drink-page/format'
+import { GLASS_NAMES, METHOD_NAMES, TOOL_NAMES } from '../drink-page/format'
 import { Sheet } from '../drink-page/Sheet'
 import { NotFound } from '../NotFound'
 import {
+  DIETARY_TAGS,
   FLAVOR_TAGS,
   GLASSES,
   MEASURED_UNITS,
+  METHOD_TOOLS,
   METHODS,
   riffLink,
+  TOOLS,
   UNMEASURED_UNITS,
   type Drink,
+  type DietaryTag,
   type Ingredient,
   type Option,
   type Picks,
   type Slot,
   type Step,
+  type Tool,
 } from '../riff-engine'
 import { DrinkView } from '../drink-page/DrinkPage'
 import { isCustomDrinkId } from './copy-drink'
@@ -23,6 +28,7 @@ import { blankDrink, checkDraft, newStepId, stepInUse, type FieldErrors } from '
 import type { Favorite } from '../favorites/favorite'
 import { useFavorites } from '../favorites/store'
 import { changed, dropDraft, getDraft, setDraft, type Draft } from './drafts'
+import { PALETTE, suggestDietaryTags, suggestTools } from './suggest'
 import { addOption, addSlot, favoritesPickingFrom, removeOption, removeSlot } from './edit-slots'
 import { putCustomDrink, shortId, useDrinks } from './store'
 import '../drink-page/drink-page.css'
@@ -672,7 +678,105 @@ function OptionEditor({
         errorKey={`slots.${slotIndex}.options.${optionIndex}.ingredients`}
         onChange={(ingredients) => setOption({ ...option, ingredients })}
       />
+      <DietaryTags option={option} name={name} onChange={setOption} />
+      <Swatches option={option} name={name} onChange={setOption} />
     </>
+  )
+}
+
+// Tick boxes for the Dietary Tags. Words in the ingredients suggest some,
+// but only a tick sets one.
+function DietaryTags({ option, name, onChange }: { option: Option; name: string; onChange: (option: Option) => void }) {
+  const ticked = option.dietaryTags ?? []
+  const suggested = suggestDietaryTags(option.ingredients.map((ingredient) => ingredient.name))
+  const toggle = (tag: DietaryTag) => {
+    const next = DIETARY_TAGS.filter((other) => (other === tag ? !ticked.includes(tag) : ticked.includes(other)))
+    const { dietaryTags: _old, ...rest } = option
+    onChange(next.length > 0 ? { ...rest, dietaryTags: next } : rest)
+  }
+  return (
+    <fieldset className="ed-tags">
+      <legend className="ed-label">Contains</legend>
+      {DIETARY_TAGS.map((tag) => {
+        const hint = suggested.includes(tag) && !ticked.includes(tag)
+        return (
+          <label key={tag} className={hint ? 'ed-check is-suggested' : 'ed-check'}>
+            <input
+              type="checkbox"
+              aria-label={`${name} contains ${tag}${hint ? ', suggested' : ''}`}
+              checked={ticked.includes(tag)}
+              onChange={() => toggle(tag)}
+            />
+            {capitalize(tag)}
+            {hint && <span className="ed-suggested">suggested</span>}
+          </label>
+        )
+      })}
+    </fieldset>
+  )
+}
+
+// The Option's color, for the glass drawing and the finish screen: one of
+// the palette's swatches, or the color it came with.
+function Swatches({ option, name, onChange }: { option: Option; name: string; onChange: (option: Option) => void }) {
+  const own = PALETTE.some((swatch) => swatch.color === option.color) ? [] : [{ name: 'its own color', color: option.color }]
+  return (
+    <>
+      <p className="ed-label">Color</p>
+      <div className="ed-swatches" role="group" aria-label={`${name} color`}>
+        {[...own, ...PALETTE].map((swatch) => (
+          <button
+            key={swatch.color}
+            type="button"
+            className="ed-swatch"
+            style={{ background: swatch.color }}
+            aria-label={swatch.name}
+            aria-pressed={option.color === swatch.color}
+            onClick={() => onChange({ ...option, color: swatch.color })}
+          />
+        ))}
+      </div>
+    </>
+  )
+}
+
+// A step's tools beyond the ones its Method brings. Ticked tools show, and
+// tools its words suggest show waiting for a tap; "More tools" shows the rest.
+function StepTools({ draft, step, index, onChange }: { draft: Drink; step: Step; index: number; onChange: (step: Step) => void }) {
+  const [all, setAll] = useState(false)
+  const ticked = step.tools ?? []
+  const suggested = suggestTools(step.text)
+  const offered = TOOLS.filter((tool) => !METHOD_TOOLS[draft.method].includes(tool))
+  const shown = all ? offered : offered.filter((tool) => ticked.includes(tool) || suggested.includes(tool))
+  const toggle = (tool: Tool) => {
+    const next = TOOLS.filter((other) => (other === tool ? !ticked.includes(tool) : ticked.includes(other)))
+    const { tools: _old, ...rest } = step
+    onChange(next.length > 0 ? { ...rest, tools: next } : rest)
+  }
+  return (
+    <div className="ed-chips ed-tools" role="group" aria-label={`Tools for step ${index + 1}`}>
+      {shown.map((tool) => {
+        const hint = suggested.includes(tool) && !ticked.includes(tool)
+        return (
+          <button
+            key={tool}
+            type="button"
+            className={hint ? 'is-suggested' : undefined}
+            aria-pressed={ticked.includes(tool)}
+            aria-label={`${TOOL_NAMES[tool]}${hint ? ', suggested' : ''}`}
+            onClick={() => toggle(tool)}
+          >
+            {hint && '+ '}
+            {TOOL_NAMES[tool]}
+          </button>
+        )
+      })}
+      {!all && shown.length < offered.length && (
+        <button type="button" className="ed-more" onClick={() => setAll(true)}>
+          More tools
+        </button>
+      )}
+    </div>
   )
 }
 
@@ -692,6 +796,13 @@ function Steps({ draft, errors, onChange }: SectionProps) {
   return (
     <section className="ed-section" aria-labelledby="ed-steps">
       <h2 id="ed-steps">Steps</h2>
+      {METHOD_TOOLS[draft.method].length > 0 && (
+        <p className="ed-hint">
+          {METHOD_NAMES[draft.method]} already brings{' '}
+          {METHOD_TOOLS[draft.method].map((tool) => TOOL_NAMES[tool].toLowerCase()).join(', ')}. Tick any other tools a
+          step needs.
+        </p>
+      )}
       <ol className="ed-rows">
         {draft.steps.map((step, i) => {
           const inUse = stepInUse(draft, step.id)
@@ -787,6 +898,7 @@ function Steps({ draft, errors, onChange }: SectionProps) {
                   </>
                 )}
               </div>
+              <StepTools draft={draft} step={step} index={i} onChange={(next) => setAt(i, next)} />
               {inUse && <p className="ed-hint">An Option changes this step, so it can't be removed.</p>}
               <FieldError message={errors[`steps.${i}`]} />
             </li>

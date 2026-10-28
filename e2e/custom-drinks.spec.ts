@@ -294,3 +294,51 @@ test('a copied Option that adds steps still works after an edit elsewhere', asyn
   await page.getByRole('dialog', { name: 'Choose cherry' }).getByRole('button', { name: 'Muddled fresh cherries' }).click()
   await expect(page.getByText('Muddle the cherries with the lime juice in a shaker tin.')).toBeVisible()
 })
+
+test('step words suggest a tool, and ticking it adds it to the Mise en Place', async ({ page }) => {
+  await editCopy(page)
+  await page.getByLabel('Step 5', { exact: true }).fill('Muddle gently, then stir.')
+  const tools = page.getByRole('group', { name: 'Tools for step 5' })
+  const muddler = tools.getByRole('button', { name: 'Muddler, suggested' })
+  await expect(muddler).toHaveAttribute('aria-pressed', 'false')
+  await muddler.click()
+  await expect(tools.getByRole('button', { name: 'Muddler', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await save(page)
+
+  await page.getByRole('button', { name: 'Make it' }).click()
+  await expect(page.getByRole('dialog', { name: /^Making/ })).toContainText(/muddler/i)
+})
+
+test('ingredient words suggest a Dietary Tag, which shows only once ticked', async ({ page }) => {
+  await editCopy(page)
+  await page.getByLabel('New Fizz Option', { exact: true }).fill('Milk soda')
+  await page.getByRole('button', { name: 'Add an Option' }).nth(2).click()
+  const option = page.getByRole('listitem').filter({ has: page.getByLabel('Fizz Option 4', { exact: true }) }).last()
+  await option.getByRole('button', { name: 'Add an ingredient' }).click()
+  await page.getByLabel('Amount of Fizz Option 4 ingredient 1', { exact: true }).fill('2')
+  await page.getByLabel('Fizz Option 4 ingredient 1', { exact: true }).fill('whole milk')
+  await page.getByRole('group', { name: 'House Spec for Fizz' }).getByRole('button', { name: 'Milk soda' }).click()
+
+  const dairy = page.getByLabel('Fizz Option 4 contains dairy, suggested', { exact: true })
+  await expect(dairy).not.toBeChecked()
+  await save(page)
+  await expect(page.getByText('whole milk')).toBeVisible()
+  await expect(page.getByText('Contains dairy')).toHaveCount(0)
+
+  await page.getByRole('link', { name: 'Edit this drink' }).click()
+  await page.getByLabel('Fizz Option 4 contains dairy, suggested', { exact: true }).check()
+  await save(page)
+  await expect(page.getByText('Contains dairy')).toBeVisible()
+})
+
+test("a new Option's color comes from its name and can be changed", async ({ page }) => {
+  await editCopy(page)
+  await page.getByLabel('New Cherry Option', { exact: true }).fill('Blueberry syrup')
+  await page.getByRole('button', { name: 'Add an Option' }).first().click()
+  const colors = page.getByRole('group', { name: 'Cherry Option 4 color' })
+  await expect(colors.getByRole('button', { name: 'blueberry' })).toHaveAttribute('aria-pressed', 'true')
+
+  await colors.getByRole('button', { name: 'lime' }).click()
+  await expect(colors.getByRole('button', { name: 'lime' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(colors.getByRole('button', { name: 'blueberry' })).toHaveAttribute('aria-pressed', 'false')
+})
