@@ -17,6 +17,10 @@ A Drink a user made or imported, which they can edit and delete. An import alway
 Its ID starts with `my-`, which no House Drink ID does, and never changes. The Drink list marks Custom Drinks "Yours".
 _Avoid_: User drink, imported drink
 
+**Backup**:
+One file holding every Custom Drink, with its photo, and every Favorite on the phone, made and restored in Settings. Restoring replaces a Drink or Favorite with the same ID.
+_Avoid_: Export, sync, import
+
 **Slot**:
 A place in a Drink where one Option is swapped in, such as fruit, sweetener, fizz, or garnish. A Slot may be optional, in which case leaving it empty drops its ingredients and steps.
 _Avoid_: Swap, variable, category, component

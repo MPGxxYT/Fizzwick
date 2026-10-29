@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router'
 import type { Units } from '../riff-engine'
+import { BackupCard } from './BackupCard'
 import { updateSettings, useSettings } from './use-settings'
 import '../drink-page/drink-page.css'
 import './settings-page.css'
@@ -9,7 +10,8 @@ const UNIT_CHOICES: { value: Units; name: string }[] = [
   { value: 'ml', name: 'Millilitres (ml)' },
 ]
 
-// The two v1 settings, saved on this device as soon as they change.
+// Units and underlines, saved on this device as soon as they change, and
+// the backup of what's stored on it.
 export function SettingsPage() {
   const { key } = useLocation()
   const navigate = useNavigate()
@@ -76,6 +78,8 @@ export function SettingsPage() {
             </button>
           </div>
         </section>
+
+        <BackupCard />
       </main>
     </div>
   )

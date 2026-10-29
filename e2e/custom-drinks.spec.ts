@@ -404,3 +404,63 @@ test('a photo picked in the editor shows on the card, small enough, and can be r
   await expect(card.locator('img')).toHaveCount(0)
   await expect(card.locator('svg')).toHaveCount(1)
 })
+
+test('a backup restored on a cleared phone gives back the Custom Drinks, photos and Favorites', async ({
+  page,
+  browser,
+}, testInfo) => {
+  await editCopy(page)
+  await page.getByLabel('Add a photo', { exact: true }).setInputFiles(await bigPhoto(page))
+  await expect(page.getByRole('img', { name: "The drink's photo" })).toBeVisible()
+  await save(page)
+  await saveAFavorite(page)
+
+  await page.goto('/settings')
+  const downloading = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download a backup' }).click()
+  const download = await downloading
+  expect(download.suggestedFilename()).toMatch(/^fizzwick-backup-\d{4}-\d{2}-\d{2}\.json$/)
+  const backup = await download.path()
+
+  // A new context has nothing stored: a cleared phone.
+  const fresh = await browser.newContext(testInfo.project.use)
+  const phone = await fresh.newPage()
+  await phone.goto('/settings')
+  await phone.getByLabel('Restore from backup', { exact: true }).setInputFiles(backup)
+  const sheet = phone.getByRole('dialog', { name: 'Restore this backup?' })
+  await expect(sheet).toContainText('Adds 1 Drink and 1 Favorite.')
+  await sheet.getByRole('button', { name: 'Restore' }).click()
+  await expect(phone.getByRole('status')).toHaveText('Added 1 Drink and 1 Favorite.')
+
+  await phone.goto('/?yours=1')
+  const card = phone.getByRole('link', { name: /Cherry Limeade · soda water/ })
+  await expect(card.locator('img')).toHaveCount(1)
+  await openFirstFavorite(phone)
+  await expect(phone.getByRole('heading', { name: 'Cherry Limeade · soda water' })).toBeVisible()
+  await fresh.close()
+})
+
+test('a file that isn’t a backup is refused and changes nothing', async ({ page }) => {
+  await page.goto('/settings')
+  await page
+    .getByLabel('Restore from backup', { exact: true })
+    .setInputFiles({ name: 'notes.json', mimeType: 'application/json', buffer: Buffer.from('{"hello": 1}') })
+  await expect(page.getByRole('status')).toHaveText("That file isn't a Fizzwick backup.")
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+})
+
+test('a link to a Custom Drink not on this phone says so', async ({ page }) => {
+  await page.goto('/drinks/my-unknown')
+  await expect(page.getByRole('heading', { name: "This drink isn't on this phone" })).toBeVisible()
+})
+
+test('sharing a Custom Drink says the link only opens on this phone', async ({ page }) => {
+  await page.addInitScript('navigator.share = async () => {}')
+  await copyCherryLimeade(page)
+  await page.getByRole('button', { name: 'Share this Riff' }).click()
+  await expect(page.getByText('Only opens on this phone until sharing arrives')).toBeVisible()
+
+  await page.goto('/drinks/cherry-limeade')
+  await page.getByRole('button', { name: 'Share this Riff' }).click()
+  await expect(page.getByText('Only opens on this phone until sharing arrives')).toHaveCount(0)
+})

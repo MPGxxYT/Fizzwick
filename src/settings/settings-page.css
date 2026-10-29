@@ -117,3 +117,77 @@
     transition: none;
   }
 }
+
+/* Backup: two full-width buttons, the restore one a label for a hidden file
+   input, so the phone's file picker opens. */
+.st-backup-actions {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.st-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0 0.75rem;
+  border: 1px solid rgba(191, 174, 220, 0.35);
+  border-radius: 0.9rem;
+  background: none;
+  color: var(--dp-ink);
+  font: 600 1rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
+
+.st-button:active {
+  background: rgba(191, 174, 220, 0.15);
+}
+
+.st-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.st-button:has(+ input:focus-visible) {
+  outline: 2px solid #7fe3c6;
+  outline-offset: 2px;
+}
+
+.st-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.st-backup-message {
+  margin: 0.75rem 0 0;
+  color: #7fe3c6;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.st-backup-message:empty {
+  display: none;
+}
+
+.st-skipped {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+}
+
+.st-restore-confirm {
+  display: block;
+  width: 100%;
+  min-height: 3rem;
+  margin-top: 0.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: #7fe3c6;
+  color: var(--dp-paper);
+  font: 700 1rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
