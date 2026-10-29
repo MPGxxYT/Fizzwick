@@ -7,7 +7,7 @@ import { CopyDrink } from '../custom-drinks/CopyDrink'
 import { DeleteDrink } from '../custom-drinks/DeleteDrink'
 import { useDrinks } from '../custom-drinks/store'
 import { GLASS_SIZES_OZ, readRiffLink, resolveRiff, riffLink, type Drink, type Picks } from '../riff-engine'
-import { NotFound } from '../NotFound'
+import { NotFound, NotOnThisPhone } from '../NotFound'
 import { useSettings } from '../settings/use-settings'
 import { StepMode } from '../step-mode/StepMode'
 import { Bubbles, ColorSpots, IceCubes } from './Ambience'
@@ -28,7 +28,10 @@ export function DrinkPage() {
   const { status, drinks } = useDrinks()
   const drink = drinks.find((other) => other.id === drinkId)
   // A Custom Drink shows up once the device's drinks have loaded.
-  if (!drink) return status === 'loading' ? <div className="dp" /> : <NotFound />
+  if (!drink) {
+    if (status === 'loading') return <div className="dp" />
+    return isCustomDrinkId(drinkId) ? <NotOnThisPhone /> : <NotFound />
+  }
   // Keyed so that moving to another Drink starts it afresh.
   return <DrinkView key={drink.id} drink={drink} pairs={pairs} />
 }

@@ -76,6 +76,12 @@ export async function putCustomPhoto(id: string, blob: Blob | null): Promise<voi
   set({ ...readyState(), photos: blob ? { ...photos, [id]: URL.createObjectURL(blob) } : photos })
 }
 
+// The stored photos themselves, by Drink ID, for the backup.
+export async function customPhotoBlobs(): Promise<Record<string, Blob>> {
+  const photos = await run<StoredPhoto[]>('photos', 'readonly', (store) => store.getAll())
+  return Object.fromEntries(photos.map(({ id, blob }) => [id, blob]))
+}
+
 const readyState = () => (state.status === 'ready' ? state : { status: 'ready' as const, drinks: [], photos: {} })
 
 export async function deleteCustomDrink(id: string): Promise<void> {
