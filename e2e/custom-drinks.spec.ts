@@ -342,3 +342,65 @@ test("a new Option's color comes from its name and can be changed", async ({ pag
   await expect(colors.getByRole('button', { name: 'lime' })).toHaveAttribute('aria-pressed', 'true')
   await expect(colors.getByRole('button', { name: 'blueberry' })).toHaveAttribute('aria-pressed', 'false')
 })
+
+// A big, busy photo, drawn in the page and handed back as PNG bytes.
+async function bigPhoto(page: import('@playwright/test').Page) {
+  // A string, since the e2e tests are type-checked without the browser's types.
+  const base64 = await page.evaluate<string>(`(async () => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 4000
+    canvas.height = 3000
+    const context = canvas.getContext('2d')
+    const gradient = context.createLinearGradient(0, 0, 4000, 3000)
+    gradient.addColorStop(0, '#b3123a')
+    gradient.addColorStop(1, '#f5d94a')
+    context.fillStyle = gradient
+    context.fillRect(0, 0, 4000, 3000)
+    for (let i = 0; i < 400; i++) {
+      context.fillStyle = 'hsl(' + ((i * 37) % 360) + ' 70% 60%)'
+      context.beginPath()
+      context.arc((i * 523) % 4000, (i * 331) % 3000, 40 + (i % 90), 0, Math.PI * 2)
+      context.fill()
+    }
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'))
+    const bytes = new Uint8Array(await blob.arrayBuffer())
+    let binary = ''
+    for (const byte of bytes) binary += String.fromCharCode(byte)
+    return btoa(binary)
+  })()`)
+  return { name: 'drink.png', mimeType: 'image/png', buffer: Buffer.from(base64, 'base64') }
+}
+
+test('a photo picked in the editor shows on the card, small enough, and can be removed', async ({ page }) => {
+  await editCopy(page)
+  const photo = await bigPhoto(page)
+  expect(photo.buffer.length).toBeGreaterThan(100 * 1024)
+  await page.getByLabel('Add a photo', { exact: true }).setInputFiles(photo)
+  await expect(page.getByRole('img', { name: "The drink's photo" })).toBeVisible()
+  await save(page)
+
+  const stored = await page.evaluate<number>(`new Promise((resolve, reject) => {
+    const request = indexedDB.open('fizzwick')
+    request.onerror = () => reject(request.error)
+    request.onsuccess = () => {
+      const all = request.result.transaction('photos').objectStore('photos').getAll()
+      all.onsuccess = () => resolve(all.result[0].blob.size)
+    }
+  })`)
+  expect(stored).toBeLessThanOrEqual(100 * 1024)
+
+  await page.goto('/?yours=1')
+  const card = page.getByRole('link', { name: /Cherry Limeade · soda water/ })
+  await expect(card.locator('img')).toHaveCount(1)
+  await page.reload()
+  await expect(card.locator('img')).toHaveCount(1)
+
+  await card.click()
+  await page.getByRole('link', { name: 'Edit this drink' }).click()
+  await page.getByRole('button', { name: 'Remove photo' }).click()
+  await expect(page.getByText('No photo')).toBeVisible()
+  await save(page)
+  await page.goto('/?yours=1')
+  await expect(card.locator('img')).toHaveCount(0)
+  await expect(card.locator('svg')).toHaveCount(1)
+})

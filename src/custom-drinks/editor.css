@@ -461,3 +461,68 @@
   border-color: var(--dp-ink);
   box-shadow: 0 0 0 2px var(--dp-paper), 0 0 0 4px #7fe3c6;
 }
+
+.ed-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The photo, at the card's shape, beside the buttons that change it. */
+.ed-photo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ed-photo-img,
+.ed-photo-empty {
+  flex: none;
+  width: 4.25rem;
+  height: 5rem;
+  border-radius: 0.75rem;
+  object-fit: cover;
+}
+
+.ed-photo-empty {
+  display: grid;
+  place-items: center;
+  border: 1px dashed rgba(191, 174, 220, 0.35);
+  color: var(--dp-soft);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.ed-photo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ed-photo-actions .ed-add {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0;
+}
+
+.ed-photo-actions input:focus-visible + .ed-add,
+.ed-photo-actions label:has(+ input:focus-visible) {
+  outline: 2px solid #7fe3c6;
+  outline-offset: 2px;
+}
+
+.ed-more-link {
+  min-height: 2.75rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--dp-soft);
+  font: 500 0.95rem 'Figtree', sans-serif;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}

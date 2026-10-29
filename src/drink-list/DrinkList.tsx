@@ -38,7 +38,7 @@ const isTool = (value: string): value is Tool => (TOOLS as readonly string[]).in
 // the same list.
 export function DrinkList() {
   const [params, setParams] = useSearchParams()
-  const { drinks } = useDrinks()
+  const { drinks, photos } = useDrinks()
   const choices = useMemo(
     () => ({ ...filterChoices(drinks), tools: toolChoices(drinks), ingredients: ingredientChoices(drinks) }),
     [drinks],
@@ -177,7 +177,15 @@ export function DrinkList() {
           <ul className="dl-drinks">
             {found.map((drink) => (
               <li key={drink.drink.id}>
-                <DrinkCard found={drink} listSearch={params.toString()} />
+                <DrinkCard
+                  found={drink}
+                  photo={
+                    isCustomDrinkId(drink.drink.id)
+                      ? photos[drink.drink.id]
+                      : drink.drink.photo && `${import.meta.env.BASE_URL}${drink.drink.photo}`
+                  }
+                  listSearch={params.toString()}
+                />
               </li>
             ))}
           </ul>
@@ -365,7 +373,15 @@ function FilterRow<T extends string>({
 // the first Slot's color, as it does on the Drink page. The list's search and
 // filters travel along, so the Drink page's "All drinks" link returns to the
 // same list.
-function DrinkCard({ found: { drink, picks }, listSearch }: { found: FoundDrink; listSearch: string }) {
+function DrinkCard({
+  found: { drink, picks },
+  photo,
+  listSearch,
+}: {
+  found: FoundDrink
+  photo: string | undefined
+  listSearch: string
+}) {
   const riff = useMemo(() => resolveRiff(drink, picks), [drink, picks])
   const [photoFailed, setPhotoFailed] = useState(false)
   const firstColor = drink.slots[0].options.find((option) => option.id === riff.picks[drink.slots[0].id])?.color
@@ -379,10 +395,10 @@ function DrinkCard({ found: { drink, picks }, listSearch }: { found: FoundDrink;
   return (
     <Link to={riffLink(drink, picks)} state={{ listSearch } satisfies ListState} className="dl-card">
       <span className="dl-card-art">
-        {!drink.photo || photoFailed || swaps.length > 0 ? (
+        {!photo || photoFailed || swaps.length > 0 ? (
           <GlassSketch glass={drink.glass} colors={riff.colors} className="dl-card-sketch" />
         ) : (
-          <img src={`${import.meta.env.BASE_URL}${drink.photo}`} alt="" onError={() => setPhotoFailed(true)} />
+          <img src={photo} alt="" onError={() => setPhotoFailed(true)} />
         )}
       </span>
       <span className="dl-card-text">

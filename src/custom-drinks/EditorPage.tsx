@@ -30,7 +30,8 @@ import { useFavorites } from '../favorites/store'
 import { changed, dropDraft, getDraft, setDraft, type Draft } from './drafts'
 import { PALETTE, suggestDietaryTags, suggestTools } from './suggest'
 import { addOption, addSlot, favoritesPickingFrom, removeOption, removeSlot } from './edit-slots'
-import { putCustomDrink, shortId, useDrinks } from './store'
+import { PhotoError, preparePhoto } from './photo'
+import { putCustomDrink, putCustomPhoto, shortId, useDrinks } from './store'
 import '../drink-page/drink-page.css'
 import './editor.css'
 
@@ -82,23 +83,32 @@ export function EditorPage() {
 
 function Editor({ entry }: { entry: Draft }) {
   const navigate = useNavigate()
-  const { drinks } = useDrinks()
+  const { drinks, photos } = useDrinks()
   const favoritesState = useFavorites()
   const favorites = favoritesState.status === 'ready' ? favoritesState.favorites : []
   const [draft, setDraftState] = useState(entry.draft)
   const [leaving, setLeaving] = useState(false)
   const [saveFailed, setSaveFailed] = useState(false)
+  const [photo, setPhotoState] = useState(entry.photo)
   const update = (next: Drink) => {
     setDraftState(next)
-    setDraft({ ...entry, draft: next })
+    setDraft({ ...entry, draft: next, photo })
   }
+  const updatePhoto = (next: Blob | null) => {
+    setPhotoState(next)
+    setDraft({ ...entry, draft, photo: next })
+  }
+  // The photo to show: a new one picked here, none if removed, or the saved one.
+  const newPhotoUrl = useMemo(() => (photo ? URL.createObjectURL(photo) : undefined), [photo])
+  useEffect(() => () => void (newPhotoUrl && URL.revokeObjectURL(newPhotoUrl)), [newPhotoUrl])
+  const photoUrl = photo === undefined ? photos[draft.id] : newPhotoUrl
 
   const otherNames = useMemo(
     () => drinks.filter((drink) => drink.id !== draft.id).map((drink) => drink.name),
     [drinks, draft.id],
   )
   const { drink: ready, errors } = useMemo(() => checkDraft(draft, otherNames), [draft, otherNames])
-  const dirty = changed({ ...entry, draft })
+  const dirty = changed({ ...entry, draft, photo })
 
   // Closing the tab or reloading with unsaved changes asks the browser's way.
   useEffect(() => {
@@ -117,6 +127,7 @@ function Editor({ entry }: { entry: Draft }) {
     if (!ready) return
     try {
       await putCustomDrink(ready)
+      if (photo !== undefined) await putCustomPhoto(ready.id, photo)
     } catch {
       setSaveFailed(true)
       return
@@ -139,7 +150,9 @@ function Editor({ entry }: { entry: Draft }) {
           <h1>{entry.isNew ? 'New drink' : 'Edit drink'}</h1>
         </header>
 
-        <Basics draft={draft} errors={errors} onChange={update} />
+        <Basics draft={draft} errors={errors} onChange={update}>
+          <PhotoField url={photoUrl} onChange={updatePhoto} />
+        </Basics>
         <Ingredients draft={draft} errors={errors} onChange={update} />
         <Slots draft={draft} errors={errors} favorites={favorites} onChange={update} />
         <Steps draft={draft} errors={errors} onChange={update} />
@@ -215,7 +228,56 @@ function Chips<T extends string>({
 
 type SectionProps = { draft: Drink; errors: FieldErrors; onChange: (next: Drink) => void }
 
-function Basics({ draft, errors, onChange }: SectionProps) {
+// An optional photo for the card, taken or picked on the phone, then cropped
+// and made small here (preparePhoto). Without one the card draws the glass.
+function PhotoField({ url, onChange }: { url: string | undefined; onChange: (photo: Blob | null) => void }) {
+  const inputId = useId()
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const pick = async (file: File | undefined) => {
+    if (!file) return
+    setBusy(true)
+    setError(null)
+    try {
+      onChange(await preparePhoto(file))
+    } catch (problem) {
+      setError(problem instanceof PhotoError ? problem.message : "Couldn't use that photo.")
+    } finally {
+      setBusy(false)
+    }
+  }
+  return (
+    <>
+      <p className="ed-label">Photo</p>
+      <div className="ed-photo">
+        {url ? <img src={url} alt="The drink's photo" className="ed-photo-img" /> : <span className="ed-photo-empty">No photo</span>}
+        <div className="ed-photo-actions">
+          <label htmlFor={inputId} className="ed-add">
+            {busy ? 'Preparing…' : url ? 'Replace photo' : 'Add a photo'}
+          </label>
+          <input
+            id={inputId}
+            className="ed-visually-hidden"
+            type="file"
+            accept="image/*"
+            onChange={(event) => {
+              void pick(event.target.files?.[0])
+              event.target.value = ''
+            }}
+          />
+          {url && (
+            <button type="button" className="ed-more-link" onClick={() => onChange(null)}>
+              Remove photo
+            </button>
+          )}
+        </div>
+      </div>
+      {error && <p className="ed-error">{error}</p>}
+    </>
+  )
+}
+
+function Basics({ draft, errors, onChange, children }: SectionProps & { children?: React.ReactNode }) {
   const nameId = useId()
   return (
     <section className="ed-section" aria-labelledby={`${nameId}-h`}>
@@ -231,6 +293,7 @@ function Basics({ draft, errors, onChange }: SectionProps) {
         onChange={(event) => onChange({ ...draft, name: event.target.value })}
       />
       <FieldError message={errors.name} />
+      {children}
 
       <p className="ed-label">Glass</p>
       <Chips
