@@ -88,20 +88,25 @@ test('the tool filter keeps Drinks you can make, opened on a Riff that fits', as
   await page.goto('/')
   await page.getByRole('group', { name: 'What you have' }).getByRole('button', { name: 'Tools' }).click()
   const tools = page.getByRole('dialog', { name: 'Tools you have' })
+  await expect(tools.getByRole('button', { name: 'Kettle' })).toHaveCount(0)
+  await expect(tools.getByRole('button', { name: 'Peeler' })).toHaveCount(0)
+  await expect(tools.getByRole('button', { name: 'Mixing glass' })).toHaveCount(0)
   await tools.getByRole('button', { name: 'Jigger' }).click()
-  await tools.getByRole('button', { name: 'Shaker', exact: true }).click()
+  await tools.getByRole('button', { name: 'Blender' }).click()
   await tools.getByRole('button', { name: 'Close' }).click()
 
   await expect(page.getByRole('group', { name: 'What you have' }).getByRole('button', { name: '2 tools' })).toHaveAttribute(
     'aria-pressed',
     'true',
   )
-  // Garden Smash always needs a muddler; Citrus Spritz drops the peel garnish.
+  // Garden Smash always needs a muddler; Nada Colada blends instead of shaking.
   await expect(page.getByRole('link', { name: /Garden Smash/ })).toHaveCount(0)
-  const spritz = page.getByRole('link', { name: /Citrus Spritz/ })
-  await expect(spritz).toContainText('With rosemary sprig')
-  await spritz.click()
-  await expect(page).toHaveURL(/\/drinks\/citrus-spritz\/garnish=/)
+  // Citrus Spritz wants a peeler, and a knife does that.
+  await expect(page.getByRole('link', { name: /Citrus Spritz/ })).not.toContainText('With')
+  const colada = page.getByRole('link', { name: /Nada Colada/ })
+  await expect(colada).toContainText('With blended with ice')
+  await colada.click()
+  await expect(page).toHaveURL(/\/drinks\/nada-colada\/.*=blended/)
 })
 
 test('the ingredient filter finds every Drink that can use what you made', async ({ page }) => {
@@ -117,11 +122,38 @@ test('the ingredient filter finds every Drink that can use what you made', async
   await expect(page.getByRole('link', { name: /Nojito/ })).toContainText('With muddled raspberries')
 })
 
+test('the ingredient filter lists things you buy, not recipe wordings', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('group', { name: 'What you have' }).getByRole('button', { name: 'Ingredients' }).click()
+  const sheet = page.getByRole('dialog', { name: 'Ingredients' })
+  await expect(sheet.getByRole('button', { name: 'Ice', exact: true })).toHaveCount(1)
+  await expect(sheet.getByRole('button', { name: 'Crushed ice' })).toHaveCount(0)
+  await expect(sheet.getByRole('button', { name: 'Cold water' })).toHaveCount(0)
+  await expect(sheet.getByRole('button', { name: 'Lemon wheel' })).toHaveCount(0)
+  await expect(sheet.getByRole('region', { name: 'Garnishes' }).getByRole('button', { name: 'Pickles' })).toBeVisible()
+
+  await sheet.getByRole('searchbox', { name: 'Search ingredients' }).fill('lemon peel')
+  await sheet.getByRole('button', { name: 'Lemons' }).click()
+  await sheet.getByRole('button', { name: 'Close' }).click()
+  await expect(page).toHaveURL(/ing=lemons/)
+  await expect(page.getByRole('group', { name: 'What you have' }).getByRole('button', { name: 'Lemons' })).toBeVisible()
+  await expect(page.getByRole('link', { name: /Tea Sour/ })).toBeVisible()
+  await expect(page.getByRole('link', { name: /Porch Tea/ })).toBeVisible()
+})
+
 test('a syrup Bar Term links to the Drinks that use it', async ({ page }) => {
   await page.goto('/bar-terms#raspberry-syrup')
   await page.getByRole('link', { name: 'Drinks that use it' }).click()
-  await expect(page).toHaveURL(/\/\?ing=raspberry\+syrup/)
+  await expect(page).toHaveURL(/\/\?ing=raspberry-syrup/)
   await expect(page.getByRole('link', { name: /Italian Soda/ })).toBeVisible()
   await expect(page.getByRole('link', { name: /Raspberry Clover/ })).toBeVisible()
   await expect(page.getByText('2 drinks', { exact: true })).toBeVisible()
+})
+
+test('the Wheel Bar Term finds wheels, not every Drink with the same fruit', async ({ page }) => {
+  await page.goto('/bar-terms#wheel')
+  await page.getByRole('link', { name: 'Drinks that use it' }).click()
+  await expect(page).toHaveURL(/ing=lime\+wheel/)
+  await expect(page.getByRole('link', { name: /Hibiscus Stir/ })).toBeVisible()
+  await expect(page.getByRole('link', { name: /Tea Sour/ })).toHaveCount(0)
 })

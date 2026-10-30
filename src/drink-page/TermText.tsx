@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { Link } from 'react-router'
 import { markBarTerms, type BarTerm, type Segment } from '../bar-terms'
 import { houseDrinks } from '../house-drinks/catalog'
-import { ingredientChoices } from '../house-drinks/search'
+import { exactIngredient, ingredientNames } from '../house-drinks/search'
 import { useSettings } from '../settings/use-settings'
 import { Sheet } from './Sheet'
 
@@ -36,9 +36,9 @@ const stop = (event: React.SyntheticEvent) => event.stopPropagation()
 // list the Drinks that use what you made: raspberry syrup, a lime wheel.
 function ingredientsNaming(term: BarTerm): string[] {
   if (term.kind !== 'ingredient' || !term.prep) return []
-  return ingredientChoices(houseDrinks).filter((name) =>
-    markBarTerms([name])[0].some((segment) => segment.term?.id === term.id),
-  )
+  return ingredientNames(houseDrinks)
+    .filter((name) => markBarTerms([name])[0].some((segment) => segment.term?.id === term.id))
+    .map(exactIngredient)
 }
 
 // In a portal, since terms sit inside paragraphs and headings. React still

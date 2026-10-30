@@ -78,3 +78,7 @@ _Avoid_: Tooltip, jargon, vocab word
 **Prep**:
 The short steps on a Bar Term for making, cutting, or doing the thing it names, such as making a syrup or cutting a lime wheel. A Drink's steps use the result and don't repeat the Prep.
 _Avoid_: Sub-recipe, instructions, how-to
+
+**Bar Item**:
+Something you'd buy or make once, such as Lemons or raspberry syrup, standing for the recipe wordings that use it: fresh lemon juice, lemon wheel, lemon peel.
+_Avoid_: Stock item, pantry item, ingredient type
