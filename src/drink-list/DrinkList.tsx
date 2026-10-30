@@ -11,11 +11,13 @@ import { isCustomDrinkId } from '../custom-drinks/copy-drink'
 import { useDrinks } from '../custom-drinks/store'
 import {
   filterChoices,
-  groupIngredients,
+  groupChoices,
   ingredientChoices,
+  ingredientLabel,
   searchDrinks,
   toolChoices,
   type FoundDrink,
+  type IngredientChoice,
 } from '../house-drinks/search'
 import { FLAVOR_TAGS, METHODS, resolveRiff, riffLink, TOOLS, type FlavorTag, type Method, type Tool } from '../riff-engine'
 import './drink-list.css'
@@ -176,7 +178,7 @@ export function DrinkList() {
               {ingredients.length === 0
                 ? 'Ingredients'
                 : ingredients.length === 1
-                  ? capitalize(ingredients[0])
+                  ? ingredientLabel(ingredients[0])
                   : `${ingredients.length} ingredients`}
             </button>
           </div>
@@ -233,11 +235,8 @@ export function DrinkList() {
   )
 }
 
-const capitalize = (text: string) => text[0].toUpperCase() + text.slice(1)
-
 // Tick the tools you have, and the list keeps the Drinks with a Riff you can
-// make with them. A barspoon and a strainer aren't offered: any long spoon
-// stirs, and a shaker's lid strains.
+// make with them. Tools a kitchen has a stand-in for aren't offered.
 function ToolSheet({
   choices,
   picked,
@@ -255,8 +254,8 @@ function ToolSheet({
     <Sheet label="Tools you have" onClose={onClose}>
       <h2>Tools you have</h2>
       <p className="dl-sheet-note">
-        Shows the drinks you can make with just these. Any long spoon works as a barspoon, and a shaker's lid as a
-        strainer.
+        Shows the drinks you can make with just these. Your kitchen covers the rest: a long spoon stirs, a shaker's lid
+        strains, a pot boils water, a knife peels, and a pint glass works as a mixing glass.
       </p>
       <div className="dl-sheet-chips" role="group" aria-label="Tools">
         {choices.map((tool) => (
@@ -283,7 +282,7 @@ function IngredientSheet({
   onChange,
   onClose,
 }: {
-  choices: string[]
+  choices: IngredientChoice[]
   picked: string[]
   onChange: (ingredients: string[]) => void
   onClose: () => void
@@ -291,14 +290,15 @@ function IngredientSheet({
   const [query, setQuery] = useState('')
   const searchId = useId()
   const words = query.toLowerCase().split(/\s+/).filter(Boolean)
-  const rest = choices.filter(
-    (ingredient) => !picked.includes(ingredient) && words.every((word) => ingredient.includes(word)),
-  )
-  const toggle = (ingredient: string) =>
-    onChange(picked.includes(ingredient) ? picked.filter((i) => i !== ingredient) : [...picked, ingredient])
-  const chip = (ingredient: string) => (
-    <button key={ingredient} type="button" aria-pressed={picked.includes(ingredient)} onClick={() => toggle(ingredient)}>
-      {capitalize(ingredient)}
+  const rest = choices.filter((choice) => {
+    const text = [choice.label.toLowerCase(), ...choice.names].join(' \n ')
+    return !picked.includes(choice.value) && words.every((word) => text.includes(word))
+  })
+  const toggle = (value: string) =>
+    onChange(picked.includes(value) ? picked.filter((i) => i !== value) : [...picked, value])
+  const chip = (value: string) => (
+    <button key={value} type="button" aria-pressed={picked.includes(value)} onClick={() => toggle(value)}>
+      {ingredientLabel(value)}
     </button>
   )
   return (
@@ -327,10 +327,10 @@ function IngredientSheet({
         />
       </div>
       {rest.length > 0 ? (
-        groupIngredients(rest).map(({ group, names }) => (
+        groupChoices(rest).map(({ group, choices }) => (
           <section key={group} className="dl-sheet-group" aria-label={group}>
             <h3>{group}</h3>
-            <div className="dl-sheet-chips">{names.map(chip)}</div>
+            <div className="dl-sheet-chips">{choices.map((choice) => chip(choice.value))}</div>
           </section>
         ))
       ) : (

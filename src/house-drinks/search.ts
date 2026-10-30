@@ -9,12 +9,13 @@ import {
   type Picks,
   type Tool,
 } from '../riff-engine'
+import { BAR_GROUPS, barItemById, barItemFor, isAlwaysOnHand, namesOf, type BarGroup } from '../my-bar/bar-items'
 
 export interface DrinkSearch {
   query?: string
   method?: Method
   flavor?: FlavorTag
-  // Show Drinks with a Riff that uses any of these ingredients.
+  // Show Drinks with a Riff that uses any of these: Bar Item IDs or exact names.
   ingredients?: string[]
   // Show Drinks with a Riff that needs only these tools (and kitchen ones).
   tools?: Tool[]
@@ -27,9 +28,22 @@ export interface FoundDrink {
   picks: Picks
 }
 
-// Tools the tool filter never hides a Drink for: any long spoon stirs, and a
-// shaker's lid strains.
-export const KITCHEN_TOOLS: readonly Tool[] = ['barspoon', 'strainer']
+// One row of the ingredient filter. `value` goes in the address, and `names`
+// are the wordings a search of the filter can find it by.
+export interface IngredientChoice {
+  value: string
+  label: string
+  group: ChoiceGroup
+  names: string[]
+}
+
+export const FROM_YOUR_DRINKS = 'From your drinks' as const
+export type ChoiceGroup = BarGroup | typeof FROM_YOUR_DRINKS
+
+// Tools the tool filter never hides a Drink for, since a kitchen has a stand-in:
+// any long spoon stirs, a shaker's lid strains, a pot boils water, a knife
+// peels, and a pint glass stirs.
+export const KITCHEN_TOOLS: readonly Tool[] = ['barspoon', 'strainer', 'kettle', 'peeler', 'mixing-glass']
 
 // Options that can still be picked. Retired ones only live on in Favorites.
 const pickable = (drink: Drink) => drink.slots.flatMap((slot) => slot.options.filter((option) => !option.retired))
@@ -100,7 +114,13 @@ export function searchDrinks(
   { query = '', method, flavor, ingredients = [], tools }: DrinkSearch,
 ): FoundDrink[] {
   const words = query.toLowerCase().split(/\s+/).filter(Boolean)
-  const wanted = new Set(ingredients.map((ingredient) => ingredient.toLowerCase()))
+  // A value is a Bar Item, standing for all its names, or one exact name.
+  const wanted = new Set(
+    ingredients.flatMap((value) => {
+      const item = barItemById(value)
+      return [value.toLowerCase(), ...(item ? namesOf(item) : [])]
+    }),
+  )
   const owned = tools && new Set([...tools, ...KITCHEN_TOOLS])
   const fits = (riff: RiffFacts) =>
     (!method || riff.method === method) &&
@@ -119,7 +139,7 @@ export function searchDrinks(
 }
 
 // Every ingredient a Riff can use, once each, by name.
-export function ingredientChoices(drinks: Drink[]): string[] {
+export function ingredientNames(drinks: Drink[]): string[] {
   const names = new Set(
     drinks.flatMap((drink) => [
       ...drink.ingredients.map(name),
@@ -127,6 +147,35 @@ export function ingredientChoices(drinks: Drink[]): string[] {
     ]),
   )
   return [...names].sort((a, b) => a.localeCompare(b))
+}
+
+// The ingredient filter's list: each Bar Item some Riff can use, and any name
+// from a Custom Drink that no Bar Item covers. Water is never offered.
+export function ingredientChoices(drinks: Drink[]): IngredientChoice[] {
+  const names = ingredientNames(drinks).filter((ingredient) => !isAlwaysOnHand(ingredient))
+  const items = new Set(names.flatMap((ingredient) => barItemFor(ingredient) ?? []))
+  return [
+    ...[...items].map((item) => ({ value: item.id, label: item.label, group: item.group, names: namesOf(item) })),
+    ...names
+      .filter((ingredient) => !barItemFor(ingredient))
+      .map((ingredient) => ({
+        value: ingredient,
+        label: ingredientLabel(ingredient),
+        group: FROM_YOUR_DRINKS,
+        names: [ingredient],
+      })),
+  ].sort((a, b) => a.label.localeCompare(b.label))
+}
+
+// What to call a value of the ingredient filter: a Bar Item ID or a name.
+export const ingredientLabel = (value: string) => barItemById(value)?.label ?? value[0].toUpperCase() + value.slice(1)
+
+// The filter value for exactly one ingredient name: its Bar Item when the
+// item is nothing but that name, so a syrup's link ticks the syrup's chip. A
+// lime wheel stays a name, since Limes also finds lime juice.
+export function exactIngredient(ingredient: string): string {
+  const item = barItemFor(ingredient)
+  return item && namesOf(item).length === 1 ? item.id : ingredient
 }
 
 // The tools worth offering in the tool filter: those some Riff needs, less
@@ -147,41 +196,9 @@ export function filterChoices(drinks: Drink[]): { methods: Method[]; flavors: Fl
   }
 }
 
-// Groups for browsing ingredients, in the order the picker shows them.
-export const INGREDIENT_GROUPS = [
-  'Syrups and sweeteners',
-  'Juices',
-  'Fruit and vegetables',
-  'Herbs, spices and bitters',
-  'Milk, cream and egg',
-  'Tea and coffee',
-  'Sodas and tonics',
-  'Garnishes',
-  'Ice and water',
-  'Other',
-] as const
-export type IngredientGroup = (typeof INGREDIENT_GROUPS)[number]
-
-// Which group a name falls in: the first rule that matches. The order
-// matters, so "soda water" is a soda before it is water, and "mint sprig,
-// for garnish" is a garnish before it is an herb. A House Drink test fails
-// when a new ingredient lands in Other.
-const GROUP_RULES: [IngredientGroup, RegExp][] = [
-  ['Sodas and tonics', /soda|tonic|ginger ale|ginger beer|sparkling/],
-  ['Ice and water', /\bice\b|water$/],
-  ['Juices', /juice|purée/],
-  ['Syrups and sweeteners', /syrup|agave|honey|grenadine|sweetener/],
-  ['Tea and coffee', /\btea\b|rooibos|lapsang|coffee|espresso|cold brew/],
-  ['Garnishes', /garnish|wheel|wedge|peel|pick$|cherry$|slice$|ribbons|stalk|spear|candied|flakes|sprig$|stick$/],
-  ['Milk, cream and egg', /milk|cream|half-and-half|yogurt|egg|aquafaba/],
-  ['Herbs, spices and bitters', /leaves|sprigs|ground|cloves|salt|pepper|nutmeg|tajín|hot sauce|horseradish|bitters|extract/],
-  ['Fruit and vegetables', /berr|cherries|mango|watermelon|cucumber|apple|pear|lemon|lime|orange/],
-]
-
-// Ingredient names in their groups, groups in a fixed order, empty ones left out.
-export function groupIngredients(names: string[]): { group: IngredientGroup; names: string[] }[] {
-  const groupOf = (name: string) => GROUP_RULES.find(([, rule]) => rule.test(name))?.[0] ?? 'Other'
-  return INGREDIENT_GROUPS.map((group) => ({ group, names: names.filter((name) => groupOf(name) === group) })).filter(
-    ({ names }) => names.length > 0,
-  )
+// Ingredient choices in their groups, groups in a fixed order, empty ones left out.
+export function groupChoices(choices: IngredientChoice[]): { group: ChoiceGroup; choices: IngredientChoice[] }[] {
+  return [...BAR_GROUPS, FROM_YOUR_DRINKS]
+    .map((group) => ({ group, choices: choices.filter((choice) => choice.group === group) }))
+    .filter(({ choices }) => choices.length > 0)
 }

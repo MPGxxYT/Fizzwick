@@ -2,7 +2,17 @@ import { describe, expect, test } from 'vitest'
 import { parseDrinkFile, type Drink } from '../riff-engine'
 import cherryLimeadeFile from './cherry-limeade.json'
 import { houseDrinks } from './catalog'
-import { filterChoices, groupIngredients, ingredientChoices, searchDrinks, toolChoices } from './search'
+import {
+  exactIngredient,
+  filterChoices,
+  FROM_YOUR_DRINKS,
+  groupChoices,
+  ingredientChoices,
+  searchDrinks,
+  toolChoices,
+  type ChoiceGroup,
+  type IngredientChoice,
+} from './search'
 
 function parse(input: unknown): Drink {
   const result = parseDrinkFile(input)
@@ -161,52 +171,88 @@ describe('the tool filter', () => {
   })
 })
 
-describe('ingredientChoices', () => {
-  test('lists every pickable ingredient once, by name', () => {
-    const choices = ingredientChoices(drinks)
-    expect(choices).toContain('agave')
-    expect(choices).toContain('whole milk')
-    expect(choices).not.toContain('kiwi purée')
-    expect(choices.filter((name) => name === 'lime wheel')).toHaveLength(1)
-    expect(choices).toEqual([...choices].sort((a, b) => a.localeCompare(b)))
+describe('the ingredient filter, by Bar Item', () => {
+  const lemonDrink = (id: string, ingredient: string): Drink => ({
+    ...mangoCream,
+    id,
+    name: id,
+    ingredients: [{ name: ingredient, amount: 1, unit: 'oz' }],
+  })
+
+  test('picking Lemons finds Drinks using its juice, wheel, wedge or peel', () => {
+    const lemons = ['fresh lemon juice', 'lemon wheel', 'lemon wedge', 'lemon peel'].map((name) => lemonDrink(name, name))
+    expect(names(searchDrinks(lemons, { ingredients: ['lemons'] }))).toHaveLength(4)
+  })
+
+  test('one exact name finds only that name', () => {
+    const lemons = [lemonDrink('juice', 'fresh lemon juice'), lemonDrink('wheel', 'lemon wheel')]
+    expect(names(searchDrinks(lemons, { ingredients: ['lemon wheel'] }))).toEqual(['wheel'])
+  })
+
+  test('a syrup link ticks the syrup, and a wheel link stays exact', () => {
+    expect(exactIngredient('raspberry syrup')).toBe('raspberry-syrup')
+    expect(exactIngredient('lime wheel')).toBe('lime wheel')
+    expect(exactIngredient('durian foam')).toBe('durian foam')
   })
 })
 
-describe('groupIngredients', () => {
-  const group = (name: string) => groupIngredients([name])[0].group
+describe('ingredientChoices', () => {
+  const house = ingredientChoices(houseDrinks)
+  const labels = house.map((choice) => choice.label)
 
-  test('sorts ingredients into groups by kind', () => {
-    expect(group('raspberry syrup')).toBe('Syrups and sweeteners')
-    expect(group('agave')).toBe('Syrups and sweeteners')
-    expect(group('tart cherry juice')).toBe('Juices')
-    expect(group('soda water')).toBe('Sodas and tonics')
-    expect(group('crushed ice')).toBe('Ice and water')
-    expect(group('chilled rooibos')).toBe('Tea and coffee')
-    expect(group('oat milk')).toBe('Milk, cream and egg')
-    expect(group('mint leaves')).toBe('Herbs, spices and bitters')
-    expect(group('mint sprig, for garnish')).toBe('Garnishes')
-    expect(group('lime wheel')).toBe('Garnishes')
-    expect(group('raspberries')).toBe('Fruit and vegetables')
-    expect(group('durian foam')).toBe('Other')
+  test('offers no water, one Ice and one Lemons', () => {
+    expect(labels.filter((label) => /water$/i.test(label))).toEqual(['Soda water', 'Tonic water'])
+    expect(labels.filter((label) => /\bice\b/i.test(label))).toEqual(['Ice'])
+    expect(labels.filter((label) => /lemon/i.test(label))).toEqual(['Lemon-lime soda', 'Lemons', 'Sparkling lemonade'])
   })
 
-  test('keeps the groups in a fixed order and names in the order given', () => {
-    expect(groupIngredients(['raspberries', 'agave', 'lime wheel', 'honey'])).toEqual([
-      { group: 'Syrups and sweeteners', names: ['agave', 'honey'] },
-      { group: 'Fruit and vegetables', names: ['raspberries'] },
-      { group: 'Garnishes', names: ['lime wheel'] },
-    ])
+  test('keeps garnish-only items, in their own group', () => {
+    expect(house.find((choice) => choice.value === 'pickles')?.group).toBe('Garnishes')
   })
 
-  test('every House Drink ingredient has a group', () => {
-    const other = groupIngredients(ingredientChoices(houseDrinks)).find(({ group }) => group === 'Other')
-    expect(other?.names ?? []).toEqual([])
+  test('every House Drink ingredient lands in a Bar Item group', () => {
+    expect(groupChoices(house).map(({ group }) => group)).not.toContain(FROM_YOUR_DRINKS)
+  })
+
+  test('leaves out Retired Options, and lists each item once in name order', () => {
+    const fixture = ingredientChoices(drinks)
+    expect(fixture.filter((choice) => choice.value === 'limes')).toHaveLength(1)
+    expect(fixture.map((choice) => choice.value)).toContain('whole-milk')
+    expect(fixture.map((choice) => choice.value)).not.toContain('kiwi purée')
+    const sorted = fixture.map((choice) => choice.label)
+    expect(sorted).toEqual([...sorted].sort((a, b) => a.localeCompare(b)))
+  })
+
+  test('a name no Bar Item covers shows under From your drinks', () => {
+    const custom: Drink = { ...mangoCream, ingredients: [{ name: 'Charred Lemon Wheel', amount: 1, unit: 'count' }] }
+    const choice = ingredientChoices([custom]).find((c) => c.value === 'charred lemon wheel')
+    expect(choice).toMatchObject({ label: 'Charred lemon wheel', group: FROM_YOUR_DRINKS })
+  })
+})
+
+describe('groupChoices', () => {
+  test('keeps the groups in a fixed order, and From your drinks last', () => {
+    const choice = (value: string, group: ChoiceGroup): IngredientChoice => ({ value, label: value, group, names: [value] })
+    expect(
+      groupChoices([choice('mine', FROM_YOUR_DRINKS), choice('pickles', 'Garnishes'), choice('agave', 'Syrups and sweeteners')]).map(
+        ({ group }) => group,
+      ),
+    ).toEqual(['Syrups and sweeteners', 'Garnishes', FROM_YOUR_DRINKS])
   })
 })
 
 describe('toolChoices', () => {
-  test('offers the tools some Riff needs, leaving out the barspoon and strainer', () => {
+  test('offers the tools some Riff needs, leaving out those a kitchen has a stand-in for', () => {
     expect(toolChoices(drinks)).toEqual(['jigger', 'shaker', 'fine-strainer', 'muddler', 'blender'])
+    expect(toolChoices(houseDrinks)).toEqual(['jigger', 'shaker', 'fine-strainer', 'muddler', 'blender'])
+  })
+
+  test('a kettle, peeler or mixing glass never hides a Drink', () => {
+    const needs: Drink = {
+      ...cherryLimeade,
+      steps: [{ id: 'all', text: 'Boil, peel and stir.', tools: ['kettle', 'peeler', 'mixing-glass'] }],
+    }
+    expect(picksOf(searchDrinks([needs], { tools: ['jigger'] }), needs.name)).toEqual(needs.houseSpec)
   })
 })
 
