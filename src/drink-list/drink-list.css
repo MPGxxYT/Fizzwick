@@ -109,9 +109,23 @@
   display: none;
 }
 
-.dl-chips button {
+.dl-chips button,
+.dl-bar-link {
   flex: none;
   scroll-snap-align: start;
+}
+
+/* Where Can make goes until My Bar has something in it. */
+.dl-bar-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 0.95rem;
+  border: 1px dashed var(--link);
+  border-radius: 999px;
+  color: var(--link);
+  font: 600 0.95rem 'Figtree', sans-serif;
+  text-decoration: none;
 }
 
 /* A mouse wheel can't scroll the row sideways, so with a mouse the chips
@@ -312,7 +326,8 @@
   margin: 0;
 }
 
-.dl-empty button {
+.dl-empty button,
+.dl-empty-bar {
   margin-top: 1rem;
   min-height: 2.75rem;
   padding: 0 1rem;
@@ -322,6 +337,13 @@
   color: var(--text);
   font: 600 0.95rem 'Figtree', sans-serif;
   cursor: pointer;
+}
+
+.dl-empty-bar {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  text-decoration: none;
 }
 
 .dl a:focus-visible,

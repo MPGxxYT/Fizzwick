@@ -30,21 +30,30 @@ describe('defaultSettings', () => {
 
 describe('readSettings', () => {
   it('reads saved settings', () => {
-    expect(readSettings('{"units":"ml","underlines":false}', 'en-US')).toEqual({ units: 'ml', underlines: false })
+    expect(readSettings('{"units":"ml","underlines":false,"canMake":true}', 'en-US')).toEqual({
+      units: 'ml',
+      underlines: false,
+      canMake: true,
+    })
   })
 
   it('uses the defaults when nothing is saved', () => {
-    expect(readSettings(null, 'en-GB')).toEqual({ units: 'ml', underlines: true })
+    expect(readSettings(null, 'en-GB')).toEqual({ units: 'ml', underlines: true, canMake: false })
   })
 
   it('keeps what is valid and defaults the rest', () => {
-    expect(readSettings('{"units":"cups","underlines":false}', 'en-US')).toEqual({ units: 'oz', underlines: false })
-    expect(readSettings('{"units":"ml"}', 'en-US')).toEqual({ units: 'ml', underlines: true })
+    expect(readSettings('{"units":"cups","underlines":false,"canMake":"yes"}', 'en-US')).toEqual({
+      units: 'oz',
+      underlines: false,
+      canMake: false,
+    })
+    expect(readSettings('{"units":"ml"}', 'en-US')).toEqual({ units: 'ml', underlines: true, canMake: false })
   })
 
   it('uses the defaults for anything that is not saved settings', () => {
-    expect(readSettings('not json', 'en-US')).toEqual({ units: 'oz', underlines: true })
-    expect(readSettings('[1,2]', 'en-US')).toEqual({ units: 'oz', underlines: true })
-    expect(readSettings('null', 'en-US')).toEqual({ units: 'oz', underlines: true })
+    const defaults = { units: 'oz', underlines: true, canMake: false }
+    expect(readSettings('not json', 'en-US')).toEqual(defaults)
+    expect(readSettings('[1,2]', 'en-US')).toEqual(defaults)
+    expect(readSettings('null', 'en-US')).toEqual(defaults)
   })
 })
