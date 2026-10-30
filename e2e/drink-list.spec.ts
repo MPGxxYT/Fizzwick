@@ -1,5 +1,25 @@
 import { expect, test } from '@playwright/test'
 
+test('the menu opens the other pages, and the heart stays outside it', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByRole('link', { name: 'Favorites' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Bar Terms explained' })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: 'New drink' })).toHaveCount(0)
+
+  await page.getByRole('button', { name: 'Menu' }).click()
+  const menu = page.getByRole('dialog', { name: 'Menu' })
+  await expect(menu.getByRole('link')).toHaveText(['New drink', 'Bar Terms', 'Settings'])
+  await menu.getByRole('button', { name: 'Close' }).click()
+  await expect(menu).toHaveCount(0)
+
+  for (const name of ['New drink', 'Bar Terms', 'Settings']) {
+    await page.goto('/')
+    await page.getByRole('button', { name: 'Menu' }).click()
+    await page.getByRole('dialog', { name: 'Menu' }).getByRole('link', { name }).click()
+    await expect(page.getByRole('heading', { name, level: 1 })).toBeVisible()
+  }
+})
+
 test('the home page lists the House Drinks and opens one', async ({ page }) => {
   await page.goto('/')
   const card = page.getByRole('link', { name: /Cherry Limeade/ })

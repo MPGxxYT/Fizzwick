@@ -43,7 +43,8 @@ test('tapping a Bar Term in step mode explains it without turning the step', asy
 
 test('the home page links to the Bar Terms, which open on tap', async ({ page }) => {
   await page.goto('/')
-  await page.getByRole('link', { name: 'Bar Terms explained' }).click()
+  await page.getByRole('button', { name: 'Menu' }).click()
+  await page.getByRole('link', { name: 'Bar Terms' }).click()
   await expect(page.getByRole('heading', { name: 'Glasses' })).toBeVisible()
   await page.getByRole('button', { name: 'Coupe' }).click()
   await expect(page.getByRole('dialog', { name: 'Coupe' })).toContainText('A shallow, wide bowl on a stem')

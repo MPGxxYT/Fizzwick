@@ -42,12 +42,6 @@
   white-space: nowrap;
 }
 
-.dl-head-links {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-}
-
 .dl-search {
   position: relative;
   margin-top: 1rem;
@@ -338,25 +332,8 @@
 }
 
 /* The way to the Bar Terms page, under the tagline. */
-.dl-terms-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.75rem;
-  margin-top: 0;
-  padding: 0 0.5rem;
-  border-radius: 0.5rem;
-  color: var(--link);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.dl-terms-link:focus-visible {
-  outline: 2px solid var(--link);
-  outline-offset: 3px;
-}
-
-/* Settings, as a gear in the top corner. */
-.dl-settings {
+/* The menu, as a hamburger in the top corner. */
+.dl-menu {
   position: absolute;
   top: calc(1rem + env(safe-area-inset-top));
   right: 0.75rem;
@@ -364,11 +341,15 @@
   place-items: center;
   width: 2.75rem;
   height: 2.75rem;
+  padding: 0;
+  border: 0;
   border-radius: 50%;
+  background: none;
   color: var(--muted);
+  cursor: pointer;
 }
 
-.dl-settings svg {
+.dl-menu svg {
   width: 1.4rem;
   height: 1.4rem;
   fill: none;
@@ -376,6 +357,33 @@
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.dl-menu-links {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.dl-menu-links a {
+  display: flex;
+  align-items: center;
+  min-height: 3rem;
+  padding: 0 1rem;
+  border-radius: 0.9rem;
+  background: var(--dp-card);
+  color: var(--dp-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.dl-menu-links a:active {
+  background: rgba(191, 174, 220, 0.15);
+}
+
+.dl-menu-links a:focus-visible {
+  outline: 2px solid #7fe3c6;
+  outline-offset: 3px;
 }
 
 /* Favorites, as a heart in the other top corner. */
@@ -404,9 +412,8 @@
 .dl-card,
 .dl-filter button,
 .dl-empty button,
-.dl-settings,
-.dl-favorites,
-.dl-terms-link {
+.dl-menu,
+.dl-favorites {
   transition:
     transform 0.12s ease-out,
     background-color 0.12s ease-out;
@@ -417,12 +424,11 @@
 }
 
 .dl-filter button:active,
-.dl-empty button:active,
-.dl-terms-link:active {
+.dl-empty button:active {
   transform: scale(0.95);
 }
 
-.dl-settings:active,
+.dl-menu:active,
 .dl-favorites:active {
   background: rgba(191, 174, 220, 0.15);
 }
@@ -430,8 +436,7 @@
 @media (prefers-reduced-motion: reduce) {
   .dl-card:active,
   .dl-filter button:active,
-  .dl-empty button:active,
-  .dl-terms-link:active {
+  .dl-empty button:active {
     transform: none;
   }
 }

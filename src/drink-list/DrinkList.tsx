@@ -32,12 +32,27 @@ const isMethod = (value: string | null): value is Method => (METHODS as readonly
 const isFlavor = (value: string | null): value is FlavorTag => (FLAVOR_TAGS as readonly string[]).includes(value ?? '')
 const isTool = (value: string): value is Tool => (TOOLS as readonly string[]).includes(value)
 
+// The app's other pages, in a sheet where a thumb can reach them.
+function MainMenu({ onClose }: { onClose: () => void }) {
+  return (
+    <Sheet label="Menu" onClose={onClose}>
+      <h2>Menu</h2>
+      <nav className="dl-menu-links" aria-label="Menu">
+        <Link to="/new">New drink</Link>
+        <Link to="/bar-terms">Bar Terms</Link>
+        <Link to="/settings">Settings</Link>
+      </nav>
+    </Sheet>
+  )
+}
+
 // Home: every Drink, with search by name or ingredient and filters by Method,
 // Flavor Tag, the tools you have and the ingredients you want to use. The
 // search and filters live in the address, so coming back from a Drink shows
 // the same list.
 export function DrinkList() {
   const [params, setParams] = useSearchParams()
+  const [menuOpen, setMenuOpen] = useState(false)
   const { drinks, photos } = useDrinks()
   const choices = useMemo(
     () => ({ ...filterChoices(drinks), tools: toolChoices(drinks), ingredients: ingredientChoices(drinks) }),
@@ -84,29 +99,27 @@ export function DrinkList() {
 
   return (
     <div className="dl">
+      {menuOpen && <MainMenu onClose={() => setMenuOpen(false)} />}
       <div className="dp-glow" aria-hidden="true" />
       <Bubbles />
       <main className="dl-page">
         <Link to="/favorites" className="dl-favorites" aria-label="Favorites">
           <Heart />
         </Link>
-        <Link to="/settings" className="dl-settings" aria-label="Settings">
+        <button
+          type="button"
+          className="dl-menu"
+          aria-label="Menu"
+          aria-haspopup="dialog"
+          onClick={() => setMenuOpen(true)}
+        >
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" />
+            <path d="M4 7h16M4 12h16M4 17h16" />
           </svg>
-        </Link>
+        </button>
         <header className="dl-head">
           <h1>{APP_NAME}</h1>
           <p>Pick a drink, then swap its parts to make it yours.</p>
-          <span className="dl-head-links">
-            <Link to="/bar-terms" className="dl-terms-link">
-              Bar Terms explained
-            </Link>
-            <Link to="/new" className="dl-terms-link">
-              New drink
-            </Link>
-          </span>
         </header>
 
         <div className="dl-search">
