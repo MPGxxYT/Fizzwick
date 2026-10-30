@@ -10,6 +10,8 @@ export interface MyBar {
 
 export const EMPTY_MY_BAR: MyBar = { tools: [], items: [] }
 
+export const isMyBarEmpty = (myBar: MyBar) => myBar.tools.length === 0 && myBar.items.length === 0
+
 // My Bar as stored, checked field by field: anything unreadable is left out.
 export function readMyBar(saved: string | null): MyBar {
   let value: unknown

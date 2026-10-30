@@ -1,7 +1,11 @@
 import { useState } from 'react'
+import { optionsNotInMyBar } from '../house-drinks/search'
+import { useCanMakeBar } from '../my-bar/use-my-bar'
 import type { Drink, Picks, Slot } from '../riff-engine'
 import { readable } from './colors'
 import { Sheet } from './Sheet'
+
+const NONE_MISSING: ReadonlySet<string> = new Set()
 
 // Each Slot's word gets its own underline style, so the words read as
 // different things. The color comes from the picked Option. Dotted is left
@@ -39,6 +43,10 @@ export function RiffSentence({
   onReset?: () => void
 }) {
   const [openSlot, setOpenSlot] = useState<Slot | null>(null)
+  // While Can make is on, the sheet says what you'd have to go and get. Those
+  // Options can still be picked.
+  const canMakeBar = useCanMakeBar()
+  const missing = openSlot && canMakeBar ? optionsNotInMyBar(drink, picks, openSlot, canMakeBar) : NONE_MISSING
 
   const words = drink.slots.map((slot, i) => {
     const option = slot.options.find((candidate) => candidate.id === picks[slot.id])
@@ -121,6 +129,7 @@ export function RiffSentence({
                     <span className="dp-swatch" style={{ background: option.color }} />
                     {option.label}
                     {option.retired && ' (retired)'}
+                    {missing.has(option.id) && <span className="dp-not-in-bar">Not in My Bar</span>}
                   </button>
                 </li>
               ))}

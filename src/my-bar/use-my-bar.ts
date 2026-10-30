@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react'
-import { readMyBar, type MyBar } from './my-bar'
+import { useSettings } from '../settings/use-settings'
+import { isMyBarEmpty, readMyBar, type MyBar } from './my-bar'
 
 // My Bar kept on this device in local storage. If storage can't be read or
 // written (private browsing, full, blocked), it starts empty and ticks last
@@ -46,4 +47,12 @@ export function updateMyBar(change: Partial<MyBar>) {
 
 export function useMyBar(): MyBar {
   return useSyncExternalStore(subscribe, () => current)
+}
+
+// My Bar while Can make is at work: toggled on, with something ticked. An
+// empty My Bar makes nothing, so the toggle waits until it has something.
+export function useCanMakeBar(): MyBar | undefined {
+  const myBar = useMyBar()
+  const { canMake } = useSettings()
+  return canMake && !isMyBarEmpty(myBar) ? myBar : undefined
 }

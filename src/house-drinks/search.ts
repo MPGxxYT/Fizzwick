@@ -7,6 +7,7 @@ import {
   type FlavorTag,
   type Method,
   type Picks,
+  type Slot,
   type Tool,
 } from '../riff-engine'
 import { BAR_GROUPS, barItemById, barItemFor, isAlwaysOnHand, namesOf, type BarGroup } from '../my-bar/bar-items'
@@ -112,15 +113,40 @@ function riffsOf(drink: Drink): RiffFacts[] {
   return riffs
 }
 
-// A Riff you have everything for. Water and garnishes never stop you.
-function canMake(riff: RiffFacts, myBar: MyBar): boolean {
-  const needed = (ingredient: string) => {
-    if (isAlwaysOnHand(ingredient)) return false
-    return !barItemFor(ingredient)?.garnishes?.includes(ingredient)
-  }
-  return (
-    riff.tools.every((tool) => myBar.tools.includes(tool) || KITCHEN_TOOLS.includes(tool)) &&
-    [...riff.ingredients].filter(needed).every((ingredient) => myBar.items.includes(barItemFor(ingredient)?.id ?? ingredient))
+// Whether My Bar lacks these. Water and garnishes never stop you, and neither
+// does a tool a kitchen has a stand-in for.
+const lacksTool = (tool: Tool, myBar: MyBar) => !myBar.tools.includes(tool) && !KITCHEN_TOOLS.includes(tool)
+
+function lacksIngredient(ingredient: string, myBar: MyBar): boolean {
+  const lower = ingredient.toLowerCase()
+  if (isAlwaysOnHand(lower)) return false
+  const item = barItemFor(lower)
+  if (item?.garnishes?.includes(lower)) return false
+  return !myBar.items.includes(item?.id ?? lower)
+}
+
+// A Riff you have everything for.
+const canMake = (riff: RiffFacts, myBar: MyBar) =>
+  !riff.tools.some((tool) => lacksTool(tool, myBar)) &&
+  ![...riff.ingredients].some((ingredient) => lacksIngredient(ingredient, myBar))
+
+// The Options of a Slot that need something My Bar lacks: one of their own
+// ingredients, or a tool that only some choices in the Slot need. A tool every
+// choice needs isn't this Slot's doing, so swapping wouldn't help.
+export function optionsNotInMyBar(drink: Drink, picks: Picks, slot: Slot, myBar: MyBar): Set<string> {
+  const toolsWith = (choice: string | null) => resolveRiff(drink, { ...picks, [slot.id]: choice }).miseEnPlace.tools
+  const choices = [...slot.options.map((option) => option.id), ...(slot.optional ? [null] : [])]
+  const everyChoice = choices
+    .map(toolsWith)
+    .reduce((shared, tools) => shared.filter((tool) => tools.includes(tool)))
+  return new Set(
+    slot.options
+      .filter(
+        (option) =>
+          option.ingredients.some((ingredient) => lacksIngredient(ingredient.name, myBar)) ||
+          toolsWith(option.id).some((tool) => !everyChoice.includes(tool) && lacksTool(tool, myBar)),
+      )
+      .map((option) => option.id),
   )
 }
 
