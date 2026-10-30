@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test'
 
 test('units and underlines change the Drink page and step mode, and survive a reload', async ({ page }) => {
   await page.goto('/')
+  await page.getByRole('button', { name: 'Menu' }).click()
   await page.getByRole('link', { name: 'Settings' }).click()
   // The test browser is en-US, so ounces to start with.
   await expect(page.getByRole('radio', { name: 'Ounces (oz)' })).toHaveAttribute('aria-checked', 'true')

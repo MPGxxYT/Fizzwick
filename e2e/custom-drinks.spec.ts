@@ -157,6 +157,7 @@ test('leaving the editor with changes asks first', async ({ page }) => {
 
 test('a new drink from blank says what it still needs', async ({ page }) => {
   await page.goto('/')
+  await page.getByRole('button', { name: 'Menu' }).click()
   await page.getByRole('link', { name: 'New drink' }).click()
   await expect(page.getByRole('heading', { name: 'New drink' })).toBeVisible()
   await expect(page.getByText('Give the drink a name.')).toBeVisible()
