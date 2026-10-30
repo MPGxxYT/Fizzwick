@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { markBarTerms } from '../bar-terms'
-import { MAX_SERVINGS, type Riff } from '../riff-engine'
-import { formatIngredient, isMakeAhead, TOOL_NAMES } from './format'
+import { isMakeAhead, MAX_SERVINGS, type Riff } from '../riff-engine'
+import { formatIngredient, TOOL_NAMES } from './format'
 import { TermText } from './TermText'
 
 // The ingredients with a drink count, then the steps. Anything to do ahead

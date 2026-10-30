@@ -51,7 +51,7 @@
             {
               "step": {
                 "id": "blend-base",
-                "text": "Put the pineapple juice, lime juice, {creamy} and 1 cup of ice in a blender.",
+                "text": "Put the pineapple juice, lime juice, {creamy} and ice in a blender.",
                 "tools": ["jigger", "blender"]
               }
             },

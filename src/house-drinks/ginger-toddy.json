@@ -69,7 +69,7 @@
         {
           "id": "clove-lemon",
           "label": "Lemon wheel studded with cloves",
-          "phrase": "a lemon wheel studded with 4 cloves, floating on top",
+          "phrase": "a lemon wheel studded with cloves, floating on top",
           "ingredients": [
             { "name": "lemon wheel", "amount": 1, "unit": "count" },
             { "name": "whole cloves", "amount": 4, "unit": "count" }
@@ -89,7 +89,7 @@
   "steps": [
     {
       "id": "boil-water",
-      "text": "Boil the kettle and pour 6 oz of the just-boiled water into a mug.",
+      "text": "Boil the kettle and pour the just-boiled water into a mug.",
       "tools": ["kettle"]
     },
     {

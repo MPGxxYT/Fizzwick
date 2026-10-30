@@ -80,7 +80,7 @@
     },
     {
       "id": "add-base",
-      "text": "Pour the {base}, {sweetener}, lime juice and 2 dashes of bitters into a mixing glass.",
+      "text": "Pour the {base}, {sweetener}, lime juice and bitters into a mixing glass.",
       "tools": ["jigger", "mixing-glass"]
     },
     {

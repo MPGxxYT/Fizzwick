@@ -30,6 +30,8 @@ const SWIPE_PX = 50
 // On the Mise en Place, taps on the left part of the screen go back and the
 // rest go forward. On the steps, taps above the current step go back.
 const BACK_ZONE = 0.3
+// The height of the fade at the top of the steps, in step-mode.css.
+const TOP_FADE_PX = 40
 
 // Making the Riff one screen at a time: the Mise en Place first, then one
 // step per screen, then a finish screen. Covers the Drink page, which stays
@@ -194,7 +196,11 @@ export function StepMode({ drink, riff, onLeave }: { drink: Drink; riff: Riff; o
         {/* Read out in full, so a screen reader hears the step and not just
             its number. */}
         <p className="sm-visually-hidden" aria-live="polite">
-          {step ? `Step ${screen} of ${last}. ${step.text}` : screen === finish ? `${cheers} Your ${riff.name} is ready.` : ''}
+          {step
+            ? `Step ${screen} of ${last}. ${step.text} ${amountsToRead(step)}`
+            : screen === finish
+              ? `${cheers} Your ${riff.name} is ready.`
+              : ''}
         </p>
       </header>
 
@@ -245,6 +251,16 @@ export function StepMode({ drink, riff, onLeave }: { drink: Drink; riff: Riff; o
       </nav>
     </div>
   )
+}
+
+// A step's amounts as a sentence: "¾ oz fresh lime juice, ¾ oz cherry syrup."
+function amountsToRead(step: RiffStep): string {
+  if (step.ingredients.length === 0) return ''
+  const amounts = step.ingredients.map((ingredient) => {
+    const { measure, name } = formatIngredient(ingredient)
+    return `${measure} ${name}`
+  })
+  return `${amounts.join(', ')}.`
 }
 
 function MiseEnPlace({ riff }: { riff: Riff }) {
@@ -410,7 +426,11 @@ function StepStack({
       const item = element.children[current] as HTMLElement | undefined
       const stage = element.parentElement
       if (!item || !stage) return
-      const anchor = Math.min(stage.clientHeight * 0.22, 160)
+      // A step too tall to fit above the bottom fade moves up, as far as the
+      // top fade, since the stage doesn't scroll.
+      const preferred = Math.min(stage.clientHeight * 0.22, 160)
+      const height = (item.lastElementChild as HTMLElement).offsetHeight
+      const anchor = Math.max(TOP_FADE_PX, Math.min(preferred, stage.clientHeight * 0.8 - height))
       element.style.transform = `translateY(${Math.round(anchor - item.offsetTop)}px)`
     }
     place()
@@ -459,11 +479,22 @@ function StepItem({
   now: number
   controls: TimerControls
 }) {
-  // The step text, then its tools, marked as one screen.
-  const [text, ...tools] = useMemo(
-    () => markBarTerms([step.text, ...step.tools.map((tool) => TOOL_NAMES[tool])]),
+  // The step text, then its tools, then each ingredient's measure and name,
+  // marked as one screen.
+  const [text, ...rest] = useMemo(
+    () =>
+      markBarTerms([
+        step.text,
+        ...step.tools.map((tool) => TOOL_NAMES[tool]),
+        ...step.ingredients.flatMap((ingredient) => {
+          const { measure, name } = formatIngredient(ingredient)
+          return [measure, name]
+        }),
+      ]),
     [step],
   )
+  const tools = rest.slice(0, step.tools.length)
+  const amounts = rest.slice(step.tools.length)
   return (
     <>
       <p className="sm-number" aria-hidden="true">
@@ -473,6 +504,20 @@ function StepItem({
         <h2 className="sm-text">
           <StepText step={step} segments={text} />
         </h2>
+        {step.ingredients.length > 0 && (
+          <ul className="dp-ingredients sm-step-amounts" aria-label="How much to use">
+            {step.ingredients.map((_ingredient, i) => (
+              <li key={i}>
+                <span className="dp-measure">
+                  <TermText segments={amounts[i * 2]} linkToPage={false} />
+                </span>
+                <span>
+                  <TermText segments={amounts[i * 2 + 1]} linkToPage={false} />
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
         {tools.length > 0 && (
           <p className="sm-step-tools">
             {tools.map((segments, i) => (

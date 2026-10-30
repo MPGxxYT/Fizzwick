@@ -90,7 +90,7 @@
       "text": "Empty the coupe if it holds ice water, then fine strain the drink into it so the foam comes out smooth and seed-free.",
       "tools": ["strainer", "fine-strainer"]
     },
-    { "id": "garnish", "text": "Lay 3 raspberries on a pick across the rim." }
+    { "id": "garnish", "text": "Lay the raspberries on a pick across the rim." }
   ],
   "houseSpec": {
     "raspberry": "raspberry-syrup",

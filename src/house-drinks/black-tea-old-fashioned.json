@@ -82,7 +82,7 @@
     },
     {
       "id": "add-base",
-      "text": "Pour the {tea}, {sweetener}, cranberry juice and 2 dashes of bitters into a mixing glass.",
+      "text": "Pour the {tea}, {sweetener}, cranberry juice and bitters into a mixing glass.",
       "tools": ["jigger", "mixing-glass"]
     },
     {
@@ -91,7 +91,7 @@
       "tools": ["mixing-glass", "barspoon"],
       "durationSeconds": 30
     },
-    { "id": "add-cube", "text": "Put one large ice cube in a rocks glass." },
+    { "id": "add-cube", "text": "Put the large ice cube in a rocks glass." },
     {
       "id": "strain",
       "text": "Strain the drink over the cube.",

@@ -86,7 +86,7 @@
             {
               "step": {
                 "id": "blend-base",
-                "text": "Put the {milk}, cinnamon syrup, vanilla and 1 cup of ice in a blender.",
+                "text": "Put the {milk}, cinnamon syrup, vanilla extract and ice in a blender.",
                 "tools": ["jigger", "blender"]
               }
             },
@@ -108,7 +108,7 @@
   "steps": [
     {
       "id": "add-base",
-      "text": "Pour the {milk} and cinnamon syrup into a shaker tin and add 2 drops of vanilla.",
+      "text": "Pour the {milk} and cinnamon syrup into a shaker tin and add the vanilla extract.",
       "tools": ["jigger", "shaker"]
     },
     {
