@@ -196,6 +196,47 @@ describe('the ingredient filter, by Bar Item', () => {
   })
 })
 
+describe('the My Bar rule', () => {
+  const mangoBar = { tools: ['shaker' as const], items: ['whole-milk', 'mango purée'] }
+
+  test('an empty My Bar makes nothing', () => {
+    expect(searchDrinks(drinks, { myBar: { tools: [], items: [] } })).toEqual([])
+  })
+
+  test('needs every ingredient and tool of one Riff', () => {
+    expect(names(searchDrinks([mangoCream], { myBar: mangoBar }))).toEqual(['Mango Cream'])
+    expect(searchDrinks([mangoCream], { myBar: { ...mangoBar, items: ['whole-milk'] } })).toEqual([])
+    expect(searchDrinks([mangoCream], { myBar: { ...mangoBar, tools: [] } })).toEqual([])
+  })
+
+  test('opens on a Riff that fits when the House Spec needs more', () => {
+    const blended = { tools: ['blender' as const], items: [...mangoBar.items, 'ice'] }
+    expect(picksOf(searchDrinks([mangoCream], { myBar: blended }), 'Mango Cream')).toEqual({ fruit: 'mango', texture: 'frozen' })
+  })
+
+  test('a garnish, water and a kitchen stand-in never stop you', () => {
+    const extras: Drink = {
+      ...mangoCream,
+      ingredients: [
+        ...mangoCream.ingredients,
+        { name: 'lemon wheel', amount: 1, unit: 'count' },
+        { name: 'cold water', amount: 1, unit: 'oz' },
+      ],
+      steps: [{ id: 'make', text: 'Boil, peel and stir {fruit}.', tools: ['kettle', 'peeler', 'mixing-glass'] }],
+    }
+    expect(names(searchDrinks([extras], { myBar: mangoBar }))).toEqual(['Mango Cream'])
+  })
+
+  test('the same fruit is still needed when it goes in the Drink', () => {
+    const juice: Drink = {
+      ...mangoCream,
+      ingredients: [...mangoCream.ingredients, { name: 'fresh lemon juice', amount: 1, unit: 'oz' }],
+    }
+    expect(searchDrinks([juice], { myBar: mangoBar })).toEqual([])
+    expect(names(searchDrinks([juice], { myBar: { ...mangoBar, items: [...mangoBar.items, 'lemons'] } }))).toEqual(['Mango Cream'])
+  })
+})
+
 describe('ingredientChoices', () => {
   const house = ingredientChoices(houseDrinks)
   const labels = house.map((choice) => choice.label)

@@ -8,11 +8,11 @@ test('the menu opens the other pages, and the heart stays outside it', async ({ 
 
   await page.getByRole('button', { name: 'Menu' }).click()
   const menu = page.getByRole('dialog', { name: 'Menu' })
-  await expect(menu.getByRole('link')).toHaveText(['New drink', 'Bar Terms', 'Settings'])
+  await expect(menu.getByRole('link')).toHaveText(['My Bar', 'New drink', 'Bar Terms', 'Settings'])
   await menu.getByRole('button', { name: 'Close' }).click()
   await expect(menu).toHaveCount(0)
 
-  for (const name of ['New drink', 'Bar Terms', 'Settings']) {
+  for (const name of ['My Bar', 'New drink', 'Bar Terms', 'Settings']) {
     await page.goto('/')
     await page.getByRole('button', { name: 'Menu' }).click()
     await page.getByRole('dialog', { name: 'Menu' }).getByRole('link', { name }).click()

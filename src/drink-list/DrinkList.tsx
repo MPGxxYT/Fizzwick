@@ -40,6 +40,7 @@ function MainMenu({ onClose }: { onClose: () => void }) {
     <Sheet label="Menu" onClose={onClose}>
       <h2>Menu</h2>
       <nav className="dl-menu-links" aria-label="Menu">
+        <Link to="/my-bar">My Bar</Link>
         <Link to="/new">New drink</Link>
         <Link to="/bar-terms">Bar Terms</Link>
         <Link to="/settings">Settings</Link>

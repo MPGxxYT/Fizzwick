@@ -82,3 +82,7 @@ _Avoid_: Sub-recipe, instructions, how-to
 **Bar Item**:
 Something you'd buy or make once, such as Lemons or raspberry syrup, standing for the recipe wordings that use it: fresh lemon juice, lemon wheel, lemon peel.
 _Avoid_: Stock item, pantry item, ingredient type
+
+**My Bar**:
+The tools and Bar Items you've ticked as having, saved on this device.
+_Avoid_: My Stock, pantry, inventory
