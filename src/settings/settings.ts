@@ -1,9 +1,11 @@
 import type { Units } from '../riff-engine'
 
-// The two v1 settings. Pure: the store that keeps them is in use-settings.ts.
+// Settings, and the Drink list's Can make toggle, which stays on across visits.
+// Pure: the store that keeps them is in use-settings.ts.
 export interface Settings {
   units: Units
   underlines: boolean // Bar Term underlines
+  canMake: boolean
 }
 
 // The countries that measure drinks in ounces.
@@ -18,7 +20,7 @@ export function defaultSettings(locale: string): Settings {
   } catch {
     region = undefined
   }
-  return { units: region && !OUNCE_REGIONS.has(region) ? 'ml' : 'oz', underlines: true }
+  return { units: region && !OUNCE_REGIONS.has(region) ? 'ml' : 'oz', underlines: true, canMake: false }
 }
 
 // Saved settings as stored, checked field by field: anything missing or
@@ -32,9 +34,10 @@ export function readSettings(saved: string | null, locale: string): Settings {
     return defaults
   }
   if (typeof value !== 'object' || value === null || Array.isArray(value)) return defaults
-  const { units, underlines } = value as Record<string, unknown>
+  const { units, underlines, canMake } = value as Record<string, unknown>
   return {
     units: units === 'oz' || units === 'ml' ? units : defaults.units,
     underlines: typeof underlines === 'boolean' ? underlines : defaults.underlines,
+    canMake: typeof canMake === 'boolean' ? canMake : defaults.canMake,
   }
 }

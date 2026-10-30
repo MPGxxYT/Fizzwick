@@ -7,10 +7,93 @@ async function tickCherryLimeade(page: Page) {
   }
 }
 
+const canMake = (page: Page) => page.getByRole('group', { name: 'What you have' }).getByRole('button', { name: 'Can make' })
+
+// A My Bar already ticked, as if saved on an earlier visit.
+async function seedMyBar(page: Page, tools: string[], items: string[]) {
+  await page.addInitScript(
+    (saved) => {
+      if (!localStorage.getItem('fizzwick.my-bar')) localStorage.setItem('fizzwick.my-bar', saved)
+    },
+    JSON.stringify({ tools, items }),
+  )
+}
+
+test('an empty My Bar offers the link to the page instead of the toggle', async ({ page }) => {
+  await page.goto('/')
+  await expect(canMake(page)).toHaveCount(0)
+  await page.getByRole('link', { name: 'Set up My Bar' }).click()
+  await expect(page.getByRole('heading', { name: 'My Bar', level: 1 })).toBeVisible()
+  await page.getByRole('button', { name: 'Ice', exact: true }).click()
+  await page.getByRole('button', { name: 'Back' }).click()
+  await expect(canMake(page)).toHaveAttribute('aria-pressed', 'false')
+  await expect(page.getByRole('link', { name: 'Set up My Bar' })).toHaveCount(0)
+})
+
+test('Can make stays on after a reload, stays out of the address, and shows only Drinks that fit', async ({ page }) => {
+  await seedMyBar(page, ['jigger'], ['limes', 'cherry-syrup', 'simple-syrup', 'soda-water', 'ice'])
+  await page.goto('/')
+  await expect(page.getByRole('link', { name: /Tea Sour/ })).toBeVisible()
+
+  await canMake(page).click()
+  await expect(canMake(page)).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('link', { name: /Cherry Limeade/ })).toBeVisible()
+  await expect(page.getByRole('link', { name: /Tea Sour/ })).toHaveCount(0)
+  await expect(page).toHaveURL(/\/$/)
+
+  await page.reload()
+  await expect(canMake(page)).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('link', { name: /Tea Sour/ })).toHaveCount(0)
+
+  await canMake(page).click()
+  await expect(page.getByRole('link', { name: /Tea Sour/ })).toBeVisible()
+})
+
+test('a Drink whose House Spec needs a missing item opens on a Riff that fits', async ({ page }) => {
+  await seedMyBar(page, ['jigger'], ['limes', 'tart-cherry-juice', 'simple-syrup', 'soda-water', 'ice'])
+  await page.goto('/')
+  await canMake(page).click()
+  const card = page.getByRole('link', { name: /Cherry Limeade/ })
+  await expect(card).toContainText('With tart cherry juice')
+  await card.click()
+  await expect(page).toHaveURL(/\/drinks\/cherry-limeade\/.*tart-cherry-juice/)
+})
+
+test('a missing fixed garnish does not hide a Drink', async ({ page }) => {
+  // Hibiscus Stir's House Spec is garnished with orange peel, and Oranges can't be ticked.
+  await seedMyBar(page, ['jigger'], ['hibiscus-tea', 'honey-syrup', 'limes', 'bitters', 'ice'])
+  await page.goto('/')
+  await canMake(page).click()
+  const card = page.getByRole('link', { name: /Hibiscus Stir/ })
+  await expect(card).toBeVisible()
+  await expect(card).not.toContainText('With')
+})
+
+test('a My Bar that makes nothing yet says so and links to the page', async ({ page }) => {
+  await seedMyBar(page, [], ['ice'])
+  await page.goto('/')
+  await canMake(page).click()
+  await expect(page.getByText("My Bar doesn't make a drink yet.")).toBeVisible()
+  await page.getByRole('link', { name: 'Open My Bar' }).click()
+  await expect(page.getByRole('heading', { name: 'My Bar', level: 1 })).toBeVisible()
+})
+
+test('clearing filters resets only the temporary ones', async ({ page }) => {
+  await seedMyBar(page, ['jigger'], ['limes', 'cherry-syrup', 'simple-syrup', 'soda-water', 'ice'])
+  await page.goto('/')
+  await canMake(page).click()
+  await page.getByRole('searchbox', { name: 'Search drinks or ingredients' }).fill('durian')
+  await expect(page.getByText('No drinks match "durian" from My Bar.')).toBeVisible()
+  await page.getByRole('button', { name: 'Clear search and filters' }).click()
+  await expect(page.getByRole('searchbox', { name: 'Search drinks or ingredients' })).toHaveValue('')
+  await expect(canMake(page)).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('link', { name: /Tea Sour/ })).toHaveCount(0)
+})
+
 test('ticks change the count, last after a reload, and start empty', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('button', { name: 'Menu' }).click()
-  await page.getByRole('link', { name: 'My Bar' }).click()
+  await page.getByRole('dialog', { name: 'Menu' }).getByRole('link', { name: 'My Bar' }).click()
   await expect(page.getByRole('heading', { name: 'My Bar', level: 1 })).toBeVisible()
   await expect(page.getByText('You can make 0 drinks')).toBeVisible()
   await expect(page.getByRole('button', { pressed: true })).toHaveCount(0)

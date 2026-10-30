@@ -19,7 +19,9 @@ import {
   type FoundDrink,
   type IngredientChoice,
 } from '../house-drinks/search'
+import { useMyBar } from '../my-bar/use-my-bar'
 import { FLAVOR_TAGS, METHODS, resolveRiff, riffLink, TOOLS, type FlavorTag, type Method, type Tool } from '../riff-engine'
+import { updateSettings, useSettings } from '../settings/use-settings'
 import './drink-list.css'
 
 // The card's ground, so the Drink names on it stay readable.
@@ -52,11 +54,17 @@ function MainMenu({ onClose }: { onClose: () => void }) {
 // Home: every Drink, with search by name or ingredient and filters by Method,
 // Flavor Tag, the tools you have and the ingredients you want to use. The
 // search and filters live in the address, so coming back from a Drink shows
-// the same list.
+// the same list. Can make stays out of it, so a shared link never carries it,
+// and it stays on until you turn it off.
 export function DrinkList() {
   const [params, setParams] = useSearchParams()
   const [menuOpen, setMenuOpen] = useState(false)
   const { drinks, photos } = useDrinks()
+  const myBar = useMyBar()
+  const { canMake: canMakeOn } = useSettings()
+  const barEmpty = myBar.tools.length === 0 && myBar.items.length === 0
+  // An empty My Bar makes nothing, so the toggle waits until it has something.
+  const canMake = canMakeOn && !barEmpty
   const choices = useMemo(
     () => ({ ...filterChoices(drinks), tools: toolChoices(drinks), ingredients: ingredientChoices(drinks) }),
     [drinks],
@@ -79,8 +87,9 @@ export function DrinkList() {
         flavor,
         ingredients,
         tools: tools.length > 0 ? tools : undefined,
+        myBar: canMake ? myBar : undefined,
       }),
-    [drinks, yours, query, method, flavor, ingredients, tools],
+    [drinks, yours, query, method, flavor, ingredients, tools, canMake, myBar],
   )
   const [sheet, setSheet] = useState<'tools' | 'ingredients' | null>(null)
 
@@ -167,6 +176,15 @@ export function DrinkList() {
         <div className="dl-filter" role="group" aria-label="What you have">
           <span className="dl-filter-label">Have</span>
           <div className="dl-chips">
+            {barEmpty ? (
+              <Link to="/my-bar" className="dl-bar-link">
+                Set up My Bar
+              </Link>
+            ) : (
+              <button type="button" aria-pressed={canMake} onClick={() => updateSettings({ canMake: !canMake })}>
+                Can make
+              </button>
+            )}
             <button type="button" aria-pressed={tools.length > 0} aria-haspopup="dialog" onClick={() => setSheet('tools')}>
               {tools.length === 0 ? 'Tools' : tools.length === 1 ? TOOL_NAMES[tools[0]] : `${tools.length} tools`}
             </button>
@@ -207,14 +225,24 @@ export function DrinkList() {
           </ul>
         ) : (
           <div className="dl-empty">
-            <p>
-              No drinks match{query.trim() ? ` "${query.trim()}"` : ''}
-              {filters ? ' with these filters' : ''}. Try fewer words or another filter.
-            </p>
+            {filtered ? (
+              <p>
+                No drinks match{query.trim() ? ` "${query.trim()}"` : ''}
+                {filters ? ' with these filters' : ''}
+                {canMake ? ' from My Bar' : ''}. Try fewer words or another filter.
+              </p>
+            ) : (
+              <p>My Bar doesn't make a drink yet. Tick a few more things.</p>
+            )}
             {filtered && (
               <button type="button" onClick={() => setParams(new URLSearchParams(), { replace: true })}>
                 Clear search and filters
               </button>
+            )}
+            {canMake && (
+              <Link to="/my-bar" className="dl-empty-bar">
+                Open My Bar
+              </Link>
             )}
           </div>
         )}
