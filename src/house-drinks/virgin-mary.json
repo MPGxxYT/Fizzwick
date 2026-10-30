@@ -21,14 +21,14 @@
         {
           "id": "hot-sauce",
           "label": "Hot sauce",
-          "phrase": "3 dashes of hot sauce",
+          "phrase": "hot sauce",
           "ingredients": [{ "name": "hot sauce", "amount": 3, "unit": "dash" }],
           "color": "#b91c1c"
         },
         {
           "id": "horseradish",
           "label": "Horseradish",
-          "phrase": "a barspoon of horseradish",
+          "phrase": "horseradish",
           "ingredients": [{ "name": "prepared horseradish", "amount": 1, "unit": "barspoon" }],
           "color": "#e7e1cf"
         }

@@ -2,6 +2,7 @@
 export { parseDrinkFile, type ParseResult } from './parse-drink-file'
 export {
   checkEveryRiff,
+  everyCombination,
   GLASS_SIZES_OZ,
   MAX_SERVINGS,
   METHOD_TOOLS,
@@ -14,4 +15,5 @@ export {
   type Units,
 } from './resolve-riff'
 export { readRiffLink, riffLink } from './riff-link'
+export { isMakeAhead } from './step-ingredients'
 export * from './drink-format'

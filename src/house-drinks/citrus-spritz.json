@@ -39,7 +39,7 @@
               "after": "add-base",
               "step": {
                 "id": "extra-sweetener",
-                "text": "Add another quarter ounce of {sweetener} to balance the sharper lemon.",
+                "text": "Add the extra sweetener, more of the {sweetener}, to balance the sharper lemon.",
                 "tools": ["jigger"]
               }
             }

@@ -256,6 +256,27 @@
   line-height: 1.25;
 }
 
+/* Short phones: smaller words, so a long step and its amounts still fit. */
+@media (max-height: 44rem) {
+  .sm-text {
+    font-size: 1.3rem;
+  }
+
+  .sm-step-amounts {
+    font-size: 0.95rem;
+  }
+}
+
+/* How much of each ingredient the step uses, for making it without the Mise
+   en Place laid out. Same columns as the Mise en Place, packed tighter. */
+.sm-step-amounts {
+  margin: 0.75rem 0 0;
+}
+
+.sm-step-amounts li {
+  padding: 0.15rem 0;
+}
+
 /* The part of a timed step the timer is for: the timer's mint, led by a
    small stopwatch. */
 .sm-timed {

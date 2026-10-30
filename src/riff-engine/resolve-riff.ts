@@ -9,6 +9,7 @@ import {
   type Step,
   type Tool,
 } from './drink-format'
+import { placeIngredients, type IngredientSource } from './step-ingredients'
 
 // The Option ID picked for each Slot, or null for an empty optional Slot.
 export type Picks = Record<string, string | null>
@@ -37,6 +38,9 @@ export interface RiffStep {
   id: string
   text: string
   tools: Tool[]
+  // The ingredients with an amount that this step adds, scaled like the Mise
+  // en Place. Each one is on one step at most.
+  ingredients: Ingredient[]
   durationSeconds?: number
 }
 
@@ -142,36 +146,57 @@ function resolve(drink: Drink, requested: Picks, { servings = 1, units = 'oz', g
   // What you pour comes first, then the ice, then the garnish, keeping the
   // Drink's order within each. A garnish is anything from the garnish Slot
   // or named "for garnish".
-  const sources = [
-    ...drink.ingredients.map((ingredient) => ({ ingredient, garnish: false })),
-    ...drink.slots.flatMap((slot) =>
-      (picked.get(slot.id)?.ingredients ?? []).map((ingredient) => ({ ingredient, garnish: slot.id === 'garnish' })),
-    ),
+  const sources: IngredientSource[] = [
+    ...drink.ingredients.map((ingredient) => ({
+      ingredient,
+      garnish: /\bfor garnish\b/.test(ingredient.name),
+      slotId: null,
+      option: null,
+    })),
+    ...drink.slots.flatMap((slot) => {
+      const option = picked.get(slot.id) ?? null
+      return (option?.ingredients ?? []).map((ingredient) => ({
+        ingredient,
+        garnish: slot.id === 'garnish' || /\bfor garnish\b/.test(ingredient.name),
+        slotId: slot.id,
+        option,
+      }))
+    }),
   ]
-  const place = ({ ingredient, garnish }: (typeof sources)[number]) =>
-    garnish || /\bfor garnish\b/.test(ingredient.name) ? 2 : /\bice\b/.test(ingredient.name) ? 1 : 0
-  const ingredients = sources
+  const place = ({ ingredient, garnish }: IngredientSource) => (garnish ? 2 : /\bice\b/.test(ingredient.name) ? 1 : 0)
+  const measured = sources
     .sort((a, b) => place(a) - place(b))
-    .map(({ ingredient }) => measure(ingredient, servings, units, glassRatio))
+    .map((source) => ({ ...source, ingredient: measure(source.ingredient, servings, units, glassRatio) }))
+  const ingredients = measured.map(({ ingredient }) => ingredient)
   const batch = BATCH_LIMITS[method]
   const batchNotes = batch && servings > batch.size ? [batch.note(Math.ceil(servings / batch.size))] : []
 
   const unresolved: { stepId: string; placeholder: string }[] = []
-  const steps = orderSteps(drink.steps, options)
+  const written = orderSteps(drink.steps, options)
     .filter((step) => isShown(step, picks))
-    .map((step): RiffStep => {
-      const text = step.text.replace(/\{([^}]*)\}/g, (match, slotId: string) => {
+    .map((step) => ({
+      step,
+      text: step.text.replace(/\{([^}]*)\}/g, (match, slotId: string) => {
         const option = picked.get(slotId)
         if (option) return option.phrase ?? option.label
         unresolved.push({ stepId: step.id, placeholder: slotId })
         return match
-      })
-      const durationSeconds = options.reduce<number | undefined>(
-        (current, option) => option.durations?.[step.id] ?? current,
-        step.durationSeconds,
-      )
-      return { id: step.id, text, tools: step.tools ?? [], ...(durationSeconds ? { durationSeconds } : {}) }
-    })
+      }),
+    }))
+  const placed = placeIngredients(written, measured)
+  const steps = written.map(({ step, text }, i): RiffStep => {
+    const durationSeconds = options.reduce<number | undefined>(
+      (current, option) => option.durations?.[step.id] ?? current,
+      step.durationSeconds,
+    )
+    return {
+      id: step.id,
+      text,
+      tools: step.tools ?? [],
+      ingredients: placed[i],
+      ...(durationSeconds ? { durationSeconds } : {}),
+    }
+  })
 
   const tools = [...new Set([...METHOD_TOOLS[method], ...steps.flatMap((step) => step.tools)])]
   const tags = new Set(options.flatMap((option) => option.dietaryTags ?? []))
@@ -279,7 +304,7 @@ function isShown(step: Step, picks: Picks): boolean {
   return step.when.option === undefined || step.when.option === optionId
 }
 
-function everyCombination(drink: Drink): Picks[] {
+export function everyCombination(drink: Drink): Picks[] {
   return drink.slots.reduce<Picks[]>(
     (combinations, slot) => {
       const choices: (string | null)[] = slot.options.map((option) => option.id)

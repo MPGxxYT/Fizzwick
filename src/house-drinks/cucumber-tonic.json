@@ -70,13 +70,13 @@
   "steps": [
     {
       "id": "ribbon-cucumber",
-      "text": "Shave 3 long ribbons down the length of a cucumber with a peeler, then curl them around the inside of a highball glass.",
+      "text": "Shave long cucumber ribbons down the length of a cucumber with a peeler, then curl them around the inside of a highball glass.",
       "tools": ["peeler"],
       "when": { "slot": "cucumber", "option": "cucumber-ribbons" }
     },
     {
       "id": "add-slices",
-      "text": "Drop 4 thin cucumber slices into a highball glass.",
+      "text": "Drop the thin cucumber slices into a highball glass.",
       "when": { "slot": "cucumber", "option": "cucumber-slices" }
     },
     { "id": "fill-glass", "text": "Fill the glass with ice, holding the cucumber against the sides." },

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { markBarTerms } from '../bar-terms'
-import { GLASS_NAMES, isMakeAhead, METHOD_NAMES, TOOL_NAMES } from '../drink-page/format'
-import { checkEveryRiff, GLASSES, METHODS, parseDrinkFile, resolveRiff, type Drink, type Ingredient, type Picks } from '../riff-engine'
+import { GLASS_NAMES, METHOD_NAMES, TOOL_NAMES } from '../drink-page/format'
+import { checkEveryRiff, everyCombination, GLASSES, isMakeAhead, METHODS, parseDrinkFile, resolveRiff, type Drink, type Ingredient, type Picks } from '../riff-engine'
 import { timedPart } from '../step-mode/timed-part'
 import { isCustomDrinkId } from '../custom-drinks/copy-drink'
 import { houseDrinks } from './catalog'
@@ -70,10 +70,10 @@ describe('House Drink Riffs', () => {
     expect(riff.dietaryTags).toEqual(['caffeine', 'dairy'])
   })
 
-  test('lemon in the Citrus Spritz adds a quarter ounce more of the picked sweetener', () => {
+  test('lemon in the Citrus Spritz adds more of the picked sweetener', () => {
     const riff = resolveRiff(houseDrink('citrus-spritz'), { citrus: 'lemon-juice', sweetener: 'agave' })
     expect(riff.steps.map((step) => step.text)).toContain(
-      'Add another quarter ounce of agave to balance the sharper lemon.',
+      'Add the extra sweetener, more of the agave, to balance the sharper lemon.',
     )
     expect(riff.ingredients).toContainEqual({ name: 'extra sweetener, to balance the lemon', amount: 0.25, unit: 'oz' })
   })
@@ -288,4 +288,48 @@ describe('House Drink Bar Terms', () => {
       expect([...new Set(missing)]).toEqual([])
     },
   )
+})
+
+// Which step shows each amount, across every Riff of each Drink. The matching
+// works from the wording, so rewording a step can shift an amount. The snapshot
+// makes any shift show up in review.
+describe('amounts in step mode', () => {
+  // Written amounts stay put when the servings, units or glass change, so they
+  // come only from the ingredients. Times and counts of shakes are fine.
+  const FIXED_AMOUNT = [
+    /\b\d+\b(?! to \d| seconds?\b| minutes?\b| times\b)/i,
+    /\b(oz|ounces?|cups?|dash(es)?|drops?|barspoons?) of\b/i,
+  ]
+
+  test.each(houseDrinks.map((drink) => [drink.id, drink] as const))('%s writes no fixed amounts in its steps', (_id, drink) => {
+    const options = drink.slots.flatMap((slot) => slot.options)
+    const wording = [
+      ...drink.steps.map((step) => step.text),
+      ...options.flatMap((option) => (option.addSteps ?? []).map(({ step }) => step.text)),
+      ...options.flatMap((option) => option.phrase ?? []),
+    ]
+    expect(wording.filter((text) => FIXED_AMOUNT.some((amount) => amount.test(text)))).toEqual([])
+  })
+
+  test.each(houseDrinks.map((drink) => [drink.id, drink] as const))('%s shows every amount on one step', (_id, drink) => {
+    const missing = everyCombination(drink).flatMap((picks) => {
+      const riff = resolveRiff(drink, picks)
+      const onSteps = riff.steps.flatMap((step) => step.ingredients)
+      expect(new Set(onSteps).size).toBe(onSteps.length)
+      return riff.ingredients.filter((ingredient) => ingredient.amount !== undefined && !onSteps.includes(ingredient))
+    })
+    expect([...new Set(missing.map(({ name }) => name))]).toEqual([])
+  })
+
+  test('each amount is on the expected step', () => {
+    const table = Object.fromEntries(
+      houseDrinks.map((drink) => {
+        const lines = everyCombination(drink).flatMap((picks) =>
+          resolveRiff(drink, picks).steps.flatMap((step) => step.ingredients.map(({ name }) => `${name} -> ${step.id}`)),
+        )
+        return [drink.id, [...new Set(lines)].sort()]
+      }),
+    )
+    expect(table).toMatchSnapshot()
+  })
 })

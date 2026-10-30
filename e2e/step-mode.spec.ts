@@ -17,6 +17,10 @@ test('making a Riff goes from the Mise en Place through every step and back', as
   await making.getByRole('button', { name: 'Start' }).click()
   await expect(making).toContainText(/Step 1 of \d+/)
   await expect(making).toContainText('Muddle the cherries')
+  // The step says how much, for the 2 drinks picked above.
+  const amounts = making.locator('[data-current]').getByRole('list', { name: 'How much to use' })
+  await expect(amounts).toContainText('10fresh cherries, pitted')
+  await expect(amounts).toContainText('1½ ozfresh lime juice')
 
   const total = Number((await making.locator('.sm-counter').textContent())?.match(/of (\d+)/)?.[1])
   for (let step = 2; step <= total; step++) {

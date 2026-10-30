@@ -166,9 +166,10 @@ describe('resolveRiff', () => {
 
   test('each step reports its tools and duration, with Option overrides', () => {
     const steep = (picks?: Record<string, string | null>) => resolveRiff(testSour(), picks).steps[0]
-    expect(steep()).toEqual({ id: 'steep', text: 'Steep the black tea and chill it.', tools: ['kettle'], durationSeconds: 240 })
+    expect(steep()).toMatchObject({ id: 'steep', text: 'Steep the black tea and chill it.', tools: ['kettle'], durationSeconds: 240 })
     expect(steep({ base: 'rooibos' }).durationSeconds).toBe(360)
-    expect(resolveRiff(testSour()).steps[1]).toEqual({ id: 'add-all', text: 'Add the lemon juice and black tea.', tools: ['jigger'] })
+    expect(resolveRiff(testSour()).steps[1]).toMatchObject({ id: 'add-all', text: 'Add the lemon juice and black tea.', tools: ['jigger'] })
+    expect(resolveRiff(testSour()).steps[1]).not.toHaveProperty('durationSeconds')
   })
 
   test('added steps go after the step they name, in Slot order', () => {

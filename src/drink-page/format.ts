@@ -82,13 +82,6 @@ export function formatIngredient({ name, amount, unit }: Ingredient): { measure:
   }
 }
 
-// A step that takes time before the drink can be made, such as tea that has
-// to brew and chill. The Drink page shows it above the ingredients, so it
-// isn't a surprise in step mode.
-export function isMakeAhead(step: { text: string }): boolean {
-  return /\bmake it ahead\b/i.test(step.text)
-}
-
 // The lines the name is set on. One or two words get a line each (Garden /
 // Smash). Longer names get two lines, split where the lines come out closest
 // in length, the shorter one first on a tie (Black Tea / Old Fashioned).

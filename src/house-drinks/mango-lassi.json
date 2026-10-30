@@ -39,7 +39,7 @@
         {
           "id": "ripe-mango",
           "label": "Ripe mango",
-          "phrase": "mango with 3 ice cubes",
+          "phrase": "mango with ice cubes",
           "ingredients": [
             { "name": "chopped ripe mango", "amount": 1, "unit": "cup" },
             { "name": "ice cubes", "amount": 3, "unit": "count" }
