@@ -5,6 +5,7 @@ import { EditorPage, NewDrinkPage, PreviewPage } from './custom-drinks/EditorPag
 import { DrinkList } from './drink-list/DrinkList'
 import { DrinkPage } from './drink-page/DrinkPage'
 import { FavoritesPage } from './favorites/FavoritesPage'
+import { MyBarPage } from './my-bar/MyBarPage'
 import { NotFound } from './NotFound'
 import { SettingsPage } from './settings/SettingsPage'
 
@@ -30,6 +31,7 @@ function App() {
         <Route path="/new" element={<NewDrinkPage />} />
         <Route path="/edit/:drinkId" element={<EditorPage />} />
         <Route path="/edit/:drinkId/preview/:riff?" element={<PreviewPage />} />
+        <Route path="/my-bar" element={<MyBarPage />} />
         <Route path="/bar-terms" element={<BarTermsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/favorites" element={<FavoritesPage />} />

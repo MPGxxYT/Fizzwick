@@ -10,6 +10,7 @@ import {
   type Tool,
 } from '../riff-engine'
 import { BAR_GROUPS, barItemById, barItemFor, isAlwaysOnHand, namesOf, type BarGroup } from '../my-bar/bar-items'
+import type { MyBar } from '../my-bar/my-bar'
 
 export interface DrinkSearch {
   query?: string
@@ -19,6 +20,8 @@ export interface DrinkSearch {
   ingredients?: string[]
   // Show Drinks with a Riff that needs only these tools (and kitchen ones).
   tools?: Tool[]
+  // Show Drinks with a Riff you can make from My Bar and the kitchen's stand-ins.
+  myBar?: MyBar
 }
 
 // A Drink the search found, with the Riff to open it on: the House Spec when
@@ -27,6 +30,9 @@ export interface FoundDrink {
   drink: Drink
   picks: Picks
 }
+
+// The tools to tick on My Bar: all but the ones a kitchen has a stand-in for.
+export const barTools = () => TOOLS.filter((tool) => !KITCHEN_TOOLS.includes(tool))
 
 // One row of the ingredient filter. `value` goes in the address, and `names`
 // are the wordings a search of the filter can find it by.
@@ -106,12 +112,24 @@ function riffsOf(drink: Drink): RiffFacts[] {
   return riffs
 }
 
+// A Riff you have everything for. Water and garnishes never stop you.
+function canMake(riff: RiffFacts, myBar: MyBar): boolean {
+  const needed = (ingredient: string) => {
+    if (isAlwaysOnHand(ingredient)) return false
+    return !barItemFor(ingredient)?.garnishes?.includes(ingredient)
+  }
+  return (
+    riff.tools.every((tool) => myBar.tools.includes(tool) || KITCHEN_TOOLS.includes(tool)) &&
+    [...riff.ingredients].filter(needed).every((ingredient) => myBar.items.includes(barItemFor(ingredient)?.id ?? ingredient))
+  )
+}
+
 // The Drinks that match every word of the query and the chosen filters,
 // sorted by name. The Method, ingredient and tool filters must all fit the
 // same Riff, which is the one the Drink opens on.
 export function searchDrinks(
   drinks: Drink[],
-  { query = '', method, flavor, ingredients = [], tools }: DrinkSearch,
+  { query = '', method, flavor, ingredients = [], tools, myBar }: DrinkSearch,
 ): FoundDrink[] {
   const words = query.toLowerCase().split(/\s+/).filter(Boolean)
   // A value is a Bar Item, standing for all its names, or one exact name.
@@ -125,7 +143,8 @@ export function searchDrinks(
   const fits = (riff: RiffFacts) =>
     (!method || riff.method === method) &&
     (wanted.size === 0 || [...wanted].some((ingredient) => riff.ingredients.has(ingredient))) &&
-    (!owned || riff.tools.every((tool) => owned.has(tool)))
+    (!owned || riff.tools.every((tool) => owned.has(tool))) &&
+    (!myBar || canMake(riff, myBar))
 
   return drinks
     .flatMap((drink) => {

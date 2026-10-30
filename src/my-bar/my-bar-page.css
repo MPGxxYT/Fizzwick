@@ -1,0 +1,28 @@
+/* My Bar: the Drink page's purple, with the filter sheet's chips. The count
+   stays in view, so each tick shows what it does. */
+.mb-back {
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mb-count {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin: 1rem -1rem 0;
+  padding: 0.65rem 1rem;
+  background: var(--dp-paper);
+  color: var(--dp-ink);
+  font: 700 1.05rem 'Figtree', sans-serif;
+}
+
+.mb-search {
+  margin-top: 0.5rem;
+}
+
+.mb-empty {
+  margin: 1.5rem 0 0;
+}
