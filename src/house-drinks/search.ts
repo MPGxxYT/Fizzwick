@@ -30,6 +30,8 @@ export interface DrinkSearch {
 export interface FoundDrink {
   drink: Drink
   picks: Picks
+  // Every Riff that fits, closest to the House Spec first.
+  fitting: Picks[]
 }
 
 // The tools to tick on My Bar: all but the ones a kitchen has a stand-in for.
@@ -177,10 +179,26 @@ export function searchDrinks(
       if (flavor && !drink.flavorTags.includes(flavor)) return []
       const text = searchableText(drink)
       if (!words.every((word) => text.includes(word))) return []
-      const riff = riffsOf(drink).find(fits)
-      return riff ? [{ drink, picks: riff.picks }] : []
+      const fitting = riffsOf(drink)
+        .filter(fits)
+        .map((riff) => riff.picks)
+      return fitting.length > 0 ? [{ drink, picks: fitting[0], fitting }] : []
     })
     .sort((a, b) => a.drink.name.localeCompare(b.drink.name))
+}
+
+// A random Riff that fits, from a random Drink in the list. The last Drink
+// picked sits out, unless it's the only one.
+export function surprisePick(
+  found: FoundDrink[],
+  lastDrinkId: string | undefined,
+  random: () => number = Math.random,
+): { drink: Drink; picks: Picks } | null {
+  const others = found.filter(({ drink }) => drink.id !== lastDrinkId)
+  const pool = others.length > 0 ? others : found
+  if (pool.length === 0) return null
+  const { drink, fitting } = pool[Math.floor(random() * pool.length)]
+  return { drink, picks: fitting[Math.floor(random() * fitting.length)] }
 }
 
 // Every ingredient a Riff can use, once each, by name.

@@ -140,6 +140,10 @@
   cursor: pointer;
 }
 
+.dp-try-another {
+  padding: 0 0.8rem;
+}
+
 .dp-reset::after {
   content: '';
   position: absolute;

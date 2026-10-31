@@ -14,15 +14,15 @@ import {
   groupChoices,
   ingredientChoices,
   ingredientLabel,
-  searchDrinks,
   toolChoices,
   type FoundDrink,
   type IngredientChoice,
 } from '../house-drinks/search'
 import { isMyBarEmpty } from '../my-bar/my-bar'
 import { useCanMakeBar, useMyBar } from '../my-bar/use-my-bar'
-import { FLAVOR_TAGS, METHODS, resolveRiff, riffLink, TOOLS, type FlavorTag, type Method, type Tool } from '../riff-engine'
+import { resolveRiff, riffLink, type Tool } from '../riff-engine'
 import { updateSettings } from '../settings/use-settings'
+import { findInList, readListFilters, useSurprise } from './list-search'
 import './drink-list.css'
 
 // The card's ground, so the Drink names on it stay readable.
@@ -32,10 +32,6 @@ const CARD = '#2e2049'
 export interface ListState {
   listSearch: string
 }
-
-const isMethod = (value: string | null): value is Method => (METHODS as readonly string[]).includes(value ?? '')
-const isFlavor = (value: string | null): value is FlavorTag => (FLAVOR_TAGS as readonly string[]).includes(value ?? '')
-const isTool = (value: string): value is Tool => (TOOLS as readonly string[]).includes(value)
 
 // The app's other pages, in a sheet where a thumb can reach them.
 function MainMenu({ onClose }: { onClose: () => void }) {
@@ -69,27 +65,12 @@ export function DrinkList() {
     [drinks],
   )
   const hasCustom = drinks.some((drink) => isCustomDrinkId(drink.id))
-  const yours = params.get('yours') === '1'
-  const query = params.get('q') ?? ''
-  const method = isMethod(params.get('method')) ? (params.get('method') as Method) : undefined
-  const flavor = isFlavor(params.get('flavor')) ? (params.get('flavor') as FlavorTag) : undefined
-  // Joined into strings so the lists only change when the address does.
-  const toolParam = params.getAll('tool').join(',')
-  const ingredientParam = params.getAll('ing').join('\n')
-  const tools = useMemo(() => (toolParam ? toolParam.split(',').filter(isTool) : []), [toolParam])
-  const ingredients = useMemo(() => (ingredientParam ? ingredientParam.split('\n') : []), [ingredientParam])
-  const found = useMemo(
-    () =>
-      searchDrinks(yours ? drinks.filter((drink) => isCustomDrinkId(drink.id)) : drinks, {
-        query,
-        method,
-        flavor,
-        ingredients,
-        tools: tools.length > 0 ? tools : undefined,
-        myBar: canMakeBar,
-      }),
-    [drinks, yours, query, method, flavor, ingredients, tools, canMakeBar],
-  )
+  // Read from a string so the filters only change when the address does.
+  const listSearch = params.toString()
+  const listFilters = useMemo(() => readListFilters(new URLSearchParams(listSearch)), [listSearch])
+  const { yours, query, method, flavor, tools, ingredients } = listFilters
+  const found = useMemo(() => findInList(drinks, listFilters, canMakeBar), [drinks, listFilters, canMakeBar])
+  const surprise = useSurprise(listSearch)
   const [sheet, setSheet] = useState<'tools' | 'ingredients' | null>(null)
 
   const update = (key: 'q' | 'method' | 'flavor' | 'yours', value: string | undefined) => {
@@ -202,9 +183,15 @@ export function DrinkList() {
           </div>
         </div>
 
-        <p className="dl-count" aria-live="polite">
-          {found.length} {found.length === 1 ? 'drink' : 'drinks'}
-        </p>
+        <div className="dl-count-line">
+          <p className="dl-count" aria-live="polite">
+            {found.length} {found.length === 1 ? 'drink' : 'drinks'}
+          </p>
+          <span aria-hidden="true">·</span>
+          <button type="button" className="dl-surprise" disabled={found.length === 0} onClick={() => surprise()}>
+            Surprise me
+          </button>
+        </div>
 
         {found.length > 0 ? (
           <ul className="dl-drinks">
