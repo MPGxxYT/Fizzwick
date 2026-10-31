@@ -2,6 +2,15 @@ import { useEffect, useId, useMemo, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router'
 import { GLASS_NAMES, METHOD_NAMES, TOOL_NAMES } from '../drink-page/format'
 import { Sheet } from '../drink-page/Sheet'
+import {
+  BAR_GROUPS,
+  BAR_ITEMS,
+  barItemById,
+  COUNTS_AS_ON_HAND,
+  COUNTS_AS_OWN,
+  suggestCountsAs,
+  type CountedAs,
+} from '../my-bar/bar-items'
 import { NotFound } from '../NotFound'
 import {
   DIETARY_TAGS,
@@ -419,6 +428,13 @@ function IngredientRows({
                 </button>
               </div>
               <FieldError message={errors[`${errorKey}.${i}`]} />
+              {ingredient.name.trim() && (
+                <CountsAs
+                  label={`Counts as, ${name} ${i + 1}`}
+                  ingredient={ingredient}
+                  onChange={(countsAs) => setAt(i, { ...ingredient, countsAs })}
+                />
+              )}
             </li>
           ))}
         </ul>
@@ -431,6 +447,50 @@ function IngredientRows({
         Add an ingredient
       </button>
     </>
+  )
+}
+
+const COUNTED_NAMES = { [COUNTS_AS_OWN]: 'Its own item', [COUNTS_AS_ON_HAND]: 'Always on hand' }
+const countedName = (counted: CountedAs) => (typeof counted === 'string' ? COUNTED_NAMES[counted] : counted.label)
+
+// What a row means on My Bar. The first choice follows the name as it's
+// typed, and is what a row with nothing saved uses.
+function CountsAs({
+  label,
+  ingredient,
+  onChange,
+}: {
+  label: string
+  ingredient: Ingredient
+  onChange: (countsAs: string | undefined) => void
+}) {
+  const saved = ingredient.countsAs
+  const known = saved === COUNTS_AS_OWN || saved === COUNTS_AS_ON_HAND || (saved && barItemById(saved))
+  const id = useId()
+  return (
+    <div className="ed-counts-as">
+      <label htmlFor={id}>Counts as</label>
+      <select
+        id={id}
+        className="ed-input"
+        aria-label={label}
+        value={known ? saved : ''}
+        onChange={(event) => onChange(event.target.value || undefined)}
+      >
+        <option value="">{countedName(suggestCountsAs(ingredient.name))} (suggested)</option>
+        <option value={COUNTS_AS_ON_HAND}>{COUNTED_NAMES[COUNTS_AS_ON_HAND]}</option>
+        <option value={COUNTS_AS_OWN}>{COUNTED_NAMES[COUNTS_AS_OWN]}</option>
+        {BAR_GROUPS.filter((group) => group !== 'Garnishes').map((group) => (
+          <optgroup key={group} label={group}>
+            {BAR_ITEMS.filter((item) => item.group === group).map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.label}
+              </option>
+            ))}
+          </optgroup>
+        ))}
+      </select>
+    </div>
   )
 }
 

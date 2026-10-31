@@ -37,6 +37,9 @@ const ingredient = z.strictObject({
   name: z.string().min(1),
   amount: z.number().positive().optional(),
   unit: oneOf([...MEASURED_UNITS, ...UNMEASURED_UNITS], 'unit'),
+  // What it counts as on My Bar: a Bar Item ID, "own" or "on-hand". With none,
+  // or an ID this version doesn't know, it goes by a suggestion from the name.
+  countsAs: z.string().min(1).optional(),
 })
 
 const step = z.strictObject({

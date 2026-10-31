@@ -87,6 +87,10 @@ _Avoid_: Stock item, pantry item, ingredient type
 The tools and Bar Items you've ticked as having, saved on this device.
 _Avoid_: My Stock, pantry, inventory
 
+**Counts as**:
+What an ingredient in a Custom Drink means on My Bar: a Bar Item, an item of its own, or always on hand. It's suggested from the name unless you choose.
+_Avoid_: Mapping, ingredient type
+
 **Can make**:
 A toggle on the Drink list that keeps only Drinks with a Riff you have everything for in My Bar, opened on the one closest to the House Spec. Water, garnishes and tools a kitchen has a stand-in for never stop you.
 _Avoid_: In stock, available, have filter

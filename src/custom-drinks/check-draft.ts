@@ -24,8 +24,12 @@ export function blankDrink(randomId: string): Drink {
   }
 }
 
-const finishIngredient = ({ name, amount, unit }: Ingredient): Ingredient =>
-  measured(unit) ? { name: name.trim(), amount, unit } : { name: name.trim(), unit }
+const finishIngredient = ({ name, amount, unit, countsAs }: Ingredient): Ingredient => ({
+  name: name.trim(),
+  ...(measured(unit) ? { amount } : {}),
+  unit,
+  ...(countsAs ? { countsAs } : {}),
+})
 const measured = (unit: string) => (MEASURED_UNITS as readonly string[]).includes(unit)
 const placeholders = (text: string) => [...text.matchAll(/\{([^}]*)\}/g)].map(([, name]) => name)
 

@@ -132,6 +132,111 @@ test('a missing garnish is not marked, and with Can make off nothing is', async 
   await expect(page.getByRole('dialog', { name: 'Choose sweetener' })).not.toContainText('Not in My Bar')
 })
 
+// A Sunday Limeade: a Cherry Limeade with soda water, plus this ingredient.
+async function copyWithIngredient(page: Page, name: string, countsAs?: string) {
+  await page.goto('/drinks/cherry-limeade/fizz=soda-water')
+  await page.getByRole('button', { name: 'Make a copy' }).click()
+  await page.getByRole('link', { name: 'Edit this drink' }).click()
+  await page.getByLabel('Name', { exact: true }).fill('Sunday Limeade')
+  await page.getByRole('button', { name: 'Add an ingredient' }).first().click()
+  await page.getByLabel('Amount of ingredient 3', { exact: true }).fill('1')
+  await page.getByLabel('Unit of ingredient 3', { exact: true }).selectOption('count')
+  await page.getByLabel('Ingredient 3', { exact: true }).fill(name)
+  if (countsAs) await page.getByLabel('Counts as, ingredient 3').selectOption({ label: countsAs })
+  await page.getByRole('button', { name: 'Save' }).click()
+  await expect(page.getByRole('heading', { name: 'Sunday Limeade' })).toBeVisible()
+}
+
+const limeadeBar = ['limes', 'cherry-syrup', 'simple-syrup', 'soda-water', 'ice']
+
+test('the editor suggests Lemons for a charred lemon wheel, and ticking Lemons makes the Drink', async ({ page }) => {
+  await seedMyBar(page, ['jigger'], limeadeBar)
+  await page.goto('/drinks/cherry-limeade/fizz=soda-water')
+  await page.getByRole('button', { name: 'Make a copy' }).click()
+  await page.getByRole('link', { name: 'Edit this drink' }).click()
+  await page.getByRole('button', { name: 'Add an ingredient' }).first().click()
+  await page.getByLabel('Ingredient 3', { exact: true }).fill('charred lemon wheel')
+  await expect(page.getByLabel('Counts as, ingredient 3')).toContainText('Lemons (suggested)')
+  await page.getByLabel('Ingredient 3', { exact: true }).fill('yuzu juice')
+  await expect(page.getByLabel('Counts as, ingredient 3')).toContainText('Its own item (suggested)')
+  await page.getByLabel('Name', { exact: true }).fill('Sunday Limeade')
+  await page.getByLabel('Amount of ingredient 3', { exact: true }).fill('1')
+  await page.getByLabel('Ingredient 3', { exact: true }).fill('charred lemon wheel')
+  await page.getByRole('button', { name: 'Save' }).click()
+  await expect(page.getByRole('heading', { name: 'Sunday Limeade' })).toBeVisible()
+
+  await page.goto('/my-bar')
+  await expect(page.getByRole('region', { name: 'From your drinks' })).toHaveCount(0)
+  await page.goto('/')
+  await canMake(page).click()
+  await expect(page.getByRole('link', { name: /Sunday Limeade/ })).toHaveCount(0)
+
+  await page.getByRole('button', { name: 'Menu' }).click()
+  await page.getByRole('dialog', { name: 'Menu' }).getByRole('link', { name: 'My Bar' }).click()
+  await page.getByRole('button', { name: 'Lemons' }).click()
+  await page.getByRole('button', { name: 'Back' }).click()
+  await expect(page.getByRole('link', { name: /Sunday Limeade/ })).toBeVisible()
+})
+
+test('yuzu juice is its own item, under From your drinks', async ({ page }) => {
+  await seedMyBar(page, ['jigger'], limeadeBar)
+  await copyWithIngredient(page, 'yuzu juice')
+  await page.goto('/my-bar')
+  await expect(page.getByRole('region', { name: 'From your drinks' }).getByRole('button', { name: 'Yuzu juice' })).toBeVisible()
+})
+
+test('always on hand never blocks a Drink, and the choice is kept when it opens again', async ({ page }) => {
+  await seedMyBar(page, ['jigger'], limeadeBar)
+  await copyWithIngredient(page, 'yuzu juice', 'Always on hand')
+
+  await page.goto('/')
+  await canMake(page).click()
+  await page.getByRole('link', { name: /Sunday Limeade/ }).click()
+  await page.getByRole('link', { name: 'Edit this drink' }).click()
+  await expect(page.getByLabel('Counts as, ingredient 3').locator('option:checked')).toHaveText('Always on hand')
+})
+
+test('a Custom Drink with no choice opens and saves without one', async ({ page }) => {
+  await page.goto('/drinks/cherry-limeade/fizz=soda-water')
+  await page.getByRole('button', { name: 'Make a copy' }).click()
+  await page.getByRole('link', { name: 'Edit this drink' }).click()
+  await expect(page.getByLabel('Counts as, ingredient 1').locator('option:checked')).toContainText('(suggested)')
+  await page.getByLabel('Name', { exact: true }).fill('Sunday Limeade')
+  await page.getByRole('button', { name: 'Save' }).click()
+  await expect(page.getByRole('heading', { name: 'Sunday Limeade' })).toBeVisible()
+
+  const saved = await page.evaluate<string>(`new Promise((resolve) => {
+    const open = indexedDB.open('fizzwick')
+    open.onsuccess = () => {
+      const all = open.result.transaction('drinks').objectStore('drinks').getAll()
+      all.onsuccess = () => resolve(JSON.stringify(all.result))
+    }
+  })`)
+  expect(saved).toContain('Sunday Limeade')
+  expect(saved).not.toContain('countsAs')
+})
+
+test('the choice survives a backup and restore', async ({ page, browser }) => {
+  await copyWithIngredient(page, 'yuzu juice', 'Always on hand')
+  await page.goto('/settings')
+  const downloading = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download a backup' }).click()
+  const backup = await (await downloading).path()
+
+  const phoneContext = await browser.newContext()
+  const phone = await phoneContext.newPage()
+  await phone.goto('/settings')
+  await phone.getByLabel('Restore from backup', { exact: true }).setInputFiles(backup)
+  await phone.getByRole('dialog', { name: 'Restore this backup?' }).getByRole('button', { name: 'Restore' }).click()
+  await expect(phone.getByRole('status')).toHaveText('Added 1 Drink.')
+
+  await phone.goto('/')
+  await phone.getByRole('link', { name: /Sunday Limeade/ }).click()
+  await phone.getByRole('link', { name: 'Edit this drink' }).click()
+  await expect(phone.getByLabel('Counts as, ingredient 3').locator('option:checked')).toHaveText('Always on hand')
+  await phoneContext.close()
+})
+
 test('ticks change the count, last after a reload, and start empty', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('button', { name: 'Menu' }).click()

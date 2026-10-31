@@ -5,12 +5,23 @@ import {
   TOOLS,
   type Drink,
   type FlavorTag,
+  type Ingredient,
   type Method,
   type Picks,
   type Slot,
   type Tool,
 } from '../riff-engine'
-import { BAR_GROUPS, barItemById, barItemFor, isAlwaysOnHand, namesOf, type BarGroup } from '../my-bar/bar-items'
+import {
+  BAR_GROUPS,
+  barItemById,
+  barItemFor,
+  COUNTS_AS_ON_HAND,
+  COUNTS_AS_OWN,
+  countedAs,
+  namesOf,
+  type BarGroup,
+  type BarItem,
+} from '../my-bar/bar-items'
 import type { MyBar } from '../my-bar/my-bar'
 
 export interface DrinkSearch {
@@ -79,7 +90,9 @@ interface RiffFacts {
   picks: Picks
   method: Method
   tools: Tool[]
-  ingredients: Set<string>
+  ingredients: Ingredient[]
+  // What the ingredient filter can find it by: each name, and its Bar Item.
+  filterValues: Set<string>
 }
 
 const name = (ingredient: { name: string }) => ingredient.name.toLowerCase()
@@ -108,7 +121,13 @@ function riffsOf(drink: Drink): RiffFacts[] {
         picks: riff.picks,
         method: riff.method,
         tools: riff.miseEnPlace.tools,
-        ingredients: new Set(riff.ingredients.map(name)),
+        ingredients: riff.ingredients,
+        filterValues: new Set(
+          riff.ingredients.flatMap((ingredient) => {
+            const counted = countedAs(ingredient)
+            return typeof counted === 'string' ? [name(ingredient)] : [name(ingredient), counted.id]
+          }),
+        ),
       }
     })
   riffCache.set(drink, riffs)
@@ -119,18 +138,18 @@ function riffsOf(drink: Drink): RiffFacts[] {
 // does a tool a kitchen has a stand-in for.
 const lacksTool = (tool: Tool, myBar: MyBar) => !myBar.tools.includes(tool) && !KITCHEN_TOOLS.includes(tool)
 
-function lacksIngredient(ingredient: string, myBar: MyBar): boolean {
-  const lower = ingredient.toLowerCase()
-  if (isAlwaysOnHand(lower)) return false
-  const item = barItemFor(lower)
-  if (item?.garnishes?.includes(lower)) return false
-  return !myBar.items.includes(item?.id ?? lower)
+function lacksIngredient(ingredient: Ingredient, myBar: MyBar): boolean {
+  const counted = countedAs(ingredient)
+  if (counted === COUNTS_AS_ON_HAND) return false
+  if (counted === COUNTS_AS_OWN) return !myBar.items.includes(name(ingredient))
+  if (counted.garnishes?.includes(name(ingredient))) return false
+  return !myBar.items.includes(counted.id)
 }
 
 // A Riff you have everything for.
 const canMake = (riff: RiffFacts, myBar: MyBar) =>
   !riff.tools.some((tool) => lacksTool(tool, myBar)) &&
-  ![...riff.ingredients].some((ingredient) => lacksIngredient(ingredient, myBar))
+  !riff.ingredients.some((ingredient) => lacksIngredient(ingredient, myBar))
 
 // The Options of a Slot that need something My Bar lacks: one of their own
 // ingredients, or a tool that only some choices in the Slot need. A tool every
@@ -145,7 +164,7 @@ export function optionsNotInMyBar(drink: Drink, picks: Picks, slot: Slot, myBar:
     slot.options
       .filter(
         (option) =>
-          option.ingredients.some((ingredient) => lacksIngredient(ingredient.name, myBar)) ||
+          option.ingredients.some((ingredient) => lacksIngredient(ingredient, myBar)) ||
           toolsWith(option.id).some((tool) => !everyChoice.includes(tool) && lacksTool(tool, myBar)),
       )
       .map((option) => option.id),
@@ -160,17 +179,12 @@ export function searchDrinks(
   { query = '', method, flavor, ingredients = [], tools, myBar }: DrinkSearch,
 ): FoundDrink[] {
   const words = query.toLowerCase().split(/\s+/).filter(Boolean)
-  // A value is a Bar Item, standing for all its names, or one exact name.
-  const wanted = new Set(
-    ingredients.flatMap((value) => {
-      const item = barItemById(value)
-      return [value.toLowerCase(), ...(item ? namesOf(item) : [])]
-    }),
-  )
+  // A value is a Bar Item ID or one exact name.
+  const wanted = ingredients.map((value) => value.toLowerCase())
   const owned = tools && new Set([...tools, ...KITCHEN_TOOLS])
   const fits = (riff: RiffFacts) =>
     (!method || riff.method === method) &&
-    (wanted.size === 0 || [...wanted].some((ingredient) => riff.ingredients.has(ingredient))) &&
+    (wanted.length === 0 || wanted.some((value) => riff.filterValues.has(value))) &&
     (!owned || riff.tools.every((tool) => owned.has(tool))) &&
     (!myBar || canMake(riff, myBar))
 
@@ -201,32 +215,35 @@ export function surprisePick(
   return { drink, picks: fitting[Math.floor(random() * fitting.length)] }
 }
 
+// Every ingredient a Riff can use.
+const ingredientsOf = (drinks: Drink[]) =>
+  drinks.flatMap((drink) => [...drink.ingredients, ...pickable(drink).flatMap((option) => option.ingredients)])
+
 // Every ingredient a Riff can use, once each, by name.
 export function ingredientNames(drinks: Drink[]): string[] {
-  const names = new Set(
-    drinks.flatMap((drink) => [
-      ...drink.ingredients.map(name),
-      ...pickable(drink).flatMap((option) => option.ingredients.map(name)),
-    ]),
-  )
-  return [...names].sort((a, b) => a.localeCompare(b))
+  return [...new Set(ingredientsOf(drinks).map(name))].sort((a, b) => a.localeCompare(b))
 }
 
-// The ingredient filter's list: each Bar Item some Riff can use, and any name
-// from a Custom Drink that no Bar Item covers. Water is never offered.
+// The ingredient filter's list: each Bar Item some Riff can use, and each
+// ingredient that counts as its own item. Always on hand is never offered.
 export function ingredientChoices(drinks: Drink[]): IngredientChoice[] {
-  const names = ingredientNames(drinks).filter((ingredient) => !isAlwaysOnHand(ingredient))
-  const items = new Set(names.flatMap((ingredient) => barItemFor(ingredient) ?? []))
+  const items = new Map<BarItem, Set<string>>()
+  const own = new Set<string>()
+  for (const ingredient of ingredientsOf(drinks)) {
+    const counted = countedAs(ingredient)
+    if (counted === COUNTS_AS_OWN) own.add(name(ingredient))
+    else if (counted !== COUNTS_AS_ON_HAND) {
+      items.set(counted, (items.get(counted) ?? new Set(namesOf(counted))).add(name(ingredient)))
+    }
+  }
   return [
-    ...[...items].map((item) => ({ value: item.id, label: item.label, group: item.group, names: namesOf(item) })),
-    ...names
-      .filter((ingredient) => !barItemFor(ingredient))
-      .map((ingredient) => ({
-        value: ingredient,
-        label: ingredientLabel(ingredient),
-        group: FROM_YOUR_DRINKS,
-        names: [ingredient],
-      })),
+    ...[...items].map(([item, names]) => ({ value: item.id, label: item.label, group: item.group, names: [...names] })),
+    ...[...own].map((ingredient) => ({
+      value: ingredient,
+      label: ingredientLabel(ingredient),
+      group: FROM_YOUR_DRINKS,
+      names: [ingredient],
+    })),
   ].sort((a, b) => a.label.localeCompare(b.label))
 }
 

@@ -150,6 +150,24 @@
   padding-right: 0.25rem;
 }
 
+.ed-counts-as {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+
+.ed-counts-as label {
+  flex: none;
+  color: var(--dp-soft);
+  font-size: 0.875rem;
+}
+
+.ed-counts-as select {
+  flex: 1;
+  min-width: 0;
+}
+
 .ed-icon {
   display: grid;
   place-items: center;
