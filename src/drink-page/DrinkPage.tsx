@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import type { ListState } from '../drink-list/DrinkList'
+import { useSurprise } from '../drink-list/list-search'
 import { SaveFavorite } from '../favorites/SaveFavorite'
 import { isCustomDrinkId } from '../custom-drinks/copy-drink'
 import { CopyDrink } from '../custom-drinks/CopyDrink'
@@ -43,6 +44,8 @@ export interface DrinkPageState extends Partial<ListState> {
   making?: boolean
   // Just made with "Make a copy".
   copied?: boolean
+  // Opened by "Surprise me", so it can pick again from the same list.
+  surprise?: boolean
 }
 
 // The editor's Preview shows an unsaved Drink on this page, at its own
@@ -77,6 +80,7 @@ export function DrinkView({ drink, pairs, preview }: { drink: Drink; pairs: stri
 
   // Back to the list as it was (same search and filters), or to Favorites.
   const listSearch = pageState?.listSearch
+  const surprise = useSurprise(listSearch ?? '')
   const back = preview
     ? { to: preview.backTo, label: 'Back to editing' }
     : pageState?.fromFavorites
@@ -183,6 +187,18 @@ export function DrinkView({ drink, pairs, preview }: { drink: Drink; pairs: stri
 
         <div className="dp-row">
           {riff.dietaryTags.length > 0 && <p className="dp-dietary">Contains {riff.dietaryTags.join(', ')}</p>}
+          {pageState?.surprise && !preview && (
+            <button
+              type="button"
+              className="dp-reset dp-try-another"
+              onClick={() => {
+                surprise({ replace: true })
+                window.scrollTo(0, 0)
+              }}
+            >
+              Try another
+            </button>
+          )}
         </div>
 
         <RecipeCard riff={riff} onServings={setServings} changeColor={changeColor} />

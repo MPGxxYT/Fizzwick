@@ -10,6 +10,7 @@ import {
   ingredientChoices,
   optionsNotInMyBar,
   searchDrinks,
+  surprisePick,
   toolChoices,
   type ChoiceGroup,
   type IngredientChoice,
@@ -235,6 +236,47 @@ describe('the My Bar rule', () => {
     }
     expect(searchDrinks([juice], { myBar: mangoBar })).toEqual([])
     expect(names(searchDrinks([juice], { myBar: { ...mangoBar, items: [...mangoBar.items, 'lemons'] } }))).toEqual(['Mango Cream'])
+  })
+})
+
+describe('every fitting Riff', () => {
+  test('lists them closest to the House Spec first, and picks the first', () => {
+    const [found] = searchDrinks([mangoCream], {})
+    expect(found.fitting).toEqual([
+      { fruit: 'mango', texture: 'shaken' },
+      { fruit: 'mango', texture: 'frozen' },
+    ])
+    expect(found.picks).toEqual(found.fitting[0])
+  })
+
+  test('leaves out the Riffs that do not fit', () => {
+    const [found] = searchDrinks([mangoCream], { method: 'blend' })
+    expect(found.fitting).toEqual([{ fruit: 'mango', texture: 'frozen' }])
+  })
+})
+
+describe('surprisePick', () => {
+  const found = searchDrinks(drinks, {})
+  const sequence = (...values: number[]) => () => values.shift() ?? 0
+
+  test('picks a Drink, then a Riff, from what the list shows', () => {
+    const pick = surprisePick(found, undefined, sequence(0.99, 0.99))
+    expect(pick?.drink.name).toBe('Mango Cream')
+    expect(pick?.picks).toEqual({ fruit: 'mango', texture: 'frozen' })
+  })
+
+  test('does not pick the same Drink twice in a row', () => {
+    for (const random of [0, 0.5, 0.99]) {
+      expect(surprisePick(found, mangoCream.id, () => random)?.drink.name).toBe('Cherry Limeade')
+    }
+  })
+
+  test('picks the last Drink again when it is the only one', () => {
+    expect(surprisePick(searchDrinks([mangoCream], {}), mangoCream.id)?.drink.name).toBe('Mango Cream')
+  })
+
+  test('an empty list picks nothing', () => {
+    expect(surprisePick([], undefined)).toBeNull()
   })
 })
 

@@ -231,10 +231,36 @@
   }
 }
 
-.dl-count {
-  margin: 1.25rem 0 0.5rem;
+.dl-count-line {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0.25rem;
   color: var(--muted);
   font-size: 0.9rem;
+}
+
+.dl-count {
+  margin: 0;
+}
+
+.dl-surprise {
+  min-height: 2.75rem;
+  padding: 0 0.25rem;
+  border: 0;
+  background: none;
+  color: var(--link);
+  font: 600 0.9rem 'Figtree', sans-serif;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.dl-surprise:disabled {
+  color: var(--muted);
+  opacity: 0.6;
+  text-decoration: none;
+  cursor: default;
 }
 
 .dl-drinks {
