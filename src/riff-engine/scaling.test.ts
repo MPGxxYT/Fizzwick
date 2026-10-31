@@ -137,6 +137,28 @@ describe('glass size', () => {
     expect(amounts(drink, { glassOz: 4 })[0]).toBe('a: 0.25 oz')
   })
 
+  test('a different glass scales counted fruit and herbs to whole ones', () => {
+    const drink = drinkWith('build', [
+      { name: 'fresh blueberries', amount: 15, unit: 'count' },
+      { name: 'basil leaves', amount: 3, unit: 'count' },
+    ])
+    expect(amounts(drink, { glassOz: 16 })).toEqual(expect.arrayContaining(['fresh blueberries: 30 count', 'basil leaves: 6 count']))
+    expect(amounts(drink, { glassOz: 12 })).toContain('basil leaves: 5 count')
+    expect(amounts(drink, { glassOz: 2 })).toContain('basil leaves: 1 count')
+    expect(amounts(drink, { glassOz: 16, servings: 2 })).toContain('fresh blueberries: 60 count')
+  })
+
+  test('a single item, a garnish and ice stay as written in a different glass', () => {
+    const drink = drinkWith('build', [
+      { name: 'egg white', amount: 1, unit: 'count' },
+      { name: 'raspberries, for garnish', amount: 3, unit: 'count' },
+      { name: 'ice cubes', amount: 3, unit: 'count' },
+    ])
+    expect(amounts(drink, { glassOz: 16 })).toEqual(
+      expect.arrayContaining(['egg white: 1 count', 'raspberries, for garnish: 3 count', 'ice cubes: 3 count']),
+    )
+  })
+
   test('glass size and servings scale together, before converting to ml', () => {
     expect(amounts(cherryLimeade, { glassOz: 16, servings: 2 })).toContain('fresh lime juice: 2 oz')
     expect(amounts(cherryLimeade, { glassOz: 16, units: 'ml' })).toContain('fresh lime juice: 30 ml')

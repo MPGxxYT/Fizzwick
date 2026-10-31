@@ -70,21 +70,21 @@
           "id": "honey-syrup",
           "label": "Honey syrup",
           "phrase": "honey syrup",
-          "ingredients": [{ "name": "honey syrup", "amount": 0.5, "unit": "oz" }],
+          "ingredients": [{ "name": "honey syrup", "amount": 0.75, "unit": "oz" }],
           "color": "#e0a43a"
         },
         {
           "id": "simple-syrup",
           "label": "Simple syrup",
           "phrase": "simple syrup",
-          "ingredients": [{ "name": "simple syrup", "amount": 0.5, "unit": "oz" }],
+          "ingredients": [{ "name": "simple syrup", "amount": 0.75, "unit": "oz" }],
           "color": "#f5f5f4"
         },
         {
           "id": "lavender-syrup",
           "label": "Lavender syrup",
           "phrase": "lavender syrup",
-          "ingredients": [{ "name": "lavender syrup", "amount": 0.5, "unit": "oz" }],
+          "ingredients": [{ "name": "lavender syrup", "amount": 0.75, "unit": "oz" }],
           "color": "#b49be0"
         }
       ]

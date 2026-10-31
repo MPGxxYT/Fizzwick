@@ -166,7 +166,7 @@ function resolve(drink: Drink, requested: Picks, { servings = 1, units = 'oz', g
   const place = ({ ingredient, garnish }: IngredientSource) => (garnish ? 2 : /\bice\b/.test(ingredient.name) ? 1 : 0)
   const measured = sources
     .sort((a, b) => place(a) - place(b))
-    .map((source) => ({ ...source, ingredient: measure(source.ingredient, servings, units, glassRatio) }))
+    .map((source) => ({ ...source, ingredient: measure(source.ingredient, servings, units, glassRatio, source.garnish) }))
   const ingredients = measured.map(({ ingredient }) => ingredient)
   const batch = BATCH_LIMITS[method]
   const batchNotes = batch && servings > batch.size ? [batch.note(Math.ceil(servings / batch.size))] : []
@@ -266,11 +266,18 @@ function orderSteps(base: Step[], options: Option[]): Step[] {
 
 // Scales an amount by the serving count, then converts oz and ml into the
 // chosen units. Poured amounts (oz and ml) also scale to the glass, and are
-// then rounded to something pourable. Other measured units scale by servings
-// but never convert or follow the glass; Top, to taste and fill have no
-// amount and are left alone.
-function measure(ingredient: Ingredient, servings: number, units: Units, glassRatio: number): Ingredient {
+// then rounded to something pourable. So do counted things that flavor the
+// drink, such as berries and leaves, rounded to whole ones; a single item, a
+// garnish or ice stays as written. Other measured units scale by servings but
+// never convert or follow the glass; Top, to taste and fill have no amount and
+// are left alone.
+function measure(ingredient: Ingredient, servings: number, units: Units, glassRatio: number, garnish: boolean): Ingredient {
   if (ingredient.amount === undefined) return ingredient
+  const followsGlass =
+    ingredient.unit === 'count' && ingredient.amount > 1 && !garnish && !/\bice\b/.test(ingredient.name)
+  if (followsGlass && glassRatio !== 1) {
+    return { ...ingredient, amount: Math.max(1, Math.round(ingredient.amount * glassRatio)) * servings }
+  }
   const poured = ingredient.unit === 'oz' || ingredient.unit === 'ml'
   const scaled = ingredient.amount * servings * (poured ? glassRatio : 1)
   if (ingredient.unit === 'oz' && units === 'ml') return { ...ingredient, amount: roundMl(scaled * ML_PER_OZ), unit: 'ml' }
