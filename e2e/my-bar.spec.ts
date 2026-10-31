@@ -90,6 +90,48 @@ test('clearing filters resets only the temporary ones', async ({ page }) => {
   await expect(page.getByRole('link', { name: /Tea Sour/ })).toHaveCount(0)
 })
 
+test('with Can make on, the swap sheet marks what is not in My Bar, and it can still be picked', async ({ page }) => {
+  await seedMyBar(page, ['jigger'], ['limes', 'cherry-syrup', 'simple-syrup', 'soda-water', 'ice'])
+  await page.goto('/')
+  await canMake(page).click()
+  await page.getByRole('link', { name: /Cherry Limeade/ }).click()
+
+  await page.getByRole('button', { name: /^Sweetener:/ }).click()
+  const sheet = page.getByRole('dialog', { name: 'Choose sweetener' })
+  await expect(sheet.getByRole('button', { name: /Agave/ })).toContainText('Not in My Bar')
+  await expect(sheet.getByRole('button', { name: /Simple syrup/ })).not.toContainText('Not in My Bar')
+
+  await sheet.getByRole('button', { name: /Agave/ }).click()
+  await expect(page).toHaveURL(/sweetener=agave/)
+
+})
+
+test('an Option is marked for a missing tool, with its ingredients ticked', async ({ page }) => {
+  await seedMyBar(page, ['jigger'], ['limes', 'cherry-syrup', 'fresh-cherries', 'simple-syrup', 'soda-water', 'ice'])
+  await page.goto('/')
+  await canMake(page).click()
+  await page.getByRole('link', { name: /Cherry Limeade/ }).click()
+  await page.getByRole('button', { name: /^Cherry:/ }).click()
+  await expect(page.getByRole('dialog', { name: 'Choose cherry' }).getByRole('button', { name: /Muddled/ })).toContainText(
+    'Not in My Bar',
+  )
+})
+
+test('a missing garnish is not marked, and with Can make off nothing is', async ({ page }) => {
+  await seedMyBar(page, ['jigger'], ['limes', 'cherry-syrup', 'simple-syrup', 'soda-water', 'ice'])
+  await page.goto('/')
+  await canMake(page).click()
+  await page.getByRole('link', { name: /Cherry Limeade/ }).click()
+  await page.getByRole('button', { name: /^Garnish:/ }).click()
+  await expect(page.getByRole('dialog', { name: 'Choose garnish' })).not.toContainText('Not in My Bar')
+
+  await page.goto('/')
+  await canMake(page).click()
+  await page.goto('/drinks/cherry-limeade')
+  await page.getByRole('button', { name: /^Sweetener:/ }).click()
+  await expect(page.getByRole('dialog', { name: 'Choose sweetener' })).not.toContainText('Not in My Bar')
+})
+
 test('ticks change the count, last after a reload, and start empty', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('button', { name: 'Menu' }).click()

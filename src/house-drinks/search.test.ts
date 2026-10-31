@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { parseDrinkFile, type Drink } from '../riff-engine'
+import { parseDrinkFile, type Drink, type Tool } from '../riff-engine'
 import cherryLimeadeFile from './cherry-limeade.json'
 import { houseDrinks } from './catalog'
 import {
@@ -8,6 +8,7 @@ import {
   FROM_YOUR_DRINKS,
   groupChoices,
   ingredientChoices,
+  optionsNotInMyBar,
   searchDrinks,
   toolChoices,
   type ChoiceGroup,
@@ -234,6 +235,48 @@ describe('the My Bar rule', () => {
     }
     expect(searchDrinks([juice], { myBar: mangoBar })).toEqual([])
     expect(names(searchDrinks([juice], { myBar: { ...mangoBar, items: [...mangoBar.items, 'lemons'] } }))).toEqual(['Mango Cream'])
+  })
+})
+
+describe('optionsNotInMyBar', () => {
+  const slot = (drink: Drink, id: string) => drink.slots.find((candidate) => candidate.id === id)!
+  const missing = (drink: Drink, slotId: string, tools: Tool[], items: string[]) => [
+    ...optionsNotInMyBar(drink, drink.houseSpec, slot(drink, slotId), { tools, items }),
+  ]
+
+  test('marks an Option with a missing ingredient', () => {
+    expect(missing(cherryLimeade, 'sweetener', ['jigger'], ['simple-syrup'])).toEqual(['agave'])
+    expect(missing(cherryLimeade, 'sweetener', ['jigger'], ['simple-syrup', 'agave'])).toEqual([])
+  })
+
+  test('marks an Option that needs a missing tool, even with its ingredients ticked', () => {
+    const items = ['cherry-syrup', 'fresh-cherries', 'tart-cherry-juice']
+    expect(missing(cherryLimeade, 'cherry', ['jigger'], items)).toEqual(['muddled-cherries'])
+    expect(missing(cherryLimeade, 'cherry', ['jigger', 'muddler', 'shaker', 'fine-strainer'], items)).toEqual([])
+  })
+
+  test('marks the Option a Method switch needs a tool for', () => {
+    expect(missing(mangoCream, 'texture', ['shaker'], ['ice'])).toEqual(['frozen'])
+    expect(missing(mangoCream, 'texture', ['blender'], ['ice'])).toEqual(['shaken'])
+  })
+
+  test('a tool every choice needs marks none of them', () => {
+    const everyChoice = (id: string) => missing(cherryLimeade, id, [], ['simple-syrup', 'agave'])
+    expect(everyChoice('sweetener')).toEqual([])
+  })
+
+  test('a missing garnish marks nothing', () => {
+    expect(missing(cherryLimeade, 'garnish', ['jigger'], [])).toEqual([])
+  })
+
+  test('goes by the other picks, as the page does', () => {
+    const blended = optionsNotInMyBar(
+      mangoCream,
+      { fruit: 'mango', texture: 'frozen' },
+      slot(mangoCream, 'fruit'),
+      { tools: ['blender'], items: ['mango purée', 'kiwi purée'] },
+    )
+    expect([...blended]).toEqual([])
   })
 })
 

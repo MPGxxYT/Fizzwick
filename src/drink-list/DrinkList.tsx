@@ -19,9 +19,10 @@ import {
   type FoundDrink,
   type IngredientChoice,
 } from '../house-drinks/search'
-import { useMyBar } from '../my-bar/use-my-bar'
+import { isMyBarEmpty } from '../my-bar/my-bar'
+import { useCanMakeBar, useMyBar } from '../my-bar/use-my-bar'
 import { FLAVOR_TAGS, METHODS, resolveRiff, riffLink, TOOLS, type FlavorTag, type Method, type Tool } from '../riff-engine'
-import { updateSettings, useSettings } from '../settings/use-settings'
+import { updateSettings } from '../settings/use-settings'
 import './drink-list.css'
 
 // The card's ground, so the Drink names on it stay readable.
@@ -60,11 +61,9 @@ export function DrinkList() {
   const [params, setParams] = useSearchParams()
   const [menuOpen, setMenuOpen] = useState(false)
   const { drinks, photos } = useDrinks()
-  const myBar = useMyBar()
-  const { canMake: canMakeOn } = useSettings()
-  const barEmpty = myBar.tools.length === 0 && myBar.items.length === 0
-  // An empty My Bar makes nothing, so the toggle waits until it has something.
-  const canMake = canMakeOn && !barEmpty
+  const barEmpty = isMyBarEmpty(useMyBar())
+  const canMakeBar = useCanMakeBar()
+  const canMake = canMakeBar !== undefined
   const choices = useMemo(
     () => ({ ...filterChoices(drinks), tools: toolChoices(drinks), ingredients: ingredientChoices(drinks) }),
     [drinks],
@@ -87,9 +86,9 @@ export function DrinkList() {
         flavor,
         ingredients,
         tools: tools.length > 0 ? tools : undefined,
-        myBar: canMake ? myBar : undefined,
+        myBar: canMakeBar,
       }),
-    [drinks, yours, query, method, flavor, ingredients, tools, canMake, myBar],
+    [drinks, yours, query, method, flavor, ingredients, tools, canMakeBar],
   )
   const [sheet, setSheet] = useState<'tools' | 'ingredients' | null>(null)
 
