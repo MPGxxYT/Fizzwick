@@ -224,3 +224,50 @@ const byName = new Map(BAR_ITEMS.flatMap((item) => namesOf(item).map((name) => [
 export const barItemById = (id: string) => byId.get(id)
 export const barItemFor = (name: string) => byName.get(name.toLowerCase())
 export const isAlwaysOnHand = (name: string) => ALWAYS_ON_HAND.includes(name.toLowerCase())
+
+export const COUNTS_AS_OWN = 'own'
+export const COUNTS_AS_ON_HAND = 'on-hand'
+
+// What an ingredient counts as on My Bar: a Bar Item, an item of its own that
+// goes by its name, or nothing to tick at all.
+export type CountedAs = BarItem | typeof COUNTS_AS_OWN | typeof COUNTS_AS_ON_HAND
+
+const PLAIN_WATER = /^((cold|hot|warm|boiling|boiled|filtered|tap) )?water$/
+
+// Words that make something a thing of its own, so lemon syrup isn't Lemons
+// and ice cream isn't Ice.
+const KIND_WORDS = new Set(['ale', 'beer', 'bitters', 'cider', 'cream', 'extract', 'milk', 'salt', 'soda', 'sugar', 'syrup', 'tea', 'tonic', 'yogurt'])
+
+const wordsOf = (text: string) =>
+  text
+    .toLowerCase()
+    .split(/[^\p{L}]+/u)
+    .filter(Boolean)
+    .map((word) => word.replace(/ies$/, 'y').replace(/(?<!s)s$/, ''))
+
+// An ingredient's name as a guess: its exact wording first, then the Bar Item
+// you can tick whose whole label is in the name, the longest label if there
+// are a few. "charred lemon wheel" is Lemons, and "yuzu juice" is its own item.
+export function suggestCountsAs(name: string): CountedAs {
+  const lower = name.trim().toLowerCase()
+  if (isAlwaysOnHand(lower) || PLAIN_WATER.test(lower)) return COUNTS_AS_ON_HAND
+  const exact = barItemFor(lower)
+  if (exact) return exact
+  const words = wordsOf(lower)
+  const fits = BAR_ITEMS.filter((item) => {
+    const label = wordsOf(item.label)
+    return (
+      item.covers.length > 0 &&
+      label.every((word) => words.includes(word)) &&
+      words.every((word) => !KIND_WORDS.has(word) || label.includes(word))
+    )
+  })
+  return fits.sort((a, b) => wordsOf(b.label).length - wordsOf(a.label).length)[0] ?? COUNTS_AS_OWN
+}
+
+// The choice saved on an ingredient, or the suggestion when it has none or
+// names an item this version doesn't know.
+export function countedAs({ name, countsAs }: { name: string; countsAs?: string }): CountedAs {
+  if (countsAs === COUNTS_AS_OWN || countsAs === COUNTS_AS_ON_HAND) return countsAs
+  return (countsAs && barItemById(countsAs)) || suggestCountsAs(name)
+}

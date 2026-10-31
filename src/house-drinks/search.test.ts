@@ -199,7 +199,49 @@ describe('the ingredient filter, by Bar Item', () => {
 })
 
 describe('the My Bar rule', () => {
-  const mangoBar = { tools: ['shaker' as const], items: ['whole-milk', 'mango purée'] }
+  const mangoBar = { tools: ['shaker' as const], items: ['whole-milk', 'mango'] }
+
+  describe('with a Counts as choice', () => {
+    const withIngredient = (ingredient: Drink['ingredients'][number]): Drink => ({
+      ...mangoCream,
+      ingredients: [...mangoCream.ingredients, ingredient],
+    })
+    const makes = (ingredient: Drink['ingredients'][number], items: string[]) =>
+      names(searchDrinks([withIngredient(ingredient)], { myBar: { ...mangoBar, items: [...mangoBar.items, ...items] } }))
+
+    test('a name that suggests an item needs that item', () => {
+      const wheel = { name: 'charred lemon wheel', amount: 1, unit: 'count' as const }
+      expect(makes(wheel, [])).toEqual([])
+      expect(makes(wheel, ['lemons'])).toEqual(['Mango Cream'])
+    })
+
+    test('its own item goes by its name', () => {
+      const yuzu = { name: 'Yuzu Juice', amount: 1, unit: 'oz' as const }
+      expect(makes(yuzu, [])).toEqual([])
+      expect(makes(yuzu, ['yuzu juice'])).toEqual(['Mango Cream'])
+    })
+
+    test('always on hand never stops you', () => {
+      expect(makes({ name: 'yuzu juice', amount: 1, unit: 'oz', countsAs: 'on-hand' }, [])).toEqual(['Mango Cream'])
+    })
+
+    test('a choice wins over the suggestion', () => {
+      const chosen = { name: 'charred lemon wheel', amount: 1, unit: 'count' as const, countsAs: 'limes' }
+      expect(makes(chosen, ['lemons'])).toEqual([])
+      expect(makes(chosen, ['limes'])).toEqual(['Mango Cream'])
+    })
+
+    test('the ingredient filter finds it by its item', () => {
+      const wheel = withIngredient({ name: 'charred lemon wheel', amount: 1, unit: 'count' })
+      expect(names(searchDrinks([wheel], { ingredients: ['lemons'] }))).toEqual(['Mango Cream'])
+      expect(ingredientChoices([wheel]).find((choice) => choice.value === 'lemons')?.names).toContain('charred lemon wheel')
+    })
+
+    test('always on hand is not offered in the filter', () => {
+      const yuzu = withIngredient({ name: 'yuzu juice', amount: 1, unit: 'oz', countsAs: 'on-hand' })
+      expect(ingredientChoices([yuzu]).map((choice) => choice.value)).not.toContain('yuzu juice')
+    })
+  })
 
   test('an empty My Bar makes nothing', () => {
     expect(searchDrinks(drinks, { myBar: { tools: [], items: [] } })).toEqual([])
@@ -316,7 +358,7 @@ describe('optionsNotInMyBar', () => {
       mangoCream,
       { fruit: 'mango', texture: 'frozen' },
       slot(mangoCream, 'fruit'),
-      { tools: ['blender'], items: ['mango purée', 'kiwi purée'] },
+      { tools: ['blender'], items: ['mango', 'kiwi purée'] },
     )
     expect([...blended]).toEqual([])
   })
@@ -350,9 +392,9 @@ describe('ingredientChoices', () => {
   })
 
   test('a name no Bar Item covers shows under From your drinks', () => {
-    const custom: Drink = { ...mangoCream, ingredients: [{ name: 'Charred Lemon Wheel', amount: 1, unit: 'count' }] }
-    const choice = ingredientChoices([custom]).find((c) => c.value === 'charred lemon wheel')
-    expect(choice).toMatchObject({ label: 'Charred lemon wheel', group: FROM_YOUR_DRINKS })
+    const custom: Drink = { ...mangoCream, ingredients: [{ name: 'Yuzu Juice', amount: 1, unit: 'oz' }] }
+    const choice = ingredientChoices([custom]).find((c) => c.value === 'yuzu juice')
+    expect(choice).toMatchObject({ label: 'Yuzu juice', group: FROM_YOUR_DRINKS })
   })
 })
 
