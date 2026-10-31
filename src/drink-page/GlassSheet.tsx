@@ -48,7 +48,7 @@ export function GlassSheet({
           onClose()
         }}
       >
-        <label htmlFor="dp-glass-oz">Using a different glass? Enter its size and the pours scale to fit.</label>
+        <label htmlFor="dp-glass-oz">Using a different glass? Enter its size and the amounts scale to fit.</label>
         <div className="dp-glass-row">
           <input
             id="dp-glass-oz"
