@@ -3,13 +3,15 @@ import { describeRestore, makeBackup, readBackup, type Restore } from '../custom
 import { customPhotoBlobs, putCustomDrink, putCustomPhoto, useCustomDrinks } from '../custom-drinks/store'
 import { Sheet } from '../drink-page/Sheet'
 import { putFavorite, useFavorites } from '../favorites/store'
+import { updateMyBar, useMyBar } from '../my-bar/use-my-bar'
 
-// Download a backup of Custom Drinks, their photos and Favorites as one file,
-// or restore one after saying what it will add and replace.
+// Download a backup of Custom Drinks, their photos, Favorites and My Bar as
+// one file, or restore one after saying what it will add and replace.
 export function BackupCard() {
   const inputId = useId()
   const custom = useCustomDrinks()
   const favorites = useFavorites()
+  const myBar = useMyBar()
   const [restore, setRestore] = useState<Restore | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const ready = custom.status === 'ready' && favorites.status === 'ready'
@@ -18,7 +20,7 @@ export function BackupCard() {
     if (!ready) return
     setMessage(null)
     try {
-      const backup = await makeBackup(custom.drinks, await customPhotoBlobs(), favorites.favorites)
+      const backup = await makeBackup(custom.drinks, await customPhotoBlobs(), favorites.favorites, myBar)
       const url = URL.createObjectURL(new Blob([JSON.stringify(backup)], { type: 'application/json' }))
       const link = document.createElement('a')
       link.href = url
@@ -46,6 +48,7 @@ export function BackupCard() {
         await putCustomPhoto(drink.id, photo)
       }
       for (const favorite of chosen.favorites) await putFavorite(favorite)
+      if (chosen.myBar) updateMyBar(chosen.myBar)
       setMessage(describeRestore(chosen, true))
     } catch {
       setMessage("This browser wouldn't save everything. Try restoring again.")
@@ -56,8 +59,8 @@ export function BackupCard() {
     <section className="st-card" aria-labelledby="st-backup">
       <h2 id="st-backup">Backup</h2>
       <p className="st-hint">
-        Your drinks and Favorites stay on this phone. A backup puts them, with their photos, in one file you can keep or
-        restore on another phone.
+        Your drinks, Favorites and My Bar stay on this phone. A backup puts them, with their photos, in one file you can
+        keep or restore on another phone.
       </p>
       <div className="st-backup-actions">
         <button type="button" className="st-button" disabled={!ready} onClick={download}>

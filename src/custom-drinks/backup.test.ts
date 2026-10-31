@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import type { Favorite } from '../favorites/favorite'
+import { EMPTY_MY_BAR, type MyBar } from '../my-bar/my-bar'
 import { parseDrinkFile, type Drink } from '../riff-engine'
 import cherryLimeadeFile from '../house-drinks/cherry-limeade.json'
 import { BACKUP_VERSION, describeRestore, makeBackup, readBackup } from './backup'
@@ -29,8 +30,8 @@ const favorite = (id: string, drinkId: string): Favorite => ({
 const photo = new Blob([new Uint8Array([0xff, 0xd8, 0xff, 0x00, 0x42])], { type: 'image/jpeg' })
 
 // Through JSON, as the downloaded file is.
-const asFile = async (drinks: Drink[], photos: Record<string, Blob>, favorites: Favorite[]) =>
-  JSON.stringify(await makeBackup(drinks, photos, favorites))
+const asFile = async (drinks: Drink[], photos: Record<string, Blob>, favorites: Favorite[], myBar: MyBar = EMPTY_MY_BAR) =>
+  JSON.stringify(await makeBackup(drinks, photos, favorites, myBar))
 
 const emptyPhone = { drinks: [], favorites: [] }
 
@@ -54,6 +55,57 @@ describe('the backup round trip', () => {
     expect(file.backupVersion).toBe(BACKUP_VERSION)
     expect(file.drinks[0].formatVersion).toBe(mine.formatVersion)
     expect(file.drinks[0].photo).toMatch(/^data:image\/jpeg;base64,/)
+  })
+})
+
+describe('My Bar in the backup', () => {
+  const myBar: MyBar = { tools: ['jigger'], items: ['lemons', 'yuzu juice'] }
+
+  test('comes back the same after a round trip', async () => {
+    const file = JSON.parse(await asFile([], {}, [], myBar))
+    expect(file.backupVersion).toBe(1)
+    expect(file.myBar).toEqual(myBar)
+    const result = readBackup(JSON.stringify(file), emptyPhone)
+    if (!result.ok) throw new Error(result.message)
+    expect(result.restore.myBar).toEqual(myBar)
+  })
+
+  test('the sheet and the result say My Bar is replaced', async () => {
+    const result = readBackup(await asFile([mine], {}, [], myBar), emptyPhone)
+    if (!result.ok) throw new Error(result.message)
+    expect(describeRestore(result.restore)).toBe('Adds 1 Drink. Replaces My Bar.')
+    expect(describeRestore(result.restore, true)).toBe('Added 1 Drink. Replaced My Bar.')
+  })
+
+  test('a backup with only My Bar is not called empty', async () => {
+    const result = readBackup(await asFile([], {}, [], myBar), emptyPhone)
+    if (!result.ok) throw new Error(result.message)
+    expect(describeRestore(result.restore)).toBe('Replaces My Bar.')
+  })
+
+  test('an empty My Bar stays out of the file, and can not clear one on the phone', async () => {
+    const file = JSON.parse(await asFile([], {}, []))
+    expect('myBar' in file).toBe(false)
+    const result = readBackup(JSON.stringify({ ...file, myBar: { tools: [], items: [] } }), emptyPhone)
+    if (!result.ok) throw new Error(result.message)
+    expect(result.restore.myBar).toBeNull()
+  })
+
+  test('an older backup leaves My Bar alone', () => {
+    const result = readBackup(JSON.stringify({ backupVersion: 1, drinks: [], favorites: [] }), emptyPhone)
+    if (!result.ok) throw new Error(result.message)
+    expect(result.restore.myBar).toBeNull()
+    expect(describeRestore(result.restore)).toBe('There are no Drinks or Favorites in this backup.')
+  })
+
+  test('leaves out what it can not read', () => {
+    const text = JSON.stringify({ backupVersion: 1, drinks: [], favorites: [], myBar: { tools: ['spork'], items: ['lemons', 3] } })
+    const result = readBackup(text, emptyPhone)
+    if (!result.ok) throw new Error(result.message)
+    expect(result.restore.myBar).toEqual({ tools: [], items: ['lemons'] })
+    const junk = readBackup(JSON.stringify({ backupVersion: 1, drinks: [], favorites: [], myBar: 'lots' }), emptyPhone)
+    if (!junk.ok) throw new Error(junk.message)
+    expect(junk.restore.myBar).toBeNull()
   })
 })
 
