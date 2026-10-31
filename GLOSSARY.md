@@ -18,7 +18,7 @@ Its ID starts with `my-`, which no House Drink ID does, and never changes. The D
 _Avoid_: User drink, imported drink
 
 **Backup**:
-One file holding every Custom Drink, with its photo, and every Favorite on the phone, made and restored in Settings. Restoring replaces a Drink or Favorite with the same ID.
+One file holding every Custom Drink, with its photo, every Favorite and My Bar's ticks, made and restored in Settings. Restoring replaces a Drink or Favorite with the same ID, and My Bar if the file has one.
 _Avoid_: Export, sync, import
 
 **Slot**:

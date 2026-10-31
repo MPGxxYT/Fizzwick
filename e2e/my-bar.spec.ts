@@ -237,6 +237,53 @@ test('the choice survives a backup and restore', async ({ page, browser }) => {
   await phoneContext.close()
 })
 
+test('a backup gives back the same ticks on a cleared phone, and not the toggle', async ({ page, browser }) => {
+  await seedMyBar(page, ['jigger'], limeadeBar)
+  await page.goto('/')
+  await canMake(page).click()
+  await page.goto('/settings')
+  const downloading = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download a backup' }).click()
+  const backup = await (await downloading).path()
+
+  const phoneContext = await browser.newContext()
+  const phone = await phoneContext.newPage()
+  await phone.goto('/settings')
+  await phone.getByLabel('Restore from backup', { exact: true }).setInputFiles(backup)
+  const sheet = phone.getByRole('dialog', { name: 'Restore this backup?' })
+  await expect(sheet).toContainText('Replaces My Bar.')
+  await sheet.getByRole('button', { name: 'Restore' }).click()
+  await expect(phone.getByRole('status')).toHaveText('Replaced My Bar.')
+
+  await phone.goto('/my-bar')
+  await expect(phone.getByRole('button', { name: 'Jigger' })).toHaveAttribute('aria-pressed', 'true')
+  for (const name of ['Limes', 'Cherry syrup', 'Simple syrup', 'Soda water', 'Ice']) {
+    await expect(phone.getByRole('button', { name, exact: true })).toHaveAttribute('aria-pressed', 'true')
+  }
+  await expect(phone.getByRole('button', { name: 'Shaker', exact: true })).toHaveAttribute('aria-pressed', 'false')
+  await phone.goto('/')
+  await expect(canMake(phone)).toHaveAttribute('aria-pressed', 'false')
+  await phoneContext.close()
+})
+
+test('a backup without My Bar leaves the ticks as they were', async ({ page }) => {
+  await seedMyBar(page, ['jigger'], limeadeBar)
+  await page.goto('/settings')
+  await page
+    .getByLabel('Restore from backup', { exact: true })
+    .setInputFiles({
+      name: 'older.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify({ backupVersion: 1, drinks: [], favorites: [] })),
+    })
+  const sheet = page.getByRole('dialog', { name: 'Restore this backup?' })
+  await expect(sheet).not.toContainText('My Bar')
+  await sheet.getByRole('button', { name: 'Restore' }).click()
+
+  await page.goto('/my-bar')
+  await expect(page.getByRole('button', { name: 'Limes' })).toHaveAttribute('aria-pressed', 'true')
+})
+
 test('ticks change the count, last after a reload, and start empty', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('button', { name: 'Menu' }).click()

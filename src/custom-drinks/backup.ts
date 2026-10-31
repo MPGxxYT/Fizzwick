@@ -1,27 +1,37 @@
 import { z } from 'zod'
 import type { Favorite } from '../favorites/favorite'
+import { checkMyBar, isMyBarEmpty, type MyBar } from '../my-bar/my-bar'
 import { parseDrinkFile, type Drink } from '../riff-engine'
 import { isCustomDrinkId, nameTaken } from './copy-drink'
 
 // The backup file Settings downloads and restores: every Custom Drink as a
 // Drink file (ADR 0001), its photo embedded in the file's `photo` as a data
-// URL, and every Favorite, House and Custom. `backupVersion` changes only
-// when this wrapper does; each Drink keeps its own `formatVersion`.
+// URL, every Favorite, House and Custom, and My Bar's ticks if there are any.
+// `backupVersion` changes only when this wrapper does; each Drink keeps its
+// own `formatVersion`.
 export const BACKUP_VERSION = 1
 
 export interface BackupFile {
   backupVersion: typeof BACKUP_VERSION
   drinks: Drink[]
   favorites: Favorite[]
+  myBar?: MyBar
 }
 
-export async function makeBackup(drinks: Drink[], photos: Record<string, Blob>, favorites: Favorite[]): Promise<BackupFile> {
+// An empty My Bar stays out, so restoring the file never clears someone's ticks.
+export async function makeBackup(
+  drinks: Drink[],
+  photos: Record<string, Blob>,
+  favorites: Favorite[],
+  myBar: MyBar,
+): Promise<BackupFile> {
   return {
     backupVersion: BACKUP_VERSION,
     drinks: await Promise.all(
       drinks.map(async (drink) => (photos[drink.id] ? { ...drink, photo: await toDataUrl(photos[drink.id]) } : drink)),
     ),
     favorites,
+    ...(isMyBarEmpty(myBar) ? {} : { myBar }),
   }
 }
 
@@ -30,6 +40,8 @@ export async function makeBackup(drinks: Drink[], photos: Record<string, Blob>, 
 export interface Restore {
   drinks: { drink: Drink; photo: Blob | null }[]
   favorites: Favorite[]
+  // Replaces My Bar. A backup with none leaves it as it was.
+  myBar: MyBar | null
   // Names of the Drinks that couldn't be read, and how many Favorites.
   skipped: string[]
   skippedFavorites: number
@@ -65,7 +77,12 @@ export function readBackup(text: string, onPhone: { drinks: Drink[]; favorites: 
     return { ok: false, message: NOT_A_BACKUP }
   }
   if (typeof file !== 'object' || file === null || !('backupVersion' in file)) return { ok: false, message: NOT_A_BACKUP }
-  const { backupVersion, drinks, favorites } = file as { backupVersion: unknown; drinks?: unknown; favorites?: unknown }
+  const { backupVersion, drinks, favorites, myBar } = file as {
+    backupVersion: unknown
+    drinks?: unknown
+    favorites?: unknown
+    myBar?: unknown
+  }
   if (typeof backupVersion === 'number' && backupVersion > BACKUP_VERSION) {
     return { ok: false, message: 'That backup is from a newer Fizzwick. Update the app, then restore it.' }
   }
@@ -99,11 +116,13 @@ export function readBackup(text: string, onPhone: { drinks: Drink[]; favorites: 
   const favoriteIds = new Set(onPhone.favorites.map((favorite) => favorite.id))
   const replacingDrinks = restored.filter(({ drink }) => drinkIds.has(drink.id)).length
   const replacingFavorites = readFavorites.filter((favorite) => favoriteIds.has(favorite.id)).length
+  const restoredBar = checkMyBar(myBar)
   return {
     ok: true,
     restore: {
       drinks: restored,
       favorites: readFavorites,
+      myBar: isMyBarEmpty(restoredBar) ? null : restoredBar,
       skipped,
       skippedFavorites: favorites.length - readFavorites.length,
       adding: { drinks: restored.length - replacingDrinks, favorites: readFavorites.length - replacingFavorites },
@@ -124,15 +143,16 @@ function listOf(drinks: number, favorites: number): string {
   return parts.join(' and ')
 }
 
-// "Adds 2 Drinks and 3 Favorites. Replaces 1 Drink on this phone." Once
-// done, "Added ..." and "Replaced ...", with the skipped Drinks named.
-export function describeRestore({ adding, replacing, skipped }: Restore, done = false): string {
+// "Adds 2 Drinks and 3 Favorites. Replaces 1 Drink on this phone. Replaces My
+// Bar." Once done, "Added ..." and "Replaced ...", with the skipped Drinks named.
+export function describeRestore({ adding, replacing, skipped, myBar }: Restore, done = false): string {
   const adds = listOf(adding.drinks, adding.favorites)
   const replaces = listOf(replacing.drinks, replacing.favorites)
-  if (!adds && !replaces) return 'There are no Drinks or Favorites in this backup.'
+  if (!adds && !replaces && !myBar) return 'There are no Drinks or Favorites in this backup.'
   const said = [
     adds && `${done ? 'Added' : 'Adds'} ${adds}.`,
     replaces && `${done ? 'Replaced' : 'Replaces'} ${replaces} on this phone.`,
+    myBar && `${done ? 'Replaced' : 'Replaces'} My Bar.`,
   ]
   if (done && skipped.length > 0) said.push(`Left out ${skipped.join(', ')}, which couldn't be read.`)
   return said.filter(Boolean).join(' ')
