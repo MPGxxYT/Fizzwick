@@ -79,6 +79,28 @@ export function SettingsPage() {
           </div>
         </section>
 
+        <section className="st-card">
+          <div className="st-switch-row">
+            <div>
+              <h2 id="st-softer-citrus">Softer citrus</h2>
+              <p className="st-hint" id="st-softer-citrus-hint">
+                Less lemon and lime in the House Drinks that run sour, with sweetener swaps evened out. Custom Drinks stay as you wrote them.
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              className="st-switch"
+              aria-checked={settings.softerCitrus}
+              aria-labelledby="st-softer-citrus"
+              aria-describedby="st-softer-citrus-hint"
+              onClick={() => updateSettings({ softerCitrus: !settings.softerCitrus })}
+            >
+              <span aria-hidden="true" />
+            </button>
+          </div>
+        </section>
+
         <BackupCard />
       </main>
     </div>

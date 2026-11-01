@@ -1,3 +1,7 @@
+## Recipes
+
+Before writing or changing a Drink's amounts, or advising a user on balance or sweetener swaps, read `docs/research/citrus-levels.md`.
+
 ## Agent skills
 
 ### Issue tracker
