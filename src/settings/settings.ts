@@ -6,6 +6,7 @@ export interface Settings {
   units: Units
   underlines: boolean // Bar Term underlines
   canMake: boolean
+  softerCitrus: boolean // the House Drink amounts in house-drinks/softer-citrus.ts
 }
 
 // The countries that measure drinks in ounces.
@@ -20,7 +21,7 @@ export function defaultSettings(locale: string): Settings {
   } catch {
     region = undefined
   }
-  return { units: region && !OUNCE_REGIONS.has(region) ? 'ml' : 'oz', underlines: true, canMake: false }
+  return { units: region && !OUNCE_REGIONS.has(region) ? 'ml' : 'oz', underlines: true, canMake: false, softerCitrus: false }
 }
 
 // Saved settings as stored, checked field by field: anything missing or
@@ -34,10 +35,11 @@ export function readSettings(saved: string | null, locale: string): Settings {
     return defaults
   }
   if (typeof value !== 'object' || value === null || Array.isArray(value)) return defaults
-  const { units, underlines, canMake } = value as Record<string, unknown>
+  const { units, underlines, canMake, softerCitrus } = value as Record<string, unknown>
   return {
     units: units === 'oz' || units === 'ml' ? units : defaults.units,
     underlines: typeof underlines === 'boolean' ? underlines : defaults.underlines,
     canMake: typeof canMake === 'boolean' ? canMake : defaults.canMake,
+    softerCitrus: typeof softerCitrus === 'boolean' ? softerCitrus : defaults.softerCitrus,
   }
 }

@@ -71,6 +71,10 @@ _Avoid_: Prep list, shopping list, checklist
 A measure meaning "fill the rest of the glass", with no fixed amount.
 _Avoid_: Fill, splash
 
+**Softer citrus**:
+A setting that lowers citrus in the House Drinks that run sour and evens out their sweetener swaps. A Riff keeps its picks; only the amounts change.
+_Avoid_: Low acid mode, mocktail mode
+
 **Bar Term**:
 A bartending word with a short plain definition that the app can explain wherever it appears.
 _Avoid_: Tooltip, jargon, vocab word
