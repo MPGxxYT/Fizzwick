@@ -43,6 +43,20 @@ Optional, if a taste test agrees: Salty Paloma down to 0.25 lime (1.27% to about
 
 Fine as they are: Cherry Limeade, Citrus Spritz, Ginger Mule, Ginger Toddy, Hibiscus Stir, Nada Colada, Orchard Spritz, Spiced Pear, Virgin Mary. Black Tea Old Fashioned has no citrus and Cucumber Tonic has only a wedge.
 
+## New Drinks
+
+Added 2026-11-05 (Peach Fizz the same day), written to the softer targets from the start: about 0.4 to 0.6% acid and 17:1 or more sugar to acid. None is taste tested yet. Same assumptions as the tables below; fruit sugar is a rough guess.
+
+| Drink | Glass | Citrus, sweetener | Acid | Sugar:acid |
+|---|---|---|---|---|
+| Strawberry Lime Fizz | highball 10 | 0.5 lime, 0.75 simple, 3 strawberries | about 0.55% | about 18:1 |
+| Blackberry Smash | rocks 8 | 0.5 lemon, 0.75 simple, 8 blackberries, 2 oz soda water | about 0.55% | about 18:1 |
+| Peach Fizz | highball 10 | 0.5 lemon, 0.75 simple, 3 peach slices | about 0.55% | about 18:1 |
+| Peach Iced Tea | collins 12 | 0.5 lemon, 0.75 simple, 4 peach slices, 4 oz tea | about 0.5% | about 18:1 |
+| Watermelon Agua Fresca | collins 12 | 0.5 lime, 0.5 simple, 1 cup watermelon, 2 oz water | about 0.4% | about 18:1 |
+
+Blackberry Smash gets 2 oz soda water for the same reason as the softer Garden Smash: a rocks glass has too little liquid to spread 0.5 oz of lemon through. Agave is 0.25 wherever simple is 0.5 to 0.75, and basil is 2 leaves, after the Blueberry Fizz test.
+
 ## Blueberry Fizz test
 
 The user's tastings below are one person's taste, with simple syrup. The first two were in a 16 oz Collins-style glass, the last in a 10 oz highball. Numbers are my estimates.

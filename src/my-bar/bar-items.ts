@@ -61,6 +61,7 @@ export const BAR_ITEMS: readonly BarItem[] = [
   { id: 'blood-orange-juice', label: 'Blood orange juice', group: 'Juices', covers: ['blood orange juice'] },
   { id: 'cranberry-juice', label: 'Cranberry juice', group: 'Juices', covers: ['cranberry juice', 'unsweetened cranberry juice'] },
   { id: 'passion-fruit-puree', label: 'Passion fruit purée', group: 'Juices', covers: ['passion fruit purée'] },
+  { id: 'peach-nectar', label: 'Peach nectar', group: 'Juices', covers: ['peach nectar'] },
   { id: 'pear-juice', label: 'Pear juice', group: 'Juices', covers: ['pear juice'] },
   { id: 'pineapple-juice', label: 'Pineapple juice', group: 'Juices', covers: ['pineapple juice'] },
   { id: 'pomegranate-juice', label: 'Pomegranate juice', group: 'Juices', covers: ['pomegranate juice'] },
@@ -88,7 +89,13 @@ export const BAR_ITEMS: readonly BarItem[] = [
     covers: ['fresh grapefruit juice'],
     garnishes: ['grapefruit peel', 'grapefruit wedge'],
   },
-  { id: 'blackberries', label: 'Blackberries', group: 'Fruit and vegetables', covers: ['blackberries'] },
+  {
+    id: 'blackberries',
+    label: 'Blackberries',
+    group: 'Fruit and vegetables',
+    covers: ['blackberries', 'frozen blackberries, thawed'],
+    garnishes: ['blackberries, on a cocktail pick'],
+  },
   {
     id: 'blueberries',
     label: 'Blueberries',
@@ -103,6 +110,13 @@ export const BAR_ITEMS: readonly BarItem[] = [
     group: 'Fruit and vegetables',
     covers: ['cucumber slices', 'long cucumber ribbons', 'thin cucumber slices'],
   },
+  {
+    id: 'peaches',
+    label: 'Peaches',
+    group: 'Fruit and vegetables',
+    covers: ['ripe peach slices'],
+    garnishes: ['thin peach slice'],
+  },
   { id: 'mango', label: 'Mango', group: 'Fruit and vegetables', covers: ['chopped ripe mango', 'frozen mango', 'frozen mango chunks'] },
   {
     id: 'raspberries',
@@ -115,7 +129,7 @@ export const BAR_ITEMS: readonly BarItem[] = [
     id: 'strawberries',
     label: 'Strawberries',
     group: 'Fruit and vegetables',
-    covers: ['frozen strawberries'],
+    covers: ['fresh strawberries, hulled', 'frozen strawberries'],
     garnishes: ['fresh strawberry'],
   },
   {
@@ -139,6 +153,7 @@ export const BAR_ITEMS: readonly BarItem[] = [
     covers: ['basil leaves'],
     garnishes: ['basil sprig', 'basil sprig, for garnish'],
   },
+  { id: 'sage', label: 'Sage', group: 'Herbs, spices and bitters', covers: ['sage leaves'] },
   {
     id: 'thyme',
     label: 'Thyme',
