@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useSyncExternalStore } from 'react'
 import { run } from '../db'
 import { houseDrinks } from '../house-drinks/catalog'
-import { softerHouseDrinks } from '../house-drinks/softer-citrus'
+import { experimentalHouseDrinks } from '../house-drinks/experimental'
 import { useSettings } from '../settings/use-settings'
 import { parseDrinkFile, type Drink } from '../riff-engine'
 
@@ -108,11 +108,11 @@ const byName = (a: Drink, b: Drink) => a.name.localeCompare(b.name)
 // the device won't store them) the House Drinks show on their own.
 export function useDrinks(): DrinksState {
   const custom = useCustomDrinks()
-  const { softerCitrus } = useSettings()
+  const { experimental } = useSettings()
   return useMemo(() => {
-    const house = softerCitrus ? softerHouseDrinks : houseDrinks
+    const house = experimental ? experimentalHouseDrinks : houseDrinks
     return custom.status === 'ready'
       ? { status: 'ready', drinks: [...house, ...custom.drinks].sort(byName), photos: custom.photos }
       : { status: custom.status === 'loading' ? 'loading' : 'ready', drinks: house, photos: {} }
-  }, [custom, softerCitrus])
+  }, [custom, experimental])
 }

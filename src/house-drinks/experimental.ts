@@ -1,10 +1,14 @@
 import type { Drink, Ingredient } from '../riff-engine'
 import { houseDrinks } from './catalog'
 
-// The Softer citrus setting's amounts, per standard glass, by ingredient name
-// wherever it appears in the Drink. Why each one: docs/research/citrus-levels.md.
+// The Experimental changes setting: House Drink changes still being taste
+// tested. Once one passes, it moves into the Drink's JSON and out of here.
+
+// Amounts being tested, per standard glass, by ingredient name wherever it
+// appears in the Drink. Softer citrus: docs/research/citrus-levels.md. Blueberry
+// Fizz basil: the user found 4 leaves strong.
 const AMOUNTS: Record<string, Record<string, number>> = {
-  'blueberry-fizz': { 'fresh lemon juice': 0.5 },
+  'blueberry-fizz': { 'basil leaves': 2 },
   'cherry-limeade': { agave: 0.25 },
   'citrus-spritz': { agave: 0.25 },
   'frozen-lemonade': { 'fresh lemon juice': 0.75, 'simple syrup': 1 },
@@ -32,8 +36,8 @@ function addSoda(drink: Drink): Drink {
   }
 }
 
-// A Drink with the Softer citrus amounts. One with none comes back as it is.
-export function softerCitrus(drink: Drink): Drink {
+// A Drink with its experimental changes. One with none comes back as it is.
+export function experimental(drink: Drink): Drink {
   const amounts = AMOUNTS[drink.id]
   if (!amounts) return drink
   const change = (ingredient: Ingredient): Ingredient =>
@@ -49,4 +53,4 @@ export function softerCitrus(drink: Drink): Drink {
   return drink.id === 'garden-smash' ? addSoda(changed) : changed
 }
 
-export const softerHouseDrinks: Drink[] = houseDrinks.map(softerCitrus)
+export const experimentalHouseDrinks: Drink[] = houseDrinks.map(experimental)

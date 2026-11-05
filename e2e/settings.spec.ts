@@ -1,18 +1,18 @@
 import { expect, test } from '@playwright/test'
 
-test('Softer citrus changes House Drink amounts and step mode, and survives a reload', async ({ page }) => {
+test('Experimental changes switches House Drink amounts and step mode, and survives a reload', async ({ page }) => {
   const lemon = page.getByRole('list', { name: 'Ingredients' }).getByRole('listitem').filter({ hasText: 'fresh lemon juice' })
-  await page.goto('/drinks/blueberry-fizz')
+  await page.goto('/drinks/lavender-lemon-fizz')
   await expect(lemon).toContainText('¾ oz')
 
   await page.goto('/settings')
-  const softer = page.getByRole('switch', { name: 'Softer citrus' })
-  await expect(softer).toHaveAttribute('aria-checked', 'false')
-  await softer.click()
+  const experimental = page.getByRole('switch', { name: 'Experimental changes' })
+  await expect(experimental).toHaveAttribute('aria-checked', 'false')
+  await experimental.click()
   await page.reload()
-  await expect(softer).toHaveAttribute('aria-checked', 'true')
+  await expect(experimental).toHaveAttribute('aria-checked', 'true')
 
-  await page.goto('/drinks/blueberry-fizz')
+  await page.goto('/drinks/lavender-lemon-fizz')
   await expect(lemon).toContainText('½ oz')
 
   // Garden Smash gains soda water, with a step that shows its amount.
@@ -22,8 +22,8 @@ test('Softer citrus changes House Drink amounts and step mode, and survives a re
   await expect(page.getByRole('dialog', { name: 'Making Garden Smash' })).toBeVisible()
 
   await page.goto('/settings')
-  await softer.click()
-  await page.goto('/drinks/blueberry-fizz')
+  await experimental.click()
+  await page.goto('/drinks/lavender-lemon-fizz')
   await expect(lemon).toContainText('¾ oz')
 })
 

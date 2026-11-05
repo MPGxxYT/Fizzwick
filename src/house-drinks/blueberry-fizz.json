@@ -8,7 +8,7 @@
   "photo": "photos/blueberry-fizz.jpg",
   "ingredients": [
     { "name": "ice", "unit": "fill" },
-    { "name": "fresh lemon juice", "amount": 0.75, "unit": "oz" }
+    { "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" }
   ],
   "slots": [
     {
