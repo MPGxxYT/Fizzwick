@@ -71,8 +71,12 @@ _Avoid_: Prep list, shopping list, checklist
 A measure meaning "fill the rest of the glass", with no fixed amount.
 _Avoid_: Fill, splash
 
+**Experimental changes**:
+A setting that swaps in House Drink changes still being taste tested, such as Softer citrus. A change that passes a taste test moves into the Drink's recipe and out of the setting. A Riff keeps its picks; only the amounts change.
+_Avoid_: Beta mode, test mode
+
 **Softer citrus**:
-A setting that lowers citrus in the House Drinks that run sour and evens out their sweetener swaps. A Riff keeps its picks; only the amounts change.
+The Experimental change that lowers citrus in the House Drinks that run sour and evens out their sweetener swaps.
 _Avoid_: Low acid mode, mocktail mode
 
 **Bar Term**:

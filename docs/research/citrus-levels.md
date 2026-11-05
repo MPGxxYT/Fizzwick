@@ -1,6 +1,6 @@
 # Citrus levels in House Drinks
 
-Researched 2026-11-01. No recipe was changed.
+Researched 2026-11-01. On 2026-11-05 Blueberry Fizz's House Spec moved to 0.5 oz lemon after a taste test. No other recipe was changed.
 
 ## Verdict
 
@@ -8,7 +8,7 @@ Researched 2026-11-01. No recipe was changed.
 
 **The amount of citrus is the better measure, and 1:1 is the wrong test.** Blueberry Fizz at 1:1 has about 0.82% acid. The carbonated drinks in Dave Arnold's data have 0.38 to 0.51%, not counting two grapefruit drinks (see Evidence). More sugar improves the balance but leaves the acid unchanged, and in one lab study sugar suppressed sourness only slightly.
 
-**Blueberry Fizz: try 0.5 oz lemon and keep 0.75 oz sweetener at the standard 10 oz highball.**
+**Blueberry Fizz: 0.5 oz lemon and 0.75 oz sweetener at the standard 10 oz highball.** The user tasted it and called the lemon perfect, so it is now the House Spec (see Blueberry Fizz test).
 
 **What is sourced and what is my judgment:**
 
@@ -18,7 +18,9 @@ Researched 2026-11-01. No recipe was changed.
 
 ## In the app
 
-The Softer citrus setting, off by default, applies the table below and these Option amounts: agave 0.25 in Nojito, Citrus Spritz and Cherry Limeade, and ginger syrup 1.5 in Ginger Toddy. The amounts are in `src/house-drinks/softer-citrus.ts`, and the recipe files keep today's specs.
+Softer citrus is part of the Experimental changes setting, off by default. It applies the table below and these Option amounts: agave 0.25 in Nojito, Citrus Spritz and Cherry Limeade, and ginger syrup 1.5 in Ginger Toddy. The amounts are in `src/house-drinks/experimental.ts`, and the recipe files keep today's specs. Blueberry Fizz is the exception: its taste-tested amount is in `blueberry-fizz.json`, so the setting no longer changes it.
+
+When a taste test backs up a row below, move its amounts into the Drink's JSON and take the Drink out of `experimental.ts`.
 
 Left out for now: the optional Salty Paloma and Tea Sour changes, and swaps that depend on another Slot, such as less sweetener with a sweet soda. Frozen Lemonade agave stays 0.5, since 1 simple is the new amount it matches.
 
@@ -29,7 +31,7 @@ Pours are per standard glass, in 0.25 oz steps. "Now" and "new" show acid % and 
 | Drink | Now | Suggested | Now | New |
 |---|---|---|---|---|
 | Lavender Lemon Fizz | 0.75 lemon, 0.5 syrup | 0.5 lemon, 0.75 syrup | 0.68%, 6:1 | 0.45%, 14:1 |
-| Blueberry Fizz | 0.75 lemon, 0.75 syrup | 0.5 lemon, 0.75 syrup | 0.82%, 11:1 | 0.55%, 17:1 |
+| Blueberry Fizz (done) | 0.75 lemon, 0.75 syrup | 0.5 lemon, 0.75 syrup | 0.82%, 11:1 | 0.55%, 17:1 |
 | Nojito | 0.75 lime, 0.75 simple | 0.5 lime, 0.75 simple | 0.68%, 9:1 | 0.45%, 14:1 |
 | Porch Tea | 0.75 lemon, 0.75 simple, 1.5 water | 0.5 lemon, 0.75 simple, 1.75 water | 0.75%, 9:1 | 0.50%, 14:1 |
 | Garden Smash | 0.75 lemon, 0.75 simple | 0.5 lemon, 0.75 simple, add 2 oz soda water | 1.61%, 9:1 | 0.67%, 14:1 |
@@ -43,18 +45,19 @@ Fine as they are: Cherry Limeade, Citrus Spritz, Ginger Mule, Ginger Toddy, Hibi
 
 ## Blueberry Fizz test
 
-The user's tastings below are one person's taste, in what was presumably a 16 oz glass with simple syrup. Numbers are my estimates.
+The user's tastings below are one person's taste, with simple syrup. The first two were in a 16 oz Collins-style glass, the last in a 10 oz highball. Numbers are my estimates.
 
-| Version | Lemon, simple, berries | Acid | Sugar g/100 ml | Sugar:acid | Result |
-|---|---|---|---|---|---|
-| Old | 1.25, 0.75, 15 | 0.85% | 5.5 | 6:1 | So sour it was thrown out |
-| Current | 1.25, 1.25, 24 | 0.85% | 9.1 | 11:1 | Much better, blueberry prominent, still a little too lemony |
-| Next test | 0.75, 1.25, 24 | 0.51% | 9.1 | 18:1 | Not tasted |
-| If that is too flat | 1, 1.25, 24 | 0.68% | 9.1 | 13:1 | Not tasted |
+| Version | Glass | Lemon, simple, berries | Acid | Sugar g/100 ml | Sugar:acid | Result |
+|---|---|---|---|---|---|---|
+| Old | 16 oz | 1.25, 0.75, 15 | 0.85% | 5.5 | 6:1 | So sour it was thrown out |
+| Equal sweetener | 16 oz | 1.25, 1.25, 24 | 0.85% | 9.1 | 11:1 | Much better, blueberry prominent, still a little too lemony |
+| Softer citrus | 10 oz | 0.5, 0.75, 15 | 0.55% | about 9.3 | 17:1 | Lemon "perfect" (2026-11-05). Now the House Spec |
 
-Raising the sugar was the right direction, and it took the drink from undrinkable to nearly there. It also fits the lab result that sugar only partly masks sourness: the acid stayed at 0.85%.
+The 16 oz plan of 0.75, 1.25, 24 scales to the 10 oz row, so it was tested in that form. The 1 oz fallback was not needed.
 
-The standard spec of 0.5 lemon and 0.75 sweetener scales to 16 oz as 0.8 and 1.2, which round to the 0.75 and 1.25 in the "next test" row. The 1 oz row is about 0.625 oz at 10 oz, which the 0.25 oz steps cannot show. If 1 oz wins, pick between 0.5 and 0.75 at the standard glass, or allow a finer step.
+Raising the sugar took the drink from undrinkable to nearly there, and lowering the acid finished it. This fits the lab result that sugar only partly masks sourness: the second row still had 0.85% acid.
+
+Only simple syrup was tasted. Honey syrup, the House pick, stays at 0.75 since it is about as sweet or a little sweeter (see Swaps).
 
 ## What the uncle's 1:1 could mean
 
