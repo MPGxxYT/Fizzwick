@@ -398,6 +398,21 @@ export const BAR_TERMS: BarTerm[] = [
     },
   },
   {
+    id: 'chocolate-syrup',
+    name: 'Chocolate syrup',
+    kind: 'ingredient',
+    definition: 'Cocoa and sugar cooked with water into a pourable syrup, so chocolate mixes into milk without lumps.',
+    prep: {
+      heading: 'How to make it',
+      steps: [
+        'Whisk 1/2 cup of unsweetened cocoa powder and 1/2 cup of sugar together in a small pan, then whisk in 1/2 cup of water and a pinch of salt.',
+        'Bring it to a gentle simmer over medium heat, stirring, and let it bubble for about 2 minutes until smooth and glossy.',
+        'Let it cool. It thickens as it cools.',
+        'Keep it in a clean jar in the fridge for up to 2 weeks.',
+      ],
+    },
+  },
+  {
     id: 'bitters',
     name: 'Bitters',
     kind: 'ingredient',

@@ -1,0 +1,119 @@
+{
+  "formatVersion": 1,
+  "id": "hot-spiced-cider",
+  "name": "Hot Spiced Cider",
+  "glass": "mug",
+  "method": "build",
+  "flavorTags": ["spicy", "fruity"],
+  "shelf": "warm-savory",
+  "added": "2026-11-06",
+  "photo": "photos/hot-spiced-cider.jpg",
+  "ingredients": [
+    { "name": "cinnamon sticks", "amount": 1, "unit": "count" },
+    { "name": "cloves", "amount": 4, "unit": "count" },
+    { "name": "orange slices", "amount": 2, "unit": "count" }
+  ],
+  "slots": [
+    {
+      "id": "base",
+      "label": "Base",
+      "options": [
+        {
+          "id": "apple-juice",
+          "label": "Apple juice",
+          "phrase": "apple juice",
+          "ingredients": [{ "name": "cloudy apple juice", "amount": 6, "unit": "oz" }],
+          "color": "#d9a441"
+        },
+        {
+          "id": "pear-juice",
+          "label": "Pear juice",
+          "phrase": "pear juice",
+          "ingredients": [{ "name": "pear juice", "amount": 6, "unit": "oz" }],
+          "color": "#e3d58a"
+        }
+      ]
+    },
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "optional": true,
+      "options": [
+        {
+          "id": "maple-syrup",
+          "label": "Maple syrup",
+          "phrase": "maple syrup",
+          "ingredients": [{ "name": "maple syrup", "amount": 0.25, "unit": "oz" }],
+          "color": "#b45309"
+        },
+        {
+          "id": "honey",
+          "label": "Honey",
+          "phrase": "honey",
+          "ingredients": [{ "name": "honey", "amount": 0.25, "unit": "oz" }],
+          "color": "#e8b04a"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "cinnamon-stick",
+          "label": "Cinnamon stick",
+          "phrase": "a cinnamon stick to stir with",
+          "ingredients": [{ "name": "cinnamon stick", "amount": 1, "unit": "count" }],
+          "color": "#8b4a24"
+        },
+        {
+          "id": "orange-wheel",
+          "label": "Orange wheel",
+          "phrase": "an orange wheel",
+          "ingredients": [{ "name": "orange wheel", "amount": 1, "unit": "count" }],
+          "color": "#f97316"
+        },
+        {
+          "id": "apple-slice",
+          "label": "Apple slice",
+          "phrase": "a thin apple slice",
+          "ingredients": [{ "name": "thin apple slice", "amount": 1, "unit": "count" }],
+          "color": "#dc2626"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "warm-base",
+      "text": "Put the {base}, cinnamon sticks, cloves and orange slices in a small pot over low heat."
+    },
+    {
+      "id": "mull",
+      "text": "Let it steep without boiling, so the spices flavor the juice.",
+      "durationSeconds": 600
+    },
+    {
+      "id": "strain",
+      "text": "Strain into a mug to catch the spices and orange.",
+      "tools": ["strainer"]
+    },
+    {
+      "id": "add-sweetener",
+      "text": "Stir in the {sweetener} until it dissolves.",
+      "tools": ["jigger", "barspoon"],
+      "when": { "slot": "sweetener" }
+    },
+    {
+      "id": "garnish",
+      "text": "Finish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "base": "apple-juice",
+    "sweetener": null,
+    "garnish": "cinnamon-stick"
+  }
+}

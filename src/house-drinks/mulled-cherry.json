@@ -1,0 +1,110 @@
+{
+  "formatVersion": 1,
+  "id": "mulled-cherry",
+  "name": "Mulled Cherry",
+  "glass": "mug",
+  "method": "build",
+  "flavorTags": ["fruity", "spicy"],
+  "shelf": "warm-savory",
+  "added": "2026-11-06",
+  "photo": "photos/mulled-cherry.jpg",
+  "ingredients": [
+    { "name": "cold water", "amount": 3, "unit": "oz" },
+    { "name": "cinnamon sticks", "amount": 1, "unit": "count" },
+    { "name": "cloves", "amount": 4, "unit": "count" }
+  ],
+  "slots": [
+    {
+      "id": "juice",
+      "label": "Juice",
+      "options": [
+        {
+          "id": "tart-cherry-juice",
+          "label": "Tart cherry juice",
+          "phrase": "tart cherry juice",
+          "ingredients": [{ "name": "tart cherry juice", "amount": 3, "unit": "oz" }],
+          "color": "#7f1d1d"
+        },
+        {
+          "id": "pomegranate-juice",
+          "label": "Pomegranate juice",
+          "phrase": "pomegranate juice",
+          "ingredients": [{ "name": "pomegranate juice", "amount": 3, "unit": "oz" }],
+          "color": "#8f1d3a"
+        }
+      ]
+    },
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "honey",
+          "label": "Honey",
+          "phrase": "honey",
+          "ingredients": [{ "name": "honey", "amount": 0.5, "unit": "oz" }],
+          "color": "#e8b04a"
+        },
+        {
+          "id": "maple-syrup",
+          "label": "Maple syrup",
+          "phrase": "maple syrup",
+          "ingredients": [{ "name": "maple syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#b45309"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "orange-wheel",
+          "label": "Orange wheel",
+          "phrase": "an orange wheel, floating on top",
+          "ingredients": [{ "name": "orange wheel", "amount": 1, "unit": "count" }],
+          "color": "#f97316"
+        },
+        {
+          "id": "cinnamon-stick",
+          "label": "Cinnamon stick",
+          "phrase": "a cinnamon stick to stir with",
+          "ingredients": [{ "name": "cinnamon stick", "amount": 1, "unit": "count" }],
+          "color": "#8b4a24"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "warm-base",
+      "text": "Put the {juice}, cold water, cinnamon sticks and cloves in a small pot over low heat."
+    },
+    {
+      "id": "mull",
+      "text": "Let it steep without boiling, so the spices flavor the juice.",
+      "durationSeconds": 480
+    },
+    {
+      "id": "strain",
+      "text": "Strain into a mug to catch the spices.",
+      "tools": ["strainer"]
+    },
+    {
+      "id": "add-sweetener",
+      "text": "Stir in the {sweetener} until it dissolves.",
+      "tools": ["jigger", "barspoon"]
+    },
+    {
+      "id": "garnish",
+      "text": "Finish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "juice": "tart-cherry-juice",
+    "sweetener": "honey",
+    "garnish": "orange-wheel"
+  }
+}
