@@ -1,0 +1,160 @@
+{
+  "formatVersion": 1,
+  "id": "peach-iced-tea",
+  "name": "Peach Iced Tea",
+  "glass": "collins",
+  "method": "build",
+  "flavorTags": ["fruity"],
+  "photo": "photos/peach-iced-tea.jpg",
+  "ingredients": [
+    { "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" },
+    { "name": "ice", "unit": "fill" }
+  ],
+  "slots": [
+    {
+      "id": "tea",
+      "label": "Tea",
+      "options": [
+        {
+          "id": "black-tea",
+          "label": "Chilled black tea",
+          "phrase": "black tea",
+          "ingredients": [{ "name": "chilled black tea", "amount": 4, "unit": "oz" }],
+          "dietaryTags": ["caffeine"],
+          "color": "#8a4b1f"
+        },
+        {
+          "id": "green-tea",
+          "label": "Chilled green tea",
+          "phrase": "green tea",
+          "ingredients": [{ "name": "chilled green tea", "amount": 4, "unit": "oz" }],
+          "dietaryTags": ["caffeine"],
+          "durations": { "brew-tea": 180 },
+          "color": "#a3a043"
+        },
+        {
+          "id": "rooibos",
+          "label": "Chilled rooibos",
+          "phrase": "rooibos",
+          "ingredients": [{ "name": "chilled rooibos", "amount": 4, "unit": "oz" }],
+          "durations": { "brew-tea": 360 },
+          "color": "#b5512a"
+        }
+      ]
+    },
+    {
+      "id": "peach",
+      "label": "Peach",
+      "options": [
+        {
+          "id": "ripe-peach",
+          "label": "Ripe peach",
+          "phrase": "peach slices",
+          "ingredients": [{ "name": "ripe peach slices", "amount": 4, "unit": "count" }],
+          "color": "#f6a96b"
+        },
+        {
+          "id": "peach-nectar",
+          "label": "Peach nectar",
+          "phrase": "peach nectar",
+          "ingredients": [{ "name": "peach nectar", "amount": 1.5, "unit": "oz" }],
+          "removeSteps": ["muddle-peach"],
+          "addSteps": [
+            {
+              "after": "brew-tea",
+              "step": {
+                "id": "pour-nectar",
+                "text": "Pour the peach nectar into a collins glass.",
+                "tools": ["jigger"]
+              }
+            }
+          ],
+          "color": "#f4b183"
+        }
+      ]
+    },
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "simple-syrup",
+          "label": "Simple syrup",
+          "phrase": "simple syrup",
+          "ingredients": [{ "name": "simple syrup", "amount": 0.75, "unit": "oz" }],
+          "color": "#f5f5f4"
+        },
+        {
+          "id": "honey-syrup",
+          "label": "Honey syrup",
+          "phrase": "honey syrup",
+          "ingredients": [{ "name": "honey syrup", "amount": 0.75, "unit": "oz" }],
+          "color": "#e0a43a"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "peach-slice",
+          "label": "Peach slice",
+          "phrase": "a thin peach slice on the rim",
+          "ingredients": [{ "name": "thin peach slice", "amount": 1, "unit": "count" }],
+          "color": "#f8b98a"
+        },
+        {
+          "id": "lemon-wheel",
+          "label": "Lemon wheel",
+          "phrase": "a lemon wheel on the rim",
+          "ingredients": [{ "name": "lemon wheel", "amount": 1, "unit": "count" }],
+          "color": "#facc15"
+        },
+        {
+          "id": "mint-sprig",
+          "label": "Mint sprig",
+          "phrase": "a mint sprig tucked into the ice",
+          "ingredients": [{ "name": "mint sprig", "amount": 1, "unit": "count" }],
+          "color": "#4d9a4a"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "brew-tea",
+      "text": "Steep the {tea} in just-boiled water, then strain it and chill it in the fridge. Make it ahead if you can.",
+      "tools": ["kettle"],
+      "durationSeconds": 240
+    },
+    {
+      "id": "muddle-peach",
+      "text": "Muddle the peach slices in a collins glass until soft and juicy.",
+      "tools": ["muddler"]
+    },
+    {
+      "id": "add-base",
+      "text": "Add the lemon juice and {sweetener}, and stir to mix.",
+      "tools": ["jigger", "barspoon"]
+    },
+    { "id": "fill-glass", "text": "Fill the glass with ice." },
+    {
+      "id": "pour-tea",
+      "text": "Pour the {tea} over the ice and stir once.",
+      "tools": ["jigger", "barspoon"]
+    },
+    {
+      "id": "garnish",
+      "text": "Finish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "tea": "black-tea",
+    "peach": "ripe-peach",
+    "sweetener": "simple-syrup",
+    "garnish": "peach-slice"
+  }
+}

@@ -80,7 +80,7 @@ describe('House Drink Riffs', () => {
 
   test('only the drinks with tea to brew and chill have a make-ahead step', () => {
     const withAhead = houseDrinks.filter((drink) => resolveRiff(drink).steps.some(isMakeAhead)).map((drink) => drink.id)
-    expect(withAhead).toEqual(['black-tea-old-fashioned', 'hibiscus-stir', 'porch-tea', 'tea-sour'])
+    expect(withAhead).toEqual(['black-tea-old-fashioned', 'hibiscus-stir', 'peach-iced-tea', 'porch-tea', 'tea-sour'])
   })
 
   test('tart cherry juice in the Hibiscus Stir has no tea to brew', () => {

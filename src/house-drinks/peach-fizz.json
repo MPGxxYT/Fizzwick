@@ -1,0 +1,194 @@
+{
+  "formatVersion": 1,
+  "id": "peach-fizz",
+  "name": "Peach Fizz",
+  "glass": "highball",
+  "method": "shake",
+  "flavorTags": ["fruity", "citrus"],
+  "photo": "photos/peach-fizz.jpg",
+  "ingredients": [
+    { "name": "ice", "unit": "fill" },
+    { "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" }
+  ],
+  "slots": [
+    {
+      "id": "peach",
+      "label": "Peach",
+      "options": [
+        {
+          "id": "ripe-peach",
+          "label": "Ripe peach",
+          "phrase": "peach slices",
+          "ingredients": [{ "name": "ripe peach slices", "amount": 3, "unit": "count" }],
+          "color": "#f6a96b"
+        },
+        {
+          "id": "peach-nectar",
+          "label": "Peach nectar",
+          "phrase": "peach nectar",
+          "ingredients": [{ "name": "peach nectar", "amount": 1.5, "unit": "oz" }],
+          "removeSteps": ["muddle-peach"],
+          "addSteps": [
+            {
+              "step": {
+                "id": "add-nectar",
+                "text": "Pour the peach nectar into a shaker tin.",
+                "tools": ["shaker", "jigger"]
+              }
+            }
+          ],
+          "color": "#f4b183"
+        }
+      ]
+    },
+    {
+      "id": "herb",
+      "label": "Herb",
+      "optional": true,
+      "options": [
+        {
+          "id": "basil",
+          "label": "Basil",
+          "phrase": "basil leaves",
+          "ingredients": [{ "name": "basil leaves", "amount": 2, "unit": "count" }],
+          "color": "#3f9d4a"
+        },
+        {
+          "id": "mint",
+          "label": "Mint",
+          "phrase": "mint leaves",
+          "ingredients": [{ "name": "mint leaves", "amount": 6, "unit": "count" }],
+          "color": "#6fcf6a"
+        },
+        {
+          "id": "thyme",
+          "label": "Thyme",
+          "phrase": "thyme sprigs",
+          "ingredients": [{ "name": "thyme sprigs", "amount": 2, "unit": "count" }],
+          "color": "#6b8e4e"
+        }
+      ]
+    },
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "simple-syrup",
+          "label": "Simple syrup",
+          "phrase": "simple syrup",
+          "ingredients": [{ "name": "simple syrup", "amount": 0.75, "unit": "oz" }],
+          "color": "#f5f5f4"
+        },
+        {
+          "id": "honey-syrup",
+          "label": "Honey syrup",
+          "phrase": "honey syrup",
+          "ingredients": [{ "name": "honey syrup", "amount": 0.75, "unit": "oz" }],
+          "color": "#e0a43a"
+        },
+        {
+          "id": "agave",
+          "label": "Agave",
+          "phrase": "agave",
+          "ingredients": [{ "name": "agave", "amount": 0.25, "unit": "oz" }],
+          "color": "#d9a441"
+        }
+      ]
+    },
+    {
+      "id": "fizz",
+      "label": "Fizz",
+      "options": [
+        {
+          "id": "soda-water",
+          "label": "Soda water",
+          "phrase": "soda water",
+          "ingredients": [{ "name": "soda water", "unit": "top" }],
+          "color": "#e0f2fe"
+        },
+        {
+          "id": "ginger-ale",
+          "label": "Ginger ale",
+          "phrase": "ginger ale",
+          "ingredients": [{ "name": "ginger ale", "unit": "top" }],
+          "color": "#f1d38a"
+        },
+        {
+          "id": "lemon-lime-soda",
+          "label": "Lemon-lime soda",
+          "phrase": "lemon-lime soda",
+          "ingredients": [{ "name": "lemon-lime soda", "unit": "top" }],
+          "color": "#e7f5c4"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "peach-slice",
+          "label": "Peach slice",
+          "phrase": "a thin peach slice on the rim",
+          "ingredients": [{ "name": "thin peach slice", "amount": 1, "unit": "count" }],
+          "color": "#f8b98a"
+        },
+        {
+          "id": "lemon-wheel",
+          "label": "Lemon wheel",
+          "phrase": "a lemon wheel",
+          "ingredients": [{ "name": "lemon wheel", "amount": 1, "unit": "count" }],
+          "color": "#fde047"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "muddle-peach",
+      "text": "Muddle the peach slices in a shaker tin until soft and juicy.",
+      "tools": ["muddler", "shaker"]
+    },
+    {
+      "id": "add-herb",
+      "text": "Add the {herb} and press them gently with the muddler, just enough to bruise them.",
+      "tools": ["muddler"],
+      "when": { "slot": "herb" }
+    },
+    {
+      "id": "add-base",
+      "text": "Add the lemon juice and {sweetener}.",
+      "tools": ["jigger"]
+    },
+    {
+      "id": "shake",
+      "text": "Fill the tin with ice and shake hard for about 10 seconds.",
+      "tools": ["shaker"]
+    },
+    { "id": "fill-glass", "text": "Fill a highball glass with fresh ice." },
+    {
+      "id": "strain",
+      "text": "Double strain into the glass, through the shaker strainer and a fine strainer, to catch the bits of peach and leaf.",
+      "tools": ["strainer", "fine-strainer"]
+    },
+    {
+      "id": "top",
+      "text": "Top with {fizz} and stir once with a barspoon.",
+      "tools": ["barspoon"]
+    },
+    {
+      "id": "garnish",
+      "text": "Garnish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "peach": "ripe-peach",
+    "herb": "basil",
+    "sweetener": "simple-syrup",
+    "fizz": "soda-water",
+    "garnish": "peach-slice"
+  }
+}
