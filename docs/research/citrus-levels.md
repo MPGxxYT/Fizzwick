@@ -57,6 +57,30 @@ Added 2026-11-05 (Peach Fizz the same day), written to the softer targets from t
 
 Blackberry Smash gets 2 oz soda water for the same reason as the softer Garden Smash: a rocks glass has too little liquid to spread 0.5 oz of lemon through. Agave is 0.25 wherever simple is 0.5 to 0.75, and basil is 2 leaves, after the Blueberry Fizz test.
 
+### Second batch
+
+Added 2026-11-06, to the same targets. None is taste tested. Where a juice brings its own sugar and acid, the citrus drops to 0.25 and the syrup to 0.25 or 0.5. Juice acid is the weakest number here: cranberry cocktail, Concord grape and pomegranate are my guesses at 0.5, 0.6 and about 1%, and hibiscus tea is left out, as in the table below.
+
+| Drink | Glass | Citrus, sweetener | Acid | Sugar:acid |
+|---|---|---|---|---|
+| Cranberry Lime Fizz | highball 10 | 0.25 lime, 0.25 simple, 2 cranberry juice | about 0.45% | about 16:1 |
+| Raspberry Lime Rickey | highball 10 | 0.5 lime, 1 raspberry syrup | about 0.55%, plus raspberry | about 15:1 |
+| Pineapple Ginger Fizz | highball 10 | 0.25 lime, 1.5 pineapple juice, ginger beer top | about 0.5% | about 18:1 |
+| Grape Fizz | highball 10 | 0.25 lemon, 0.25 simple, 2 Concord grape juice | about 0.5% | about 16:1 |
+| Grapefruit Rosemary Tonic | highball 10 | 1.5 grapefruit, tonic top, sweetener optional | about 0.55% | about 15:1 |
+| Lemon, Lime and Bitters | highball 10 | 0.25 lime, lemon-lime soda top | about 0.3% | about 35:1 |
+| Cherry Thyme Smash | rocks 8 | 0.5 lemon, 0.75 demerara, 6 cherries, 2 oz soda water | about 0.55% | about 20:1 |
+| Pineapple Mint Smash | rocks 8 | 0.25 lime, 0.5 simple, 4 pineapple chunks, 2 oz soda water | about 0.55% | about 15:1 |
+| Mint Green Tea Cooler | collins 12 | 0.5 lemon, 0.75 honey syrup, 4 oz tea | about 0.45% | about 14:1 |
+| Hibiscus Cooler | collins 12 | 0.25 lime, 0.75 simple, 4 oz hibiscus tea | about 0.25%, plus hibiscus | about 27:1 before hibiscus |
+| Cucumber Lime Cooler | collins 12 | 0.5 lime, 0.75 simple | about 0.45% | about 13:1 |
+| Maple Apple Sour | coupe | 0.25 lemon, 0.25 maple, 2 apple juice | about 0.7% | about 16:1 |
+| Pomegranate Sour | coupe | 0.25 lime, 0.5 simple, 1.5 pomegranate juice | about 0.6% | about 16:1 |
+
+Cherry Almond Cream and Chai Steamer have no citrus.
+
+The two sours sit below Arnold's shaken sours (0.76 to 1.05%) but above the long drinks, since sours are tart by style. The coolers with no fruit land near 14:1, the same as the softer Nojito and Lavender Lemon Fizz in Drinks to change. Lemon, Lime and Bitters is sweet and low in acid by design, because the soda is most of it. Raspberry Lime Rickey uses 1 oz raspberry syrup, since the syrup is less sweet than simple (see Swaps). Pineapple Mint Smash uses 0.25 lime because the muddled pineapple adds acid of its own.
+
 ## Blueberry Fizz test
 
 The user's tastings below are one person's taste, with simple syrup. The first two were in a 16 oz Collins-style glass, the last in a 10 oz highball. Numbers are my estimates.

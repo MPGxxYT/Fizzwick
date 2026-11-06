@@ -60,6 +60,7 @@ export const BAR_ITEMS: readonly BarItem[] = [
   { id: 'apple-juice', label: 'Apple juice', group: 'Juices', covers: ['cloudy apple juice'] },
   { id: 'blood-orange-juice', label: 'Blood orange juice', group: 'Juices', covers: ['blood orange juice'] },
   { id: 'cranberry-juice', label: 'Cranberry juice', group: 'Juices', covers: ['cranberry juice', 'unsweetened cranberry juice'] },
+  { id: 'grape-juice', label: 'Grape juice', group: 'Juices', covers: ['concord grape juice'] },
   { id: 'passion-fruit-puree', label: 'Passion fruit purée', group: 'Juices', covers: ['passion fruit purée'] },
   { id: 'peach-nectar', label: 'Peach nectar', group: 'Juices', covers: ['peach nectar'] },
   { id: 'pear-juice', label: 'Pear juice', group: 'Juices', covers: ['pear juice'] },
@@ -104,6 +105,13 @@ export const BAR_ITEMS: readonly BarItem[] = [
     garnishes: ['blueberries, on a cocktail pick'],
   },
   { id: 'fresh-cherries', label: 'Fresh cherries', group: 'Fruit and vegetables', covers: ['fresh cherries, pitted'] },
+  {
+    id: 'pineapple',
+    label: 'Pineapple',
+    group: 'Fruit and vegetables',
+    covers: ['pineapple chunks'],
+    garnishes: ['pineapple wedge'],
+  },
   {
     id: 'cucumbers',
     label: 'Cucumbers',
@@ -152,6 +160,13 @@ export const BAR_ITEMS: readonly BarItem[] = [
     group: 'Herbs, spices and bitters',
     covers: ['basil leaves'],
     garnishes: ['basil sprig', 'basil sprig, for garnish'],
+  },
+  {
+    id: 'rosemary',
+    label: 'Rosemary',
+    group: 'Herbs, spices and bitters',
+    covers: ['rosemary sprigs'],
+    garnishes: ['rosemary sprig'],
   },
   { id: 'sage', label: 'Sage', group: 'Herbs, spices and bitters', covers: ['sage leaves'] },
   {
@@ -218,13 +233,12 @@ export const BAR_ITEMS: readonly BarItem[] = [
   garnish('cocktail-cherries', 'Cocktail cherries', 'cherry', 'cocktail cherry'),
   garnish('cloves', 'Cloves', 'whole cloves'),
   garnish('coconut-flakes', 'Coconut flakes', 'toasted coconut flakes'),
+  garnish('grapes', 'Grapes', 'frozen grapes on a pick'),
   garnish('lavender', 'Lavender', 'lavender sprig'),
   garnish('nutmeg', 'Nutmeg', 'grated nutmeg'),
   garnish('oranges', 'Oranges', 'orange peel', 'orange wheel'),
   garnish('pears', 'Pears', 'thin pear slice'),
   garnish('pickles', 'Pickles', 'pickle spear'),
-  garnish('pineapple', 'Pineapple', 'pineapple wedge'),
-  garnish('rosemary', 'Rosemary', 'rosemary sprig'),
 ]
 
 // Names nobody has to buy: water from the tap or kettle, and more of a

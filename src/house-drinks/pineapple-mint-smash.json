@@ -1,0 +1,123 @@
+{
+  "formatVersion": 1,
+  "id": "pineapple-mint-smash",
+  "name": "Pineapple Mint Smash",
+  "glass": "rocks",
+  "method": "shake",
+  "flavorTags": ["fruity", "herbal"],
+  "shelf": "smashes",
+  "added": "2026-11-06",
+  "photo": "photos/pineapple-mint-smash.jpg",
+  "ingredients": [
+    { "name": "pineapple chunks", "amount": 4, "unit": "count" },
+    { "name": "fresh lime juice", "amount": 0.25, "unit": "oz" },
+    { "name": "crushed ice", "unit": "fill" },
+    { "name": "soda water", "amount": 2, "unit": "oz" }
+  ],
+  "slots": [
+    {
+      "id": "herb",
+      "label": "Herb",
+      "options": [
+        {
+          "id": "mint",
+          "label": "Mint",
+          "phrase": "mint leaves",
+          "ingredients": [{ "name": "mint leaves", "amount": 6, "unit": "count" }],
+          "color": "#6fcf6a"
+        },
+        {
+          "id": "basil",
+          "label": "Basil",
+          "phrase": "basil leaves",
+          "ingredients": [{ "name": "basil leaves", "amount": 2, "unit": "count" }],
+          "color": "#3f9d4a"
+        }
+      ]
+    },
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "simple-syrup",
+          "label": "Simple syrup",
+          "phrase": "simple syrup",
+          "ingredients": [{ "name": "simple syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#f5f5f4"
+        },
+        {
+          "id": "agave",
+          "label": "Agave",
+          "phrase": "agave",
+          "ingredients": [{ "name": "agave", "amount": 0.25, "unit": "oz" }],
+          "color": "#d9a441"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "mint-sprig",
+          "label": "Mint sprig",
+          "phrase": "a mint sprig",
+          "ingredients": [{ "name": "mint sprig", "amount": 1, "unit": "count" }],
+          "color": "#4ade80"
+        },
+        {
+          "id": "pineapple-wedge",
+          "label": "Pineapple wedge",
+          "phrase": "a pineapple wedge on the rim",
+          "ingredients": [{ "name": "pineapple wedge", "amount": 1, "unit": "count" }],
+          "color": "#facc15"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "muddle-pineapple",
+      "text": "Muddle the pineapple chunks in a shaker tin until juicy.",
+      "tools": ["muddler", "shaker"]
+    },
+    {
+      "id": "add-herb",
+      "text": "Add the {herb} and press them gently with the muddler, just enough to bruise them.",
+      "tools": ["muddler"]
+    },
+    {
+      "id": "add-base",
+      "text": "Add the lime juice and {sweetener}.",
+      "tools": ["jigger"]
+    },
+    {
+      "id": "shake",
+      "text": "Fill the tin with ice and shake hard for about 10 seconds.",
+      "tools": ["shaker"]
+    },
+    { "id": "fill-glass", "text": "Fill a rocks glass with crushed ice." },
+    {
+      "id": "strain",
+      "text": "Double strain into the glass, through the shaker strainer and a fine strainer, to catch the pulp and bits of leaf.",
+      "tools": ["strainer", "fine-strainer"]
+    },
+    {
+      "id": "add-soda",
+      "text": "Pour the soda water over the top and stir once with a barspoon.",
+      "tools": ["jigger", "barspoon"]
+    },
+    {
+      "id": "garnish",
+      "text": "Garnish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "herb": "mint",
+    "sweetener": "simple-syrup",
+    "garnish": "mint-sprig"
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "formatVersion": 1,
+  "id": "raspberry-lime-rickey",
+  "name": "Raspberry Lime Rickey",
+  "glass": "highball",
+  "method": "build",
+  "flavorTags": ["fruity", "citrus"],
+  "shelf": "fizzy-fruity",
+  "added": "2026-11-06",
+  "photo": "photos/raspberry-lime-rickey.jpg",
+  "ingredients": [
+    { "name": "fresh lime juice", "amount": 0.5, "unit": "oz" },
+    { "name": "ice", "unit": "fill" }
+  ],
+  "slots": [
+    {
+      "id": "raspberry",
+      "label": "Raspberry",
+      "options": [
+        {
+          "id": "raspberry-syrup",
+          "label": "Raspberry syrup",
+          "phrase": "raspberry syrup",
+          "ingredients": [{ "name": "raspberry syrup", "amount": 1, "unit": "oz" }],
+          "removeSteps": ["muddle-raspberries"],
+          "color": "#c81d4e"
+        },
+        {
+          "id": "fresh-raspberries",
+          "label": "Fresh raspberries",
+          "phrase": "raspberries",
+          "ingredients": [
+            { "name": "raspberries", "amount": 6, "unit": "count" },
+            { "name": "simple syrup", "amount": 0.75, "unit": "oz" }
+          ],
+          "removeSteps": ["add-base"],
+          "color": "#e11d48"
+        }
+      ]
+    },
+    {
+      "id": "fizz",
+      "label": "Fizz",
+      "options": [
+        {
+          "id": "soda-water",
+          "label": "Soda water",
+          "phrase": "soda water",
+          "ingredients": [{ "name": "soda water", "unit": "top" }],
+          "color": "#e0f2fe"
+        },
+        {
+          "id": "sparkling-limeade",
+          "label": "Sparkling limeade",
+          "phrase": "sparkling limeade",
+          "ingredients": [{ "name": "sparkling limeade", "unit": "top" }],
+          "color": "#d9f99d"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "lime-wheel",
+          "label": "Lime wheel",
+          "phrase": "a lime wheel",
+          "ingredients": [{ "name": "lime wheel", "amount": 1, "unit": "count" }],
+          "color": "#84cc16"
+        },
+        {
+          "id": "raspberries-pick",
+          "label": "Raspberries on a pick",
+          "phrase": "raspberries on a pick",
+          "ingredients": [{ "name": "raspberries on a pick", "amount": 3, "unit": "count" }],
+          "color": "#be123c"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "muddle-raspberries",
+      "text": "Muddle the raspberries in a highball glass with the simple syrup and lime juice until they burst.",
+      "tools": ["muddler", "jigger"]
+    },
+    {
+      "id": "add-base",
+      "text": "Pour the lime juice and {raspberry} into a highball glass, and stir to mix.",
+      "tools": ["jigger", "barspoon"]
+    },
+    { "id": "fill-glass", "text": "Fill the glass with ice." },
+    {
+      "id": "top",
+      "text": "Top with {fizz} and stir once with a barspoon.",
+      "tools": ["barspoon"]
+    },
+    {
+      "id": "garnish",
+      "text": "Garnish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "raspberry": "raspberry-syrup",
+    "fizz": "soda-water",
+    "garnish": "lime-wheel"
+  }
+}

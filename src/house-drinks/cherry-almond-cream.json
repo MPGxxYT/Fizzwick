@@ -1,0 +1,121 @@
+{
+  "formatVersion": 1,
+  "id": "cherry-almond-cream",
+  "name": "Cherry Almond Cream",
+  "glass": "rocks",
+  "method": "shake",
+  "flavorTags": ["creamy", "fruity"],
+  "shelf": "creamy-frozen",
+  "added": "2026-11-06",
+  "photo": "photos/cherry-almond-cream.jpg",
+  "ingredients": [
+    { "name": "cherry syrup", "amount": 0.75, "unit": "oz" },
+    { "name": "drops of vanilla extract", "amount": 2, "unit": "count" },
+    { "name": "ice", "unit": "fill" }
+  ],
+  "slots": [
+    {
+      "id": "milk",
+      "label": "Milk",
+      "options": [
+        {
+          "id": "almond-milk",
+          "label": "Almond milk",
+          "phrase": "almond milk",
+          "ingredients": [{ "name": "almond milk", "amount": 3, "unit": "oz" }],
+          "dietaryTags": ["nuts"],
+          "color": "#efe4d2"
+        },
+        {
+          "id": "oat-milk",
+          "label": "Oat milk",
+          "phrase": "oat milk",
+          "ingredients": [{ "name": "oat milk", "amount": 3, "unit": "oz" }],
+          "color": "#eadfc8"
+        },
+        {
+          "id": "whole-milk",
+          "label": "Whole milk",
+          "phrase": "whole milk",
+          "ingredients": [{ "name": "whole milk", "amount": 3, "unit": "oz" }],
+          "dietaryTags": ["dairy"],
+          "color": "#fbfaf5"
+        }
+      ]
+    },
+    {
+      "id": "texture",
+      "label": "Texture",
+      "options": [
+        {
+          "id": "shaken",
+          "label": "Shaken over ice",
+          "ingredients": [],
+          "removeSteps": ["blend"],
+          "color": "#e7d3c1"
+        },
+        {
+          "id": "blended",
+          "label": "Blended",
+          "ingredients": [],
+          "method": "blend",
+          "removeSteps": ["add-base", "shake", "strain"],
+          "color": "#f1e3d8"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "cherry",
+          "label": "Cocktail cherry",
+          "phrase": "a cocktail cherry",
+          "ingredients": [{ "name": "cocktail cherry", "amount": 1, "unit": "count" }],
+          "color": "#7f1d1d"
+        },
+        {
+          "id": "nutmeg",
+          "label": "Grated nutmeg",
+          "phrase": "a little grated nutmeg",
+          "ingredients": [{ "name": "grated nutmeg", "unit": "to-taste" }],
+          "color": "#92400e"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "add-base",
+      "text": "Pour the {milk}, cherry syrup and vanilla extract into a shaker tin.",
+      "tools": ["shaker", "jigger"]
+    },
+    {
+      "id": "shake",
+      "text": "Fill the tin with ice and shake hard for about 15 seconds, until frothy.",
+      "tools": ["shaker"]
+    },
+    {
+      "id": "strain",
+      "text": "Strain into a rocks glass over fresh ice.",
+      "tools": ["strainer"]
+    },
+    {
+      "id": "blend",
+      "text": "Blend the {milk}, cherry syrup, vanilla extract and a glass of ice until smooth, about 20 seconds, then pour into a rocks glass.",
+      "tools": ["blender", "jigger"]
+    },
+    {
+      "id": "garnish",
+      "text": "Garnish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "milk": "almond-milk",
+    "texture": "shaken",
+    "garnish": "cherry"
+  }
+}

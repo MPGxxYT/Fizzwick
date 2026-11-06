@@ -1,0 +1,88 @@
+{
+  "formatVersion": 1,
+  "id": "pineapple-ginger-fizz",
+  "name": "Pineapple Ginger Fizz",
+  "glass": "highball",
+  "method": "build",
+  "flavorTags": ["fruity", "spicy"],
+  "shelf": "fizzy-fruity",
+  "added": "2026-11-06",
+  "photo": "photos/pineapple-ginger-fizz.jpg",
+  "ingredients": [
+    { "name": "ice", "unit": "fill" },
+    { "name": "pineapple juice", "amount": 1.5, "unit": "oz" },
+    { "name": "fresh lime juice", "amount": 0.25, "unit": "oz" }
+  ],
+  "slots": [
+    {
+      "id": "ginger",
+      "label": "Ginger",
+      "options": [
+        {
+          "id": "ginger-beer",
+          "label": "Ginger beer",
+          "phrase": "ginger beer",
+          "ingredients": [{ "name": "ginger beer", "unit": "top" }],
+          "color": "#d6b25e"
+        },
+        {
+          "id": "ginger-ale",
+          "label": "Ginger ale",
+          "phrase": "ginger ale",
+          "ingredients": [{ "name": "ginger ale", "unit": "top" }],
+          "color": "#f1d38a"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "pineapple-wedge",
+          "label": "Pineapple wedge",
+          "phrase": "a pineapple wedge on the rim",
+          "ingredients": [{ "name": "pineapple wedge", "amount": 1, "unit": "count" }],
+          "color": "#facc15"
+        },
+        {
+          "id": "candied-ginger",
+          "label": "Candied ginger",
+          "phrase": "a piece of candied ginger on a pick",
+          "ingredients": [{ "name": "candied ginger", "amount": 1, "unit": "count" }],
+          "color": "#c08a3e"
+        },
+        {
+          "id": "lime-wheel",
+          "label": "Lime wheel",
+          "phrase": "a lime wheel",
+          "ingredients": [{ "name": "lime wheel", "amount": 1, "unit": "count" }],
+          "color": "#84cc16"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    { "id": "fill-glass", "text": "Fill a highball glass with ice." },
+    {
+      "id": "add-juice",
+      "text": "Pour in the pineapple juice and lime juice.",
+      "tools": ["jigger"]
+    },
+    {
+      "id": "top",
+      "text": "Top with {ginger} and stir once with a barspoon.",
+      "tools": ["barspoon"]
+    },
+    {
+      "id": "garnish",
+      "text": "Garnish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "ginger": "ginger-beer",
+    "garnish": "pineapple-wedge"
+  }
+}
