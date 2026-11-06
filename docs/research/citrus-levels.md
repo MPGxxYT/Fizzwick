@@ -81,6 +81,19 @@ Cherry Almond Cream and Chai Steamer have no citrus.
 
 The two sours sit below Arnold's shaken sours (0.76 to 1.05%) but above the long drinks, since sours are tart by style. The coolers with no fruit land near 14:1, the same as the softer Nojito and Lavender Lemon Fizz in Drinks to change. Lemon, Lime and Bitters is sweet and low in acid by design, because the soda is most of it. Raspberry Lime Rickey uses 1 oz raspberry syrup, since the syrup is less sweet than simple (see Swaps). Pineapple Mint Smash uses 0.25 lime because the muddled pineapple adds acid of its own.
 
+### Warm drinks
+
+Added 2026-11-06 for winter. None is taste tested. Each is a 6 oz mug, like Ginger Toddy and Chai Steamer, with no ice or dilution. The sour side comes from the juice, so none adds citrus.
+
+| Drink | Base, sweetener | Acid | Sugar:acid |
+|---|---|---|---|
+| Hot Spiced Cider | 6 apple juice, sweetener optional (0.25 maple or honey) | about 0.5% | about 20:1 with none |
+| Mulled Cherry | 3 tart cherry juice, 3 water, 0.5 honey | about 0.6% | about 26:1 |
+
+Golden Milk and Spiced Hot Chocolate have no acid to balance. Their sweetener is set to taste: 0.5 oz honey or maple, or 1 oz ginger syrup since it has about half the sugar of honey (see Swaps), and 1 oz chocolate syrup.
+
+Tart cherry juice acid is my guess at about 1.2%, the weakest number here. Mulled Cherry sits near Ginger Toddy's 29:1, which is fine as it is. Fructose tastes less sweet as it warms (see Sugar data), so a hot drink can carry more sugar for each gram of acid than a cold one.
+
 ## Blueberry Fizz test
 
 The user's tastings below are one person's taste, with simple syrup. The first two were in a 16 oz Collins-style glass, the last in a 10 oz highball. Numbers are my estimates.

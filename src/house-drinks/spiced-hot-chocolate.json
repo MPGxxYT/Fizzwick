@@ -1,0 +1,121 @@
+{
+  "formatVersion": 1,
+  "id": "spiced-hot-chocolate",
+  "name": "Spiced Hot Chocolate",
+  "glass": "mug",
+  "method": "build",
+  "flavorTags": ["creamy", "spicy"],
+  "shelf": "warm-savory",
+  "added": "2026-11-06",
+  "photo": "photos/spiced-hot-chocolate.jpg",
+  "ingredients": [
+    { "name": "chocolate syrup", "amount": 1, "unit": "oz" },
+    { "name": "drops of vanilla extract", "amount": 2, "unit": "count" }
+  ],
+  "slots": [
+    {
+      "id": "milk",
+      "label": "Milk",
+      "options": [
+        {
+          "id": "whole-milk",
+          "label": "Whole milk",
+          "phrase": "whole milk",
+          "ingredients": [{ "name": "whole milk", "amount": 6, "unit": "oz" }],
+          "dietaryTags": ["dairy"],
+          "color": "#fbfaf5"
+        },
+        {
+          "id": "rich",
+          "label": "Milk and half-and-half",
+          "phrase": "whole milk and half-and-half",
+          "ingredients": [
+            { "name": "whole milk", "amount": 4, "unit": "oz" },
+            { "name": "half-and-half", "amount": 2, "unit": "oz" }
+          ],
+          "dietaryTags": ["dairy"],
+          "color": "#f8f1e3"
+        },
+        {
+          "id": "oat-milk",
+          "label": "Oat milk",
+          "phrase": "oat milk",
+          "ingredients": [{ "name": "oat milk", "amount": 6, "unit": "oz" }],
+          "color": "#eadfc8"
+        }
+      ]
+    },
+    {
+      "id": "spice",
+      "label": "Spice",
+      "optional": true,
+      "options": [
+        {
+          "id": "cinnamon",
+          "label": "Cinnamon",
+          "phrase": "a pinch of ground cinnamon",
+          "ingredients": [{ "name": "ground cinnamon", "unit": "to-taste" }],
+          "color": "#b45f2c"
+        },
+        {
+          "id": "cayenne",
+          "label": "Cinnamon and cayenne",
+          "phrase": "a pinch each of ground cinnamon and cayenne pepper",
+          "ingredients": [
+            { "name": "ground cinnamon", "unit": "to-taste" },
+            { "name": "cayenne pepper", "unit": "to-taste" }
+          ],
+          "color": "#b91c1c"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "nutmeg",
+          "label": "Grated nutmeg",
+          "phrase": "a little grated nutmeg",
+          "ingredients": [{ "name": "grated nutmeg", "unit": "to-taste" }],
+          "color": "#92400e"
+        },
+        {
+          "id": "cinnamon-stick",
+          "label": "Cinnamon stick",
+          "phrase": "a cinnamon stick to stir with",
+          "ingredients": [{ "name": "cinnamon stick", "amount": 1, "unit": "count" }],
+          "color": "#8b4a24"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "warm-milk",
+      "text": "Warm the {milk} in a small pot over medium heat until it steams, without letting it boil."
+    },
+    {
+      "id": "add-chocolate",
+      "text": "Take it off the heat and stir in the chocolate syrup and vanilla extract until smooth.",
+      "tools": ["jigger", "barspoon"]
+    },
+    {
+      "id": "add-spice",
+      "text": "Stir in {spice}.",
+      "when": { "slot": "spice" }
+    },
+    { "id": "pour", "text": "Pour into a mug." },
+    {
+      "id": "garnish",
+      "text": "Finish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "milk": "whole-milk",
+    "spice": "cinnamon",
+    "garnish": "nutmeg"
+  }
+}

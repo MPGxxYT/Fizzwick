@@ -13,6 +13,7 @@ const PREPPED = {
     'ginger-syrup',
     'lavender-syrup',
     'raspberry-syrup',
+    'chocolate-syrup',
     'grenadine',
   ],
   'How to cut it': ['wheel', 'wedge'],

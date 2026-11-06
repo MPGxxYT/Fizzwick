@@ -62,7 +62,11 @@ describe('suggestCountsAs', () => {
   })
 
   test('never suggests a garnish-only item, which can not be ticked', () => {
-    expect(suggested('orange juice')).toBe(COUNTS_AS_OWN)
+    expect(suggested('pear slices')).toBe(COUNTS_AS_OWN)
+  })
+
+  test('juice from a fruit you buy counts as that fruit', () => {
+    expect(suggested('orange juice')).toBe('oranges')
   })
 
   test('plain water is always on hand, and other waters are not', () => {

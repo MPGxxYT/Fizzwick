@@ -1,0 +1,120 @@
+{
+  "formatVersion": 1,
+  "id": "golden-milk",
+  "name": "Golden Milk",
+  "glass": "mug",
+  "method": "build",
+  "flavorTags": ["spicy", "creamy"],
+  "shelf": "warm-savory",
+  "added": "2026-11-06",
+  "photo": "photos/golden-milk.jpg",
+  "ingredients": [
+    { "name": "ground turmeric", "amount": 1, "unit": "barspoon" },
+    { "name": "ground black pepper", "unit": "to-taste" },
+    { "name": "ground cardamom", "unit": "to-taste" }
+  ],
+  "slots": [
+    {
+      "id": "milk",
+      "label": "Milk",
+      "options": [
+        {
+          "id": "whole-milk",
+          "label": "Whole milk",
+          "phrase": "whole milk",
+          "ingredients": [{ "name": "whole milk", "amount": 6, "unit": "oz" }],
+          "dietaryTags": ["dairy"],
+          "color": "#fbfaf5"
+        },
+        {
+          "id": "coconut-milk",
+          "label": "Coconut milk",
+          "phrase": "coconut milk",
+          "ingredients": [{ "name": "coconut milk", "amount": 6, "unit": "oz" }],
+          "color": "#f4efe6"
+        },
+        {
+          "id": "oat-milk",
+          "label": "Oat milk",
+          "phrase": "oat milk",
+          "ingredients": [{ "name": "oat milk", "amount": 6, "unit": "oz" }],
+          "color": "#eadfc8"
+        }
+      ]
+    },
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "honey",
+          "label": "Honey",
+          "phrase": "honey",
+          "ingredients": [{ "name": "honey", "amount": 0.5, "unit": "oz" }],
+          "color": "#e8b04a"
+        },
+        {
+          "id": "ginger-syrup",
+          "label": "Ginger syrup",
+          "phrase": "ginger syrup",
+          "ingredients": [{ "name": "ginger syrup", "amount": 1, "unit": "oz" }],
+          "color": "#d6a345"
+        },
+        {
+          "id": "maple-syrup",
+          "label": "Maple syrup",
+          "phrase": "maple syrup",
+          "ingredients": [{ "name": "maple syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#b45309"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "cinnamon",
+          "label": "Ground cinnamon",
+          "phrase": "a pinch of ground cinnamon",
+          "ingredients": [{ "name": "ground cinnamon", "unit": "to-taste" }],
+          "color": "#8b4a24"
+        },
+        {
+          "id": "cinnamon-stick",
+          "label": "Cinnamon stick",
+          "phrase": "a cinnamon stick to stir with",
+          "ingredients": [{ "name": "cinnamon stick", "amount": 1, "unit": "count" }],
+          "color": "#8b4a24"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "warm-milk",
+      "text": "Put the {milk}, turmeric, a pinch of black pepper and a pinch of cardamom in a small pot over medium heat."
+    },
+    {
+      "id": "heat",
+      "text": "Stir now and then until it steams, without letting it boil. The pepper helps the turmeric's flavor come through."
+    },
+    {
+      "id": "add-sweetener",
+      "text": "Take it off the heat and stir in the {sweetener}.",
+      "tools": ["jigger", "barspoon"]
+    },
+    { "id": "pour", "text": "Pour into a mug." },
+    {
+      "id": "garnish",
+      "text": "Finish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "milk": "whole-milk",
+    "sweetener": "honey",
+    "garnish": "cinnamon"
+  }
+}
