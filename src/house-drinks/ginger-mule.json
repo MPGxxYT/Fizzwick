@@ -5,6 +5,8 @@
   "glass": "mug",
   "method": "build",
   "flavorTags": ["spicy", "citrus"],
+  "shelf": "crisp-bitter",
+  "added": "2026-10-21",
   "photo": "photos/ginger-mule.jpg",
   "ingredients": [
     { "name": "crushed ice", "unit": "fill" },

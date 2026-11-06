@@ -5,6 +5,8 @@
   "glass": "coupe",
   "method": "shake",
   "flavorTags": ["spicy", "fruity"],
+  "shelf": "sours-sippers",
+  "added": "2026-10-21",
   "photo": "photos/spiced-pear.jpg",
   "ingredients": [{ "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" }],
   "slots": [

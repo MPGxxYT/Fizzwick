@@ -5,6 +5,8 @@
   "glass": "collins",
   "method": "build",
   "flavorTags": ["fruity", "herbal"],
+  "shelf": "fizzy-fruity",
+  "added": "2026-10-26",
   "photo": "photos/watermelon-cooler.jpg",
   "ingredients": [
     { "name": "fresh lime juice", "amount": 0.5, "unit": "oz" },

@@ -1,4 +1,4 @@
-import { useId, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { APP_NAME } from '../app-name'
 import { Bubbles } from '../drink-page/Ambience'
@@ -20,18 +20,21 @@ import {
 } from '../house-drinks/search'
 import { isMyBarEmpty } from '../my-bar/my-bar'
 import { useCanMakeBar, useMyBar } from '../my-bar/use-my-bar'
-import { resolveRiff, riffLink, type Tool } from '../riff-engine'
+import { resolveRiff, riffLink, type FlavorTag, type Method, type Tool } from '../riff-engine'
 import { updateSettings } from '../settings/use-settings'
 import { findInList, readListFilters, useSurprise } from './list-search'
+import { groupByShelf, newDrinkIds } from './shelves'
 import './drink-list.css'
 
-// The card's ground, so the Drink names on it stay readable.
+// The Shelf's ground, so the Drink names on it stay readable.
 const CARD = '#2e2049'
 
 // Passed to a Drink page so its "All drinks" link can return to this list.
 export interface ListState {
   listSearch: string
 }
+
+const flavorName = (flavor: FlavorTag) => flavor[0].toUpperCase() + flavor.slice(1)
 
 // The app's other pages, in a sheet where a thumb can reach them.
 function MainMenu({ onClose }: { onClose: () => void }) {
@@ -48,11 +51,12 @@ function MainMenu({ onClose }: { onClose: () => void }) {
   )
 }
 
-// Home: every Drink, with search by name or ingredient and filters by Method,
-// Flavor Tag, the tools you have and the ingredients you want to use. The
-// search and filters live in the address, so coming back from a Drink shows
-// the same list. Can make stays out of it, so a shared link never carries it,
-// and it stays on until you turn it off.
+// Home: every Drink, grouped on Shelves, with search by name or ingredient
+// and filters by Method, Flavor Tag, the tools you have and the ingredients
+// you want to use. The filters wait in a sheet, and the ones that are on show
+// as chips under the search. The search and filters live in the address, so
+// coming back from a Drink shows the same list. Can make stays out of it, so
+// a shared link never carries it, and it stays on until you turn it off.
 export function DrinkList() {
   const [params, setParams] = useSearchParams()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -65,13 +69,15 @@ export function DrinkList() {
     [drinks],
   )
   const hasCustom = drinks.some((drink) => isCustomDrinkId(drink.id))
+  const fresh = useMemo(() => newDrinkIds(drinks), [drinks])
   // Read from a string so the filters only change when the address does.
   const listSearch = params.toString()
   const listFilters = useMemo(() => readListFilters(new URLSearchParams(listSearch)), [listSearch])
   const { yours, query, method, flavor, tools, ingredients } = listFilters
   const found = useMemo(() => findInList(drinks, listFilters, canMakeBar), [drinks, listFilters, canMakeBar])
+  const shelves = useMemo(() => groupByShelf(found, (item) => item.drink), [found])
   const surprise = useSurprise(listSearch)
-  const [sheet, setSheet] = useState<'tools' | 'ingredients' | null>(null)
+  const [sheet, setSheet] = useState<'filters' | 'tools' | 'ingredients' | null>(null)
 
   const update = (key: 'q' | 'method' | 'flavor' | 'yours', value: string | undefined) => {
     const next = new URLSearchParams(params)
@@ -85,6 +91,28 @@ export function DrinkList() {
     for (const value of values) next.append(key, value)
     setParams(next, { replace: true })
   }
+
+  // The filters that are on, each as a chip that turns it off.
+  const onChips = [
+    ...(yours ? [{ key: 'yours', name: 'Yours', off: () => update('yours', undefined) }] : []),
+    ...(canMake ? [{ key: 'can-make', name: 'Can make', off: () => updateSettings({ canMake: false }) }] : []),
+    ...(method ? [{ key: 'method', name: METHOD_NAMES[method], off: () => update('method', undefined) }] : []),
+    ...(flavor ? [{ key: 'flavor', name: flavorName(flavor), off: () => update('flavor', undefined) }] : []),
+    ...(tools.length > 0
+      ? [
+          {
+            key: 'tools',
+            name: tools.length === 1 ? TOOL_NAMES[tools[0]] : `${tools.length} tools`,
+            off: () => updateAll('tool', []),
+          },
+        ]
+      : []),
+    ...ingredients.map((value) => ({
+      key: `ing-${value}`,
+      name: ingredientLabel(value),
+      off: () => updateAll('ing', ingredients.filter((other) => other !== value)),
+    })),
+  ]
   const filters = Boolean(yours || method || flavor || tools.length > 0 || ingredients.length > 0)
   const filtered = Boolean(query.trim()) || filters
   const searchId = useId()
@@ -95,93 +123,70 @@ export function DrinkList() {
       <div className="dp-glow" aria-hidden="true" />
       <Bubbles />
       <main className="dl-page">
-        <Link to="/favorites" className="dl-favorites" aria-label="Favorites">
-          <Heart />
-        </Link>
-        <button
-          type="button"
-          className="dl-menu"
-          aria-label="Menu"
-          aria-haspopup="dialog"
-          onClick={() => setMenuOpen(true)}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 7h16M4 12h16M4 17h16" />
-          </svg>
-        </button>
         <header className="dl-head">
+          <Link to="/favorites" className="dl-icon-button" aria-label="Favorites">
+            <Heart />
+          </Link>
           <h1>{APP_NAME}</h1>
-          <p>Pick a drink, then swap its parts to make it yours.</p>
+          <button
+            type="button"
+            className="dl-icon-button"
+            aria-label="Menu"
+            aria-haspopup="dialog"
+            onClick={() => setMenuOpen(true)}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h16M4 12h16M4 17h16" />
+            </svg>
+          </button>
         </header>
 
-        <div className="dl-search">
-          <label htmlFor={searchId} className="dl-visually-hidden">
-            Search drinks or ingredients
-          </label>
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="6.5" />
-            <path d="M16 16l4.5 4.5" />
-          </svg>
-          <input
-            id={searchId}
-            type="search"
-            placeholder="Search drinks or ingredients"
-            value={query}
-            onChange={(event) => update('q', event.target.value || undefined)}
-          />
+        <div className="dl-find">
+          <div className="dl-search">
+            <label htmlFor={searchId} className="dl-visually-hidden">
+              Search drinks or ingredients
+            </label>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="6.5" />
+              <path d="M16 16l4.5 4.5" />
+            </svg>
+            <input
+              id={searchId}
+              type="search"
+              placeholder="Search drinks"
+              value={query}
+              onChange={(event) => update('q', event.target.value || undefined)}
+            />
+          </div>
+          <button
+            type="button"
+            className="dl-filters-button"
+            aria-haspopup="dialog"
+            aria-label={onChips.length > 0 ? `Filters, ${onChips.length} on` : 'Filters'}
+            onClick={() => setSheet('filters')}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h10M18 7h2M4 17h2M10 17h10" />
+              <circle cx="16" cy="7" r="2" />
+              <circle cx="8" cy="17" r="2" />
+            </svg>
+            Filters
+            {onChips.length > 0 && <span className="dl-filters-count">{onChips.length}</span>}
+          </button>
         </div>
 
-        {hasCustom && (
-          <div className="dl-filter" role="group" aria-label="Show">
-            <span className="dl-filter-label">Show</span>
-            <div className="dl-chips">
-              <button type="button" aria-pressed={yours} onClick={() => update('yours', yours ? undefined : '1')}>
-                Yours
+        {onChips.length > 0 && (
+          <div className="dl-on" role="group" aria-label="Filters on">
+            {onChips.map((chip) => (
+              <button key={chip.key} type="button" aria-label={`Turn off ${chip.name}`} onClick={chip.off}>
+                {chip.name}
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 7l10 10M17 7L7 17" />
+                </svg>
               </button>
-            </div>
+            ))}
           </div>
         )}
-        <FilterRow
-          label="Method"
-          choices={byName(choices.methods.map((value) => ({ value, name: METHOD_NAMES[value] })))}
-          picked={method}
-          onPick={(value) => update('method', value)}
-        />
-        <FilterRow
-          label="Flavor"
-          choices={byName(choices.flavors.map((value) => ({ value, name: value[0].toUpperCase() + value.slice(1) })))}
-          picked={flavor}
-          onPick={(value) => update('flavor', value)}
-        />
-        <div className="dl-filter" role="group" aria-label="What you have">
-          <span className="dl-filter-label">Have</span>
-          <div className="dl-chips">
-            {barEmpty ? (
-              <Link to="/my-bar" className="dl-bar-link">
-                Set up My Bar
-              </Link>
-            ) : (
-              <button type="button" aria-pressed={canMake} onClick={() => updateSettings({ canMake: !canMake })}>
-                Can make
-              </button>
-            )}
-            <button type="button" aria-pressed={tools.length > 0} aria-haspopup="dialog" onClick={() => setSheet('tools')}>
-              {tools.length === 0 ? 'Tools' : tools.length === 1 ? TOOL_NAMES[tools[0]] : `${tools.length} tools`}
-            </button>
-            <button
-              type="button"
-              aria-pressed={ingredients.length > 0}
-              aria-haspopup="dialog"
-              onClick={() => setSheet('ingredients')}
-            >
-              {ingredients.length === 0
-                ? 'Ingredients'
-                : ingredients.length === 1
-                  ? ingredientLabel(ingredients[0])
-                  : `${ingredients.length} ingredients`}
-            </button>
-          </div>
-        </div>
 
         <div className="dl-count-line">
           <p className="dl-count" aria-live="polite">
@@ -194,21 +199,30 @@ export function DrinkList() {
         </div>
 
         {found.length > 0 ? (
-          <ul className="dl-drinks">
-            {found.map((drink) => (
-              <li key={drink.drink.id}>
-                <DrinkCard
-                  found={drink}
-                  photo={
-                    isCustomDrinkId(drink.drink.id)
-                      ? photos[drink.drink.id]
-                      : drink.drink.photo && `${import.meta.env.BASE_URL}${drink.drink.photo}`
-                  }
-                  listSearch={params.toString()}
-                />
-              </li>
+          <>
+            {shelves.length > 1 && <ShelfNav shelves={shelves.map(({ shelf, name }) => ({ shelf, name }))} />}
+            {shelves.map(({ shelf, name, items }) => (
+              <section key={shelf} id={`shelf-${shelf}`} className="dl-shelf" aria-labelledby={`shelf-${shelf}-name`}>
+                <h2 id={`shelf-${shelf}-name`}>{name}</h2>
+                <ul className="dl-drinks">
+                  {items.map((drink) => (
+                    <li key={drink.drink.id}>
+                      <DrinkRow
+                        found={drink}
+                        photo={
+                          isCustomDrinkId(drink.drink.id)
+                            ? photos[drink.drink.id]
+                            : drink.drink.photo && `${import.meta.env.BASE_URL}${drink.drink.photo}`
+                        }
+                        isNew={fresh.has(drink.drink.id)}
+                        listSearch={listSearch}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </section>
             ))}
-          </ul>
+          </>
         ) : (
           <div className="dl-empty">
             {filtered ? (
@@ -234,19 +248,154 @@ export function DrinkList() {
         )}
       </main>
 
+      {sheet === 'filters' && (
+        <Sheet label="Filters" onClose={() => setSheet(null)}>
+          <h2>Filters</h2>
+          <p className="dl-sheet-note" aria-live="polite">
+            {found.length} {found.length === 1 ? 'drink' : 'drinks'} match.
+          </p>
+          {hasCustom && (
+            <FilterGroup label="Show">
+              <button type="button" aria-pressed={yours} onClick={() => update('yours', yours ? undefined : '1')}>
+                Yours
+              </button>
+            </FilterGroup>
+          )}
+          <FilterGroup label="What you have">
+            {barEmpty ? (
+              <Link to="/my-bar" className="dl-bar-link">
+                Set up My Bar
+              </Link>
+            ) : (
+              <button type="button" aria-pressed={canMake} onClick={() => updateSettings({ canMake: !canMake })}>
+                Can make
+              </button>
+            )}
+            <button type="button" aria-pressed={tools.length > 0} aria-haspopup="dialog" onClick={() => setSheet('tools')}>
+              {tools.length === 0 ? 'Tools' : tools.length === 1 ? TOOL_NAMES[tools[0]] : `${tools.length} tools`}
+            </button>
+            <button
+              type="button"
+              aria-pressed={ingredients.length > 0}
+              aria-haspopup="dialog"
+              onClick={() => setSheet('ingredients')}
+            >
+              {ingredients.length === 0
+                ? 'Ingredients'
+                : ingredients.length === 1
+                  ? ingredientLabel(ingredients[0])
+                  : `${ingredients.length} ingredients`}
+            </button>
+          </FilterGroup>
+          <FilterChoices
+            label="Flavor"
+            choices={byName(choices.flavors.map((value) => ({ value, name: flavorName(value) })))}
+            picked={flavor}
+            onPick={(value) => update('flavor', value)}
+          />
+          <FilterChoices<Method>
+            label="Method"
+            choices={byName(choices.methods.map((value) => ({ value, name: METHOD_NAMES[value] })))}
+            picked={method}
+            onPick={(value) => update('method', value)}
+          />
+          {filters && (
+            <button
+              type="button"
+              className="dl-sheet-clear"
+              onClick={() => setParams(query ? new URLSearchParams({ q: query }) : new URLSearchParams(), { replace: true })}
+            >
+              Clear filters
+            </button>
+          )}
+        </Sheet>
+      )}
+      {/* Tools and Ingredients open from the Filters sheet and go back to it. */}
       {sheet === 'tools' && (
         <ToolSheet
           choices={choices.tools}
           picked={tools}
-          onChange={(next) => updateAll('tool', next)} onClose={() => setSheet(null)} />
+          onChange={(next) => updateAll('tool', next)}
+          onClose={() => setSheet('filters')}
+        />
       )}
       {sheet === 'ingredients' && (
         <IngredientSheet
           choices={choices.ingredients}
           picked={ingredients}
-          onChange={(next) => updateAll('ing', next)} onClose={() => setSheet(null)} />
+          onChange={(next) => updateAll('ing', next)}
+          onClose={() => setSheet('filters')}
+        />
       )}
     </div>
+  )
+}
+
+// The Shelves' names in a strip that stays at the top while the list
+// scrolls. Tapping one scrolls to that Shelf, and the Shelf on screen is
+// marked.
+function ShelfNav({ shelves }: { shelves: { shelf: string; name: string }[] }) {
+  const nav = useRef<HTMLElement>(null)
+  const [current, setCurrent] = useState(shelves[0].shelf)
+  const key = shelves.map(({ shelf }) => shelf).join(' ')
+
+  useEffect(() => {
+    const onScroll = () => {
+      const below = (nav.current?.getBoundingClientRect().bottom ?? 0) + 8
+      const shelves = key.split(' ')
+      let on = shelves[0]
+      for (const shelf of shelves) {
+        const top = document.getElementById(`shelf-${shelf}`)?.getBoundingClientRect().top
+        if (top !== undefined && top <= below) on = shelf
+      }
+      // A short last Shelf never reaches the top, so at the bottom it's the one.
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2
+      setCurrent(atBottom && window.scrollY > 0 ? shelves[shelves.length - 1] : on)
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [key])
+
+  // Keep the marked name in view in the strip.
+  useEffect(() => {
+    const button = nav.current?.querySelector<HTMLElement>(`[data-shelf="${current}"]`)
+    const strip = nav.current?.firstElementChild
+    if (!button || !strip) return
+    strip.scrollTo({ left: button.offsetLeft - 16, behavior: 'smooth' })
+  }, [current])
+
+  const jump = (shelf: string) => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    document.getElementById(`shelf-${shelf}`)?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' })
+  }
+
+  return (
+    <nav ref={nav} className="dl-shelf-nav" aria-label="Shelves">
+      <div className="dl-shelf-strip">
+        {shelves.map(({ shelf, name }) => (
+          <button
+            key={shelf}
+            type="button"
+            data-shelf={shelf}
+            aria-current={current === shelf ? 'true' : undefined}
+            onClick={() => jump(shelf)}
+          >
+            {name}
+          </button>
+        ))}
+      </div>
+    </nav>
+  )
+}
+
+// One labelled set of chips in the Filters sheet.
+function FilterGroup({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <section className="dl-filter" role="group" aria-label={label}>
+      <h3>{label}</h3>
+      <div className="dl-sheet-chips">{children}</div>
+    </section>
   )
 }
 
@@ -360,12 +509,13 @@ function IngredientSheet({
   )
 }
 
+
 // Filter chips read in alphabetical order.
 const byName = <T extends { name: string }>(choices: T[]) => [...choices].sort((a, b) => a.name.localeCompare(b.name))
 
-// One row of toggle chips that scrolls sideways. Tapping the picked chip
+// One filter's chips, where only one can be on. Tapping the picked chip
 // again clears the filter.
-function FilterRow<T extends string>({
+function FilterChoices<T extends string>({
   label,
   choices,
   picked,
@@ -377,21 +527,18 @@ function FilterRow<T extends string>({
   onPick: (value: T | undefined) => void
 }) {
   return (
-    <div className="dl-filter" role="group" aria-label={label}>
-      <span className="dl-filter-label">{label}</span>
-      <div className="dl-chips">
-        {choices.map((choice) => (
-          <button
-            key={choice.value}
-            type="button"
-            aria-pressed={picked === choice.value}
-            onClick={() => onPick(picked === choice.value ? undefined : choice.value)}
-          >
-            {choice.name}
-          </button>
-        ))}
-      </div>
-    </div>
+    <FilterGroup label={label}>
+      {choices.map((choice) => (
+        <button
+          key={choice.value}
+          type="button"
+          aria-pressed={picked === choice.value}
+          onClick={() => onPick(picked === choice.value ? undefined : choice.value)}
+        >
+          {choice.name}
+        </button>
+      ))}
+    </FilterGroup>
   )
 }
 
@@ -401,13 +548,15 @@ function FilterRow<T extends string>({
 // the first Slot's color, as it does on the Drink page. The list's search and
 // filters travel along, so the Drink page's "All drinks" link returns to the
 // same list.
-function DrinkCard({
+function DrinkRow({
   found: { drink, picks },
   photo,
+  isNew,
   listSearch,
 }: {
   found: FoundDrink
   photo: string | undefined
+  isNew: boolean
   listSearch: string
 }) {
   const riff = useMemo(() => resolveRiff(drink, picks), [drink, picks])
@@ -421,25 +570,31 @@ function DrinkCard({
   })
 
   return (
-    <Link to={riffLink(drink, picks)} state={{ listSearch } satisfies ListState} className="dl-card">
-      <span className="dl-card-art">
+    <Link to={riffLink(drink, picks)} state={{ listSearch } satisfies ListState} className="dl-row">
+      <span className="dl-row-art">
         {!photo || photoFailed || swaps.length > 0 ? (
-          <GlassSketch glass={drink.glass} colors={riff.colors} className="dl-card-sketch" />
+          <GlassSketch glass={drink.glass} colors={riff.colors} className="dl-row-sketch" />
         ) : (
           <img src={photo} alt="" onError={() => setPhotoFailed(true)} />
         )}
       </span>
-      <span className="dl-card-text">
-        <span className="dl-card-name" style={firstColor ? { color: readable(firstColor, CARD) } : undefined}>
-          {drink.name}
+      <span className="dl-row-text">
+        <span className="dl-row-title">
+          <span className="dl-row-name" style={firstColor ? { color: readable(firstColor, CARD) } : undefined}>
+            {drink.name}
+          </span>
+          {isNew && <span className="dl-row-mark is-new">New</span>}
+          {isCustomDrinkId(drink.id) && <span className="dl-row-mark">Yours</span>}
         </span>
-        {isCustomDrinkId(drink.id) && <span className="dl-card-yours">Yours</span>}
-        {swaps.length > 0 && <span className="dl-card-riff">With {swaps.join(', ')}</span>}
-        <span className="dl-card-meta">
+        {swaps.length > 0 && <span className="dl-row-riff">With {swaps.join(', ')}</span>}
+        <span className="dl-row-meta">
           {METHOD_NAMES[riff.method]}, {glassInSentence(GLASS_NAMES[drink.glass])}
         </span>
-        <span className="dl-card-tags">{drink.flavorTags.join(', ')}</span>
+        <span className="dl-row-tags">{drink.flavorTags.join(', ')}</span>
       </span>
+      <svg className="dl-row-go" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 5l7 7-7 7" />
+      </svg>
     </Link>
   )
 }

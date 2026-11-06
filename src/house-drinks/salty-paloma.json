@@ -5,6 +5,8 @@
   "glass": "highball",
   "method": "build",
   "flavorTags": ["citrus", "smoky"],
+  "shelf": "crisp-bitter",
+  "added": "2026-10-26",
   "photo": "photos/salty-paloma.jpg",
   "ingredients": [
     { "name": "fresh grapefruit juice", "amount": 2, "unit": "oz" },

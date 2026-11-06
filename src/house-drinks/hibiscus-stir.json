@@ -5,6 +5,8 @@
   "glass": "coupe",
   "method": "stir",
   "flavorTags": ["fruity", "bitter"],
+  "shelf": "sours-sippers",
+  "added": "2026-10-26",
   "photo": "photos/hibiscus-stir.jpg",
   "ingredients": [
     { "name": "fresh lime juice", "amount": 0.25, "unit": "oz" },

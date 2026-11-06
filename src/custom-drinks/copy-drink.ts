@@ -21,13 +21,14 @@ export function nameTaken(name: string, names: string[]): boolean {
 // and step with their IDs, and the Riff becomes its House Spec. It's named
 // like a Favorite of that Riff ("Citrus Spritz · soda water"), with "(copy)"
 // or "(copy 2)" added when the name is taken. No photo: the House Drink's
-// shows its own House Spec, so the copy draws its glass instead.
+// shows its own House Spec, so the copy draws its glass instead. No added
+// date either, since the copy is new today and sits on Yours.
 export function copyDrink(drink: Drink, picks: Picks, takenNames: string[], randomId: string): Drink {
   const riff = resolveRiff(drink, picks)
   const base = riff.defaultFavoriteName
   let name = base
   for (let n = 1; nameTaken(name, takenNames); n++) name = `${base} (copy${n > 1 ? ` ${n}` : ''})`
 
-  const { photo: _photo, ...rest } = drink
+  const { photo: _photo, added: _added, ...rest } = drink
   return { ...rest, id: `${CUSTOM_ID_PREFIX}${randomId}`, name, houseSpec: riff.picks }
 }

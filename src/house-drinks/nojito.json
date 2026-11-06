@@ -5,6 +5,8 @@
   "glass": "collins",
   "method": "build",
   "flavorTags": ["herbal", "citrus"],
+  "shelf": "smashes",
+  "added": "2026-10-21",
   "photo": "photos/nojito.jpg",
   "ingredients": [
     { "name": "mint leaves", "amount": 8, "unit": "count" },

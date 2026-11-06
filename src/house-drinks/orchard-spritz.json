@@ -5,6 +5,8 @@
   "glass": "highball",
   "method": "build",
   "flavorTags": ["fruity", "spicy"],
+  "shelf": "crisp-bitter",
+  "added": "2026-10-26",
   "photo": "photos/orchard-spritz.jpg",
   "ingredients": [
     { "name": "fresh lemon juice", "amount": 0.25, "unit": "oz" },

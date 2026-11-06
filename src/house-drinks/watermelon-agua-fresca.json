@@ -5,6 +5,8 @@
   "glass": "collins",
   "method": "blend",
   "flavorTags": ["fruity"],
+  "shelf": "iced-tea-coolers",
+  "added": "2026-11-05",
   "photo": "photos/watermelon-agua-fresca.jpg",
   "ingredients": [
     { "name": "seedless watermelon chunks", "amount": 1, "unit": "cup" },

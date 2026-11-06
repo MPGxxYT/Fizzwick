@@ -5,6 +5,8 @@
   "glass": "collins",
   "method": "build",
   "flavorTags": ["citrus", "fruity"],
+  "shelf": "fizzy-fruity",
+  "added": "2026-10-21",
   "photo": "photos/cherry-limeade.jpg",
   "ingredients": [
     { "name": "ice", "unit": "fill" },

@@ -5,6 +5,8 @@
   "glass": "rocks",
   "method": "shake",
   "flavorTags": ["herbal"],
+  "shelf": "smashes",
+  "added": "2026-10-21",
   "photo": "photos/garden-smash.jpg",
   "ingredients": [
     { "name": "cucumber slices", "amount": 3, "unit": "count" },

@@ -5,6 +5,8 @@
   "glass": "collins",
   "method": "build",
   "flavorTags": ["fruity", "creamy"],
+  "shelf": "fizzy-fruity",
+  "added": "2026-10-26",
   "photo": "photos/italian-soda.jpg",
   "ingredients": [{ "name": "ice", "unit": "fill" }],
   "slots": [

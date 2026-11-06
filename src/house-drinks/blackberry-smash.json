@@ -5,6 +5,8 @@
   "glass": "rocks",
   "method": "shake",
   "flavorTags": ["fruity", "herbal"],
+  "shelf": "smashes",
+  "added": "2026-11-05",
   "photo": "photos/blackberry-smash.jpg",
   "ingredients": [
     { "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" },

@@ -5,6 +5,8 @@
   "glass": "coupe",
   "method": "dry-shake",
   "flavorTags": ["fruity", "citrus", "creamy"],
+  "shelf": "sours-sippers",
+  "added": "2026-10-26",
   "photo": "photos/raspberry-clover.jpg",
   "ingredients": [
     { "name": "fresh lemon juice", "amount": 0.75, "unit": "oz" },

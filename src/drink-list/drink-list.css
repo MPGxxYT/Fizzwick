@@ -9,28 +9,50 @@
   position: relative;
   max-width: 34rem;
   margin: 0 auto;
-  padding: calc(2rem + env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right))
+  padding: calc(0.75rem + env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right))
     calc(4rem + env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-left));
 }
 
+/* Favorites, the name and the menu on one line, so the drinks start high. */
 .dl-head {
-  text-align: center;
+  display: grid;
+  grid-template-columns: 2.75rem 1fr 2.75rem;
+  align-items: center;
+  margin: 0 -0.5rem;
 }
 
 .dl-head h1 {
   margin: 0;
+  text-align: center;
   font-family: 'Bricolage Grotesque Variable', sans-serif;
   font-weight: 800;
-  font-size: clamp(2.5rem, 12vw, 3.5rem);
+  font-size: 2rem;
   line-height: 1;
   letter-spacing: -0.02em;
   color: var(--accent);
 }
 
-.dl-head p {
-  margin: 0.4rem 0 0;
+.dl-icon-button {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
   color: var(--muted);
-  text-wrap: balance;
+  cursor: pointer;
+}
+
+.dl-icon-button svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .dl-visually-hidden {
@@ -40,6 +62,19 @@
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* Search, with the Filters button beside it. */
+.dl-find {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.dl-find .dl-search {
+  flex: 1;
+  min-width: 0;
+  margin-top: 0;
 }
 
 .dl-search {
@@ -76,172 +111,87 @@
   color: var(--muted);
 }
 
-.dl-filter {
-  display: flex;
+.dl-filters-button {
+  flex: none;
+  display: inline-flex;
   align-items: center;
+  gap: 0.4rem;
+  min-height: 3.25rem;
+  padding: 0 1rem;
+  border: 1px solid rgba(191, 174, 220, 0.3);
+  border-radius: 999px;
+  background: #2e2049;
+  color: var(--text);
+  font: 600 0.95rem 'Figtree', sans-serif;
+  cursor: pointer;
+}
+
+.dl-filters-button svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.dl-filters-count {
+  display: grid;
+  place-items: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: var(--link);
+  color: var(--bg);
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The filters that are on. Tapping one turns it off. */
+.dl-on {
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 0.75rem;
 }
 
-.dl-filter-label {
-  flex: none;
-  min-width: 3.75rem;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-/* The chips run off the right edge of the screen and scroll sideways, so
-   each filter takes one line. The fade says there's more. */
-.dl-chips {
-  display: flex;
-  gap: 0.5rem;
-  min-width: 0;
-  margin: -0.3rem calc(-1 * max(1.25rem, env(safe-area-inset-right))) -0.3rem 0;
-  padding: 0.3rem max(1.25rem, env(safe-area-inset-right)) 0.3rem 0.3rem;
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
-  scrollbar-width: none;
-  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
-  mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
-}
-
-.dl-chips::-webkit-scrollbar {
-  display: none;
-}
-
-.dl-chips button,
-.dl-bar-link {
-  flex: none;
-  scroll-snap-align: start;
-}
-
-/* Where Can make goes until My Bar has something in it. */
-.dl-bar-link {
+.dl-on button {
   display: inline-flex;
   align-items: center;
+  gap: 0.3rem;
   min-height: 2.75rem;
-  padding: 0 0.95rem;
-  border: 1px dashed var(--link);
+  padding: 0 0.7rem 0 0.95rem;
+  border: 1px solid var(--link);
   border-radius: 999px;
-  color: var(--link);
+  background: rgba(127, 227, 198, 0.12);
+  color: var(--text);
   font: 600 0.95rem 'Figtree', sans-serif;
-  text-decoration: none;
-}
-
-/* A mouse wheel can't scroll the row sideways, so with a mouse the chips
-   wrap onto more lines instead. */
-@media (hover: hover) and (pointer: fine) {
-  .dl-filter {
-    align-items: flex-start;
-  }
-
-  .dl-filter-label {
-    line-height: 2.75rem;
-  }
-
-  .dl-chips {
-    flex-wrap: wrap;
-    margin: 0;
-    padding: 0;
-    overflow: visible;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-}
-
-.dl-filter button {
-  min-height: 2.75rem;
-  padding: 0 0.95rem;
-  border: 1px solid rgba(191, 174, 220, 0.35);
-  border-radius: 999px;
-  background: none;
-  color: var(--text);
-  font: 500 0.95rem 'Figtree', sans-serif;
   cursor: pointer;
 }
 
-.dl-filter button[aria-pressed='true'] {
-  border-color: var(--link);
-  background: var(--link);
-  color: var(--bg);
-  font-weight: 600;
-}
-
-/* The Tools and Ingredients sheets: the same chips, wrapping. */
-.dl-sheet-note {
-  margin: 0 0 1rem;
-  color: var(--muted);
-}
-
-.dl-sheet-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.dl-sheet-search {
-  margin: 0 0 1rem;
-}
-
-.dl-sheet-group h3 {
-  margin: 1.25rem 0 0.6rem;
-  color: var(--muted);
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.dl-sheet-chips button,
-.dl-sheet-clear {
-  min-height: 2.75rem;
-  padding: 0 0.95rem;
-  border: 1px solid rgba(191, 174, 220, 0.35);
-  border-radius: 999px;
-  background: none;
-  color: var(--text);
-  font: 500 0.95rem 'Figtree', sans-serif;
-  cursor: pointer;
-  transition:
-    transform 0.12s ease-out,
-    background-color 0.12s ease-out;
-}
-
-.dl-sheet-chips button[aria-pressed='true'] {
-  border-color: var(--link);
-  background: var(--link);
-  color: var(--bg);
-  font-weight: 600;
-}
-
-.dl-sheet-clear {
-  border: none;
-  padding: 0;
-  color: var(--link);
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-}
-
-.dl-sheet-chips button:active {
-  transform: scale(0.95);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .dl-sheet-chips button:active {
-    transform: none;
-  }
+.dl-on svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: var(--link);
+  stroke-width: 2.4;
+  stroke-linecap: round;
 }
 
 .dl-count-line {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin: 0.75rem 0 0.25rem;
+  margin: 0.5rem 0 0;
   color: var(--muted);
   font-size: 0.9rem;
 }
 
 .dl-count {
   margin: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .dl-surprise {
@@ -263,85 +213,180 @@
   cursor: default;
 }
 
+/* The Shelf names, stuck to the top of the screen while the list scrolls.
+   The strip runs to both edges and scrolls sideways; the fade says there's
+   more. */
+.dl-shelf-nav {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0 calc(-1 * max(1.25rem, env(safe-area-inset-right))) 0
+    calc(-1 * max(1.25rem, env(safe-area-inset-left)));
+  padding-top: env(safe-area-inset-top);
+  background: var(--bg);
+  box-shadow: 0 6px 12px -8px rgba(8, 3, 18, 0.8);
+}
+
+.dl-shelf-strip {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.4rem max(1.25rem, env(safe-area-inset-right)) 0.4rem max(1.25rem, env(safe-area-inset-left));
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
+}
+
+.dl-shelf-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.dl-shelf-strip button {
+  flex: none;
+  min-height: 2.75rem;
+  padding: 0 0.8rem;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font: 600 0.95rem 'Figtree', sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.dl-shelf-strip button[aria-current='true'] {
+  background: #3d2b5e;
+  color: var(--text);
+}
+
+/* A Shelf: its name, then its Drinks as rows on one panel. */
+.dl-shelf {
+  margin-top: 1.5rem;
+  scroll-margin-top: calc(3.75rem + env(safe-area-inset-top));
+}
+
+.dl-shelf-nav + .dl-shelf {
+  margin-top: 0.75rem;
+}
+
+.dl-shelf h2 {
+  margin: 0 0 0.5rem 0.25rem;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
 .dl-drinks {
   margin: 0;
   padding: 0;
   list-style: none;
+  border-radius: 1.25rem;
+  background: #2e2049;
+  box-shadow: 0 0 0 1px rgba(191, 174, 220, 0.2);
+  overflow: hidden;
 }
 
 .dl-drinks li + li {
-  margin-top: 0.75rem;
+  border-top: 1px solid rgba(191, 174, 220, 0.14);
 }
 
-.dl-card {
+.dl-row {
   display: grid;
-  grid-template-columns: 4.25rem 1fr;
+  grid-template-columns: 3rem 1fr 1.25rem;
   align-items: center;
-  gap: 1rem;
-  padding: 0.75rem 1rem;
-  border-radius: 1.25rem;
-  background: #2e2049;
-  box-shadow: 0 0 0 1px rgba(191, 174, 220, 0.25);
+  gap: 0.85rem;
+  min-height: 4.5rem;
+  padding: 0.6rem 0.75rem 0.6rem 0.9rem;
   color: var(--text);
   text-decoration: none;
 }
 
-.dl-card-art {
+.dl-row-art {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 5rem;
+  height: 3.5rem;
 }
 
-.dl-card-art img {
+.dl-row-art img {
   width: 100%;
   height: 100%;
-  border-radius: 0.75rem;
+  border-radius: 0.6rem;
   object-fit: cover;
 }
 
-.dl-card-sketch {
+.dl-row-sketch {
   height: 100%;
   width: auto;
 }
 
-.dl-card-text {
+.dl-row-text {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.1rem;
+  min-width: 0;
 }
 
-.dl-card-name {
+.dl-row-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem 0.5rem;
+}
+
+.dl-row-name {
   font-family: 'Bricolage Grotesque Variable', sans-serif;
   font-weight: 800;
-  font-size: 1.6rem;
-  line-height: 1.1;
+  font-size: 1.3rem;
+  line-height: 1.15;
 }
 
-.dl-card-meta {
-  color: var(--muted);
-}
-
-/* A Custom Drink's mark. */
-.dl-card-yours {
-  align-self: flex-start;
-  padding: 0.1rem 0.55rem;
+/* New and Yours, after the name. */
+.dl-row-mark {
+  padding: 0.05rem 0.5rem;
   border: 1px solid var(--link);
   border-radius: 999px;
   color: var(--link);
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.dl-row-mark.is-new {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #24173b;
 }
 
 /* What a found Riff swaps from the House Spec. */
-.dl-card-riff {
+.dl-row-riff {
   color: var(--link);
   font-weight: 600;
+  font-size: 0.95rem;
 }
 
-.dl-card-tags {
+.dl-row-meta,
+.dl-row-tags {
   color: var(--muted);
   font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.dl-row-tags {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.dl-row-go {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: rgba(191, 174, 220, 0.6);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .dl-empty {
@@ -372,6 +417,88 @@
   text-decoration: none;
 }
 
+/* The Filters sheet: one group of chips per filter. */
+.dl-filter h3,
+.dl-sheet-group h3 {
+  margin: 1.25rem 0 0.6rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.dl-filter:first-of-type h3 {
+  margin-top: 0.25rem;
+}
+
+.dl-filter .dl-sheet-chips {
+  margin-bottom: 0;
+}
+
+/* Where Can make goes until My Bar has something in it. */
+.dl-bar-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 0.95rem;
+  border: 1px dashed var(--link);
+  border-radius: 999px;
+  color: var(--link);
+  font: 600 0.95rem 'Figtree', sans-serif;
+  text-decoration: none;
+}
+
+/* The Tools and Ingredients sheets: the same chips, wrapping. */
+.dl-sheet-note {
+  margin: 0 0 1rem;
+  color: var(--muted);
+}
+
+.dl-sheet-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.dl-sheet-search {
+  margin: 0 0 1rem;
+}
+
+.dl-sheet-chips button,
+.dl-sheet-clear {
+  min-height: 2.75rem;
+  padding: 0 0.95rem;
+  border: 1px solid rgba(191, 174, 220, 0.35);
+  border-radius: 999px;
+  background: none;
+  color: var(--text);
+  font: 500 0.95rem 'Figtree', sans-serif;
+  cursor: pointer;
+  transition:
+    transform 0.12s ease-out,
+    background-color 0.12s ease-out;
+}
+
+.dl-sheet-chips button[aria-pressed='true'] {
+  border-color: var(--link);
+  background: var(--link);
+  color: var(--bg);
+  font-weight: 600;
+}
+
+.dl-sheet-clear {
+  margin-top: 1rem;
+  border: none;
+  padding: 0;
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.dl-sheet-chips button:active {
+  transform: scale(0.95);
+}
+
 .dl a:focus-visible,
 .dl button:focus-visible,
 .dl input:focus-visible {
@@ -379,32 +506,8 @@
   outline-offset: 3px;
 }
 
-/* The way to the Bar Terms page, under the tagline. */
-/* The menu, as a hamburger in the top corner. */
-.dl-menu {
-  position: absolute;
-  top: calc(1rem + env(safe-area-inset-top));
-  right: 0.75rem;
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: none;
-  color: var(--muted);
-  cursor: pointer;
-}
-
-.dl-menu svg {
-  width: 1.4rem;
-  height: 1.4rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.dl-row:focus-visible {
+  outline-offset: -3px;
 }
 
 .dl-menu-links {
@@ -434,57 +537,44 @@
   outline-offset: 3px;
 }
 
-/* Favorites, as a heart in the other top corner. */
-.dl-favorites {
-  position: absolute;
-  top: calc(1rem + env(safe-area-inset-top));
-  left: 0.75rem;
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 50%;
-  color: var(--muted);
-}
-
-.dl-favorites svg {
-  width: 1.4rem;
-  height: 1.4rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linejoin: round;
-}
-
 /* Pressed: things you tap sink a little, since a phone has no hover. */
-.dl-card,
-.dl-filter button,
+.dl-row,
+.dl-on button,
+.dl-filters-button,
+.dl-shelf-strip button,
 .dl-empty button,
-.dl-menu,
-.dl-favorites {
+.dl-icon-button {
   transition:
     transform 0.12s ease-out,
     background-color 0.12s ease-out;
 }
 
-.dl-card:active {
-  transform: scale(0.98);
+.dl-row:active {
+  background: rgba(191, 174, 220, 0.1);
 }
 
-.dl-filter button:active,
+.dl-on button:active,
+.dl-filters-button:active,
 .dl-empty button:active {
   transform: scale(0.95);
 }
 
-.dl-menu:active,
-.dl-favorites:active {
+.dl-icon-button:active,
+.dl-shelf-strip button:active {
   background: rgba(191, 174, 220, 0.15);
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .dl-row:hover {
+    background: rgba(191, 174, 220, 0.06);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .dl-card:active,
-  .dl-filter button:active,
-  .dl-empty button:active {
+  .dl-on button:active,
+  .dl-filters-button:active,
+  .dl-empty button:active,
+  .dl-sheet-chips button:active {
     transform: none;
   }
 }

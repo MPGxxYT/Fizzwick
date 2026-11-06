@@ -5,6 +5,8 @@
   "glass": "highball",
   "method": "shake",
   "flavorTags": ["fruity", "citrus"],
+  "shelf": "fizzy-fruity",
+  "added": "2026-10-22",
   "photo": "photos/blueberry-fizz.jpg",
   "ingredients": [
     { "name": "ice", "unit": "fill" },

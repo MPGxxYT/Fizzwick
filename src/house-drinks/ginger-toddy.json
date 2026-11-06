@@ -5,6 +5,8 @@
   "glass": "mug",
   "method": "build",
   "flavorTags": ["spicy", "citrus"],
+  "shelf": "warm-savory",
+  "added": "2026-10-26",
   "photo": "photos/ginger-toddy.jpg",
   "ingredients": [{ "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" }],
   "slots": [

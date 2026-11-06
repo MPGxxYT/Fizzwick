@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import { closeFilters, openFilters } from './filters.ts'
 
 // Enough for a Cherry Limeade with soda water.
 async function tickCherryLimeade(page: Page) {
@@ -7,7 +8,18 @@ async function tickCherryLimeade(page: Page) {
   }
 }
 
-const canMake = (page: Page) => page.getByRole('group', { name: 'What you have' }).getByRole('button', { name: 'Can make' })
+const canMake = (page: Page) =>
+  page
+    .getByRole('dialog', { name: 'Filters' })
+    .getByRole('group', { name: 'What you have' })
+    .getByRole('button', { name: 'Can make' })
+const canMakeOn = (page: Page) => page.getByRole('group', { name: 'Filters on' }).getByRole('button', { name: 'Turn off Can make' })
+
+async function toggleCanMake(page: Page) {
+  await openFilters(page)
+  await canMake(page).click()
+  await closeFilters(page)
+}
 
 // A My Bar already ticked, as if saved on an earlier visit.
 async function seedMyBar(page: Page, tools: string[], items: string[]) {
@@ -21,11 +33,13 @@ async function seedMyBar(page: Page, tools: string[], items: string[]) {
 
 test('an empty My Bar offers the link to the page instead of the toggle', async ({ page }) => {
   await page.goto('/')
+  await openFilters(page)
   await expect(canMake(page)).toHaveCount(0)
   await page.getByRole('link', { name: 'Set up My Bar' }).click()
   await expect(page.getByRole('heading', { name: 'My Bar', level: 1 })).toBeVisible()
   await page.getByRole('button', { name: 'Ice', exact: true }).click()
   await page.getByRole('button', { name: 'Back' }).click()
+  await openFilters(page)
   await expect(canMake(page)).toHaveAttribute('aria-pressed', 'false')
   await expect(page.getByRole('link', { name: 'Set up My Bar' })).toHaveCount(0)
 })
@@ -35,24 +49,26 @@ test('Can make stays on after a reload, stays out of the address, and shows only
   await page.goto('/')
   await expect(page.getByRole('link', { name: /Tea Sour/ })).toBeVisible()
 
-  await canMake(page).click()
-  await expect(canMake(page)).toHaveAttribute('aria-pressed', 'true')
+  await toggleCanMake(page)
+  await expect(canMakeOn(page)).toBeVisible()
   await expect(page.getByRole('link', { name: /Cherry Limeade/ })).toBeVisible()
   await expect(page.getByRole('link', { name: /Tea Sour/ })).toHaveCount(0)
   await expect(page).toHaveURL(/\/$/)
 
   await page.reload()
+  await openFilters(page)
   await expect(canMake(page)).toHaveAttribute('aria-pressed', 'true')
+  await closeFilters(page)
   await expect(page.getByRole('link', { name: /Tea Sour/ })).toHaveCount(0)
 
-  await canMake(page).click()
+  await toggleCanMake(page)
   await expect(page.getByRole('link', { name: /Tea Sour/ })).toBeVisible()
 })
 
 test('a Drink whose House Spec needs a missing item opens on a Riff that fits', async ({ page }) => {
   await seedMyBar(page, ['jigger'], ['limes', 'tart-cherry-juice', 'simple-syrup', 'soda-water', 'ice'])
   await page.goto('/')
-  await canMake(page).click()
+  await toggleCanMake(page)
   const card = page.getByRole('link', { name: /Cherry Limeade/ })
   await expect(card).toContainText('With tart cherry juice')
   await card.click()
@@ -63,7 +79,7 @@ test('a missing fixed garnish does not hide a Drink', async ({ page }) => {
   // Hibiscus Stir's House Spec is garnished with orange peel, and Oranges can't be ticked.
   await seedMyBar(page, ['jigger'], ['hibiscus-tea', 'honey-syrup', 'limes', 'bitters', 'ice'])
   await page.goto('/')
-  await canMake(page).click()
+  await toggleCanMake(page)
   const card = page.getByRole('link', { name: /Hibiscus Stir/ })
   await expect(card).toBeVisible()
   await expect(card).not.toContainText('With')
@@ -72,7 +88,7 @@ test('a missing fixed garnish does not hide a Drink', async ({ page }) => {
 test('a My Bar that makes nothing yet says so and links to the page', async ({ page }) => {
   await seedMyBar(page, [], ['ice'])
   await page.goto('/')
-  await canMake(page).click()
+  await toggleCanMake(page)
   await expect(page.getByText("My Bar doesn't make a drink yet.")).toBeVisible()
   await page.getByRole('link', { name: 'Open My Bar' }).click()
   await expect(page.getByRole('heading', { name: 'My Bar', level: 1 })).toBeVisible()
@@ -81,19 +97,19 @@ test('a My Bar that makes nothing yet says so and links to the page', async ({ p
 test('clearing filters resets only the temporary ones', async ({ page }) => {
   await seedMyBar(page, ['jigger'], ['limes', 'cherry-syrup', 'simple-syrup', 'soda-water', 'ice'])
   await page.goto('/')
-  await canMake(page).click()
+  await toggleCanMake(page)
   await page.getByRole('searchbox', { name: 'Search drinks or ingredients' }).fill('durian')
   await expect(page.getByText('No drinks match "durian" from My Bar.')).toBeVisible()
   await page.getByRole('button', { name: 'Clear search and filters' }).click()
   await expect(page.getByRole('searchbox', { name: 'Search drinks or ingredients' })).toHaveValue('')
-  await expect(canMake(page)).toHaveAttribute('aria-pressed', 'true')
+  await expect(canMakeOn(page)).toBeVisible()
   await expect(page.getByRole('link', { name: /Tea Sour/ })).toHaveCount(0)
 })
 
 test('with Can make on, the swap sheet marks what is not in My Bar, and it can still be picked', async ({ page }) => {
   await seedMyBar(page, ['jigger'], ['limes', 'cherry-syrup', 'simple-syrup', 'soda-water', 'ice'])
   await page.goto('/')
-  await canMake(page).click()
+  await toggleCanMake(page)
   await page.getByRole('link', { name: /Cherry Limeade/ }).click()
 
   await page.getByRole('button', { name: /^Sweetener:/ }).click()
@@ -109,7 +125,7 @@ test('with Can make on, the swap sheet marks what is not in My Bar, and it can s
 test('an Option is marked for a missing tool, with its ingredients ticked', async ({ page }) => {
   await seedMyBar(page, ['jigger'], ['limes', 'cherry-syrup', 'fresh-cherries', 'simple-syrup', 'soda-water', 'ice'])
   await page.goto('/')
-  await canMake(page).click()
+  await toggleCanMake(page)
   await page.getByRole('link', { name: /Cherry Limeade/ }).click()
   await page.getByRole('button', { name: /^Cherry:/ }).click()
   await expect(page.getByRole('dialog', { name: 'Choose cherry' }).getByRole('button', { name: /Muddled/ })).toContainText(
@@ -120,13 +136,13 @@ test('an Option is marked for a missing tool, with its ingredients ticked', asyn
 test('a missing garnish is not marked, and with Can make off nothing is', async ({ page }) => {
   await seedMyBar(page, ['jigger'], ['limes', 'cherry-syrup', 'simple-syrup', 'soda-water', 'ice'])
   await page.goto('/')
-  await canMake(page).click()
+  await toggleCanMake(page)
   await page.getByRole('link', { name: /Cherry Limeade/ }).click()
   await page.getByRole('button', { name: /^Garnish:/ }).click()
   await expect(page.getByRole('dialog', { name: 'Choose garnish' })).not.toContainText('Not in My Bar')
 
   await page.goto('/')
-  await canMake(page).click()
+  await toggleCanMake(page)
   await page.goto('/drinks/cherry-limeade')
   await page.getByRole('button', { name: /^Sweetener:/ }).click()
   await expect(page.getByRole('dialog', { name: 'Choose sweetener' })).not.toContainText('Not in My Bar')
@@ -168,7 +184,7 @@ test('the editor suggests Lemons for a charred lemon wheel, and ticking Lemons m
   await page.goto('/my-bar')
   await expect(page.getByRole('region', { name: 'From your drinks' })).toHaveCount(0)
   await page.goto('/')
-  await canMake(page).click()
+  await toggleCanMake(page)
   await expect(page.getByRole('link', { name: /Sunday Limeade/ })).toHaveCount(0)
 
   await page.getByRole('button', { name: 'Menu' }).click()
@@ -190,7 +206,7 @@ test('always on hand never blocks a Drink, and the choice is kept when it opens 
   await copyWithIngredient(page, 'yuzu juice', 'Always on hand')
 
   await page.goto('/')
-  await canMake(page).click()
+  await toggleCanMake(page)
   await page.getByRole('link', { name: /Sunday Limeade/ }).click()
   await page.getByRole('link', { name: 'Edit this drink' }).click()
   await expect(page.getByLabel('Counts as, ingredient 3').locator('option:checked')).toHaveText('Always on hand')
@@ -240,7 +256,7 @@ test('the choice survives a backup and restore', async ({ page, browser }) => {
 test('a backup gives back the same ticks on a cleared phone, and not the toggle', async ({ page, browser }) => {
   await seedMyBar(page, ['jigger'], limeadeBar)
   await page.goto('/')
-  await canMake(page).click()
+  await toggleCanMake(page)
   await page.goto('/settings')
   const downloading = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Download a backup' }).click()
@@ -262,6 +278,7 @@ test('a backup gives back the same ticks on a cleared phone, and not the toggle'
   }
   await expect(phone.getByRole('button', { name: 'Shaker', exact: true })).toHaveAttribute('aria-pressed', 'false')
   await phone.goto('/')
+  await openFilters(phone)
   await expect(canMake(phone)).toHaveAttribute('aria-pressed', 'false')
   await phoneContext.close()
 })
