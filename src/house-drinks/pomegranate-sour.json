@@ -1,0 +1,115 @@
+{
+  "formatVersion": 1,
+  "id": "pomegranate-sour",
+  "name": "Pomegranate Sour",
+  "glass": "coupe",
+  "method": "dry-shake",
+  "flavorTags": ["fruity", "citrus", "creamy"],
+  "shelf": "sours-sippers",
+  "added": "2026-11-06",
+  "photo": "photos/pomegranate-sour.jpg",
+  "ingredients": [
+    { "name": "pomegranate juice", "amount": 1.5, "unit": "oz" },
+    { "name": "fresh lime juice", "amount": 0.25, "unit": "oz" }
+  ],
+  "slots": [
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "simple-syrup",
+          "label": "Simple syrup",
+          "phrase": "simple syrup",
+          "ingredients": [{ "name": "simple syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#f5f5f4"
+        },
+        {
+          "id": "honey-syrup",
+          "label": "Honey syrup",
+          "phrase": "honey syrup",
+          "ingredients": [{ "name": "honey syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#e0a43a"
+        }
+      ]
+    },
+    {
+      "id": "foam",
+      "label": "Foam",
+      "options": [
+        {
+          "id": "egg-white",
+          "label": "Egg white",
+          "phrase": "egg white",
+          "ingredients": [{ "name": "egg white", "amount": 1, "unit": "count" }],
+          "dietaryTags": ["egg"],
+          "color": "#fefce8"
+        },
+        {
+          "id": "aquafaba",
+          "label": "Aquafaba",
+          "phrase": "aquafaba",
+          "ingredients": [{ "name": "aquafaba", "amount": 1, "unit": "oz" }],
+          "color": "#f5efd9"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "cherry",
+          "label": "Cocktail cherry",
+          "phrase": "a cocktail cherry on a pick",
+          "ingredients": [{ "name": "cocktail cherry", "amount": 1, "unit": "count" }],
+          "color": "#7f1d1d"
+        },
+        {
+          "id": "lime-wheel",
+          "label": "Lime wheel",
+          "phrase": "a lime wheel",
+          "ingredients": [{ "name": "lime wheel", "amount": 1, "unit": "count" }],
+          "color": "#84cc16"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "chill-glass",
+      "text": "Put a coupe in the freezer to chill while you mix."
+    },
+    {
+      "id": "add-base",
+      "text": "Pour the pomegranate juice, lime juice, {sweetener} and {foam} into a shaker tin.",
+      "tools": ["shaker", "jigger"]
+    },
+    {
+      "id": "dry-shake",
+      "text": "Dry shake without ice for about 15 seconds to whip up the foam.",
+      "tools": ["shaker"]
+    },
+    {
+      "id": "shake",
+      "text": "Fill the tin with ice and shake hard for about 12 seconds.",
+      "tools": ["shaker"]
+    },
+    {
+      "id": "fine-strain",
+      "text": "Fine strain into the chilled coupe.",
+      "tools": ["strainer", "fine-strainer"]
+    },
+    {
+      "id": "garnish",
+      "text": "Garnish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "sweetener": "simple-syrup",
+    "foam": "aquafaba",
+    "garnish": "cherry"
+  }
+}

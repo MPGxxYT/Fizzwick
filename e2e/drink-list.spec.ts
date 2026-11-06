@@ -35,7 +35,8 @@ test('search finds a Drink by an ingredient that only appears in an Option', asy
   await page.goto('/')
   await page.getByRole('searchbox', { name: 'Search drinks or ingredients' }).fill('sparkling limeade')
   await expect(page.getByRole('link', { name: /Cherry Limeade/ })).toBeVisible()
-  await expect(page.getByText('1 drink', { exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: /Raspberry Lime Rickey/ })).toBeVisible()
+  await expect(page.getByText('2 drinks', { exact: true })).toBeVisible()
 })
 
 test('a search with no matches says so and can be cleared', async ({ page }) => {
@@ -127,7 +128,7 @@ test('the ingredient filter finds every Drink that can use what you made', async
   await sheet.getByRole('button', { name: 'Close' }).click()
   await closeFilters(page)
 
-  await expect(page.getByText('3 drinks', { exact: true })).toBeVisible()
+  await expect(page.getByText('4 drinks', { exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: /Nojito/ })).toContainText('With muddled raspberries')
 })
 
@@ -158,7 +159,8 @@ test('a syrup Bar Term links to the Drinks that use it', async ({ page }) => {
   await expect(page).toHaveURL(/\/\?ing=raspberry-syrup/)
   await expect(page.getByRole('link', { name: /Italian Soda/ })).toBeVisible()
   await expect(page.getByRole('link', { name: /Raspberry Clover/ })).toBeVisible()
-  await expect(page.getByText('2 drinks', { exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: /Raspberry Lime Rickey/ })).toBeVisible()
+  await expect(page.getByText('3 drinks', { exact: true })).toBeVisible()
 })
 
 test('the Wheel Bar Term finds wheels, not every Drink with the same fruit', async ({ page }) => {
@@ -172,7 +174,7 @@ test('the Wheel Bar Term finds wheels, not every Drink with the same fruit', asy
 test('the Drinks sit on Shelves, and the Shelf strip jumps to one', async ({ page }) => {
   await page.goto('/')
   const smashes = page.getByRole('region', { name: 'Smashes' })
-  await expect(smashes.getByRole('link')).toHaveCount(3)
+  await expect(smashes.getByRole('link')).toHaveCount(5)
   await expect(smashes.getByRole('link', { name: /Nojito/ })).toBeVisible()
 
   const strip = page.getByRole('navigation', { name: 'Shelves' })

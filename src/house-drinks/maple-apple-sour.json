@@ -1,0 +1,108 @@
+{
+  "formatVersion": 1,
+  "id": "maple-apple-sour",
+  "name": "Maple Apple Sour",
+  "glass": "coupe",
+  "method": "shake",
+  "flavorTags": ["fruity", "spicy"],
+  "shelf": "sours-sippers",
+  "added": "2026-11-06",
+  "photo": "photos/maple-apple-sour.jpg",
+  "ingredients": [
+    { "name": "cloudy apple juice", "amount": 2, "unit": "oz" },
+    { "name": "fresh lemon juice", "amount": 0.25, "unit": "oz" }
+  ],
+  "slots": [
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "maple-syrup",
+          "label": "Maple syrup",
+          "phrase": "maple syrup",
+          "ingredients": [{ "name": "maple syrup", "amount": 0.25, "unit": "oz" }],
+          "color": "#b45309"
+        },
+        {
+          "id": "cinnamon-syrup",
+          "label": "Cinnamon syrup",
+          "phrase": "cinnamon syrup",
+          "ingredients": [{ "name": "cinnamon syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#a0522d"
+        }
+      ]
+    },
+    {
+      "id": "bitters",
+      "label": "Bitters",
+      "optional": true,
+      "options": [
+        {
+          "id": "aromatic-bitters",
+          "label": "Alcohol-free bitters",
+          "phrase": "bitters",
+          "ingredients": [{ "name": "alcohol-free aromatic bitters", "amount": 2, "unit": "dash" }],
+          "color": "#7c2d12"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "apple-slice",
+          "label": "Apple slice",
+          "phrase": "a thin apple slice",
+          "ingredients": [{ "name": "thin apple slice", "amount": 1, "unit": "count" }],
+          "color": "#dc2626"
+        },
+        {
+          "id": "nutmeg",
+          "label": "Grated nutmeg",
+          "phrase": "a little grated nutmeg",
+          "ingredients": [{ "name": "grated nutmeg", "unit": "to-taste" }],
+          "color": "#92400e"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "chill-glass",
+      "text": "Put a coupe in the freezer to chill while you mix."
+    },
+    {
+      "id": "add-base",
+      "text": "Pour the apple juice, lemon juice and {sweetener} into a shaker tin.",
+      "tools": ["shaker", "jigger"]
+    },
+    {
+      "id": "add-bitters",
+      "text": "Add the {bitters}.",
+      "when": { "slot": "bitters" }
+    },
+    {
+      "id": "shake",
+      "text": "Fill the tin with ice and shake hard for about 12 seconds.",
+      "tools": ["shaker"]
+    },
+    {
+      "id": "strain",
+      "text": "Strain into the chilled coupe.",
+      "tools": ["strainer"]
+    },
+    {
+      "id": "garnish",
+      "text": "Garnish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "sweetener": "maple-syrup",
+    "bitters": "aromatic-bitters",
+    "garnish": "apple-slice"
+  }
+}

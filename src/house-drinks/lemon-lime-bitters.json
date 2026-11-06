@@ -1,0 +1,76 @@
+{
+  "formatVersion": 1,
+  "id": "lemon-lime-bitters",
+  "name": "Lemon, Lime and Bitters",
+  "glass": "highball",
+  "method": "build",
+  "flavorTags": ["citrus", "bitter"],
+  "shelf": "crisp-bitter",
+  "added": "2026-11-06",
+  "photo": "photos/lemon-lime-bitters.jpg",
+  "ingredients": [
+    { "name": "alcohol-free aromatic bitters", "amount": 4, "unit": "dash" },
+    { "name": "fresh lime juice", "amount": 0.25, "unit": "oz" },
+    { "name": "ice", "unit": "fill" }
+  ],
+  "slots": [
+    {
+      "id": "fizz",
+      "label": "Fizz",
+      "options": [
+        {
+          "id": "lemon-lime-soda",
+          "label": "Lemon-lime soda",
+          "phrase": "lemon-lime soda",
+          "ingredients": [{ "name": "lemon-lime soda", "unit": "top" }],
+          "color": "#e7f5c4"
+        },
+        {
+          "id": "sparkling-lemonade",
+          "label": "Sparkling lemonade",
+          "phrase": "sparkling lemonade",
+          "ingredients": [{ "name": "sparkling lemonade", "unit": "top" }],
+          "color": "#fef9c3"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "options": [
+        {
+          "id": "lime-wheel",
+          "label": "Lime wheel",
+          "phrase": "a lime wheel",
+          "ingredients": [{ "name": "lime wheel", "amount": 1, "unit": "count" }],
+          "color": "#84cc16"
+        },
+        {
+          "id": "lemon-wheel",
+          "label": "Lemon wheel",
+          "phrase": "a lemon wheel",
+          "ingredients": [{ "name": "lemon wheel", "amount": 1, "unit": "count" }],
+          "color": "#fde047"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "add-bitters",
+      "text": "Dash the bitters into a highball glass and swirl to coat the inside.",
+      "tools": ["jigger"]
+    },
+    { "id": "fill-glass", "text": "Fill the glass with ice and add the lime juice." },
+    {
+      "id": "top",
+      "text": "Top with {fizz} and stir once with a barspoon. The bitters turn it a pale pink.",
+      "tools": ["barspoon"]
+    },
+    { "id": "garnish", "text": "Garnish with {garnish}." }
+  ],
+  "houseSpec": {
+    "fizz": "lemon-lime-soda",
+    "garnish": "lime-wheel"
+  }
+}

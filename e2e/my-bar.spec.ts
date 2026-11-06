@@ -334,7 +334,7 @@ test('lists tools first, with no stand-ins, garnish-only items or water', async 
     'Muddler',
     'Blender',
   ])
-  for (const name of ['Pickles', 'Rosemary', 'Cold water', 'Just-boiled water', 'Lemon wheel']) {
+  for (const name of ['Pickles', 'Celery', 'Cold water', 'Just-boiled water', 'Lemon wheel']) {
     await expect(page.getByRole('button', { name, exact: true })).toHaveCount(0)
   }
   await expect(page.getByRole('button', { name: 'Ice', exact: true })).toHaveCount(1)
