@@ -5,6 +5,8 @@
   "glass": "rocks",
   "method": "shake",
   "flavorTags": ["creamy", "spicy"],
+  "shelf": "creamy-frozen",
+  "added": "2026-10-21",
   "photo": "photos/cinnamon-cream.jpg",
   "ingredients": [
     { "name": "cinnamon syrup", "amount": 0.75, "unit": "oz" },

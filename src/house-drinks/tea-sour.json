@@ -5,6 +5,8 @@
   "glass": "coupe",
   "method": "dry-shake",
   "flavorTags": ["citrus", "creamy"],
+  "shelf": "sours-sippers",
+  "added": "2026-10-21",
   "photo": "photos/tea-sour.jpg",
   "ingredients": [
     { "name": "fresh lemon juice", "amount": 0.75, "unit": "oz" },

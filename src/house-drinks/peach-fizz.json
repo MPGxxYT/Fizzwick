@@ -5,6 +5,8 @@
   "glass": "highball",
   "method": "shake",
   "flavorTags": ["fruity", "citrus"],
+  "shelf": "fizzy-fruity",
+  "added": "2026-11-05",
   "photo": "photos/peach-fizz.jpg",
   "ingredients": [
     { "name": "ice", "unit": "fill" },

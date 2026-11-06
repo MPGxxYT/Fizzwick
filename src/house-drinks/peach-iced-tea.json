@@ -5,6 +5,8 @@
   "glass": "collins",
   "method": "build",
   "flavorTags": ["fruity"],
+  "shelf": "iced-tea-coolers",
+  "added": "2026-11-05",
   "photo": "photos/peach-iced-tea.jpg",
   "ingredients": [
     { "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" },

@@ -5,6 +5,8 @@
   "glass": "collins",
   "method": "build",
   "flavorTags": ["herbal", "citrus"],
+  "shelf": "fizzy-fruity",
+  "added": "2026-10-26",
   "photo": "photos/lavender-lemon-fizz.jpg",
   "ingredients": [
     { "name": "fresh lemon juice", "amount": 0.75, "unit": "oz" },

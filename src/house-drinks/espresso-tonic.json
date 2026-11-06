@@ -5,6 +5,8 @@
   "glass": "highball",
   "method": "build",
   "flavorTags": ["bitter", "citrus"],
+  "shelf": "crisp-bitter",
+  "added": "2026-10-26",
   "photo": "photos/espresso-tonic.jpg",
   "ingredients": [{ "name": "ice", "unit": "fill" }],
   "slots": [

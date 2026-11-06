@@ -5,6 +5,8 @@
   "glass": "highball",
   "method": "build",
   "flavorTags": ["citrus"],
+  "shelf": "iced-tea-coolers",
+  "added": "2026-10-26",
   "photo": "photos/porch-tea.jpg",
   "ingredients": [{ "name": "ice", "unit": "fill" }],
   "slots": [

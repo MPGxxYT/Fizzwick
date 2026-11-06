@@ -5,6 +5,8 @@
   "glass": "rocks",
   "method": "stir",
   "flavorTags": ["bitter", "smoky"],
+  "shelf": "sours-sippers",
+  "added": "2026-10-21",
   "photo": "photos/black-tea-old-fashioned.jpg",
   "ingredients": [
     { "name": "unsweetened cranberry juice", "amount": 0.5, "unit": "oz" },

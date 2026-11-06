@@ -5,6 +5,8 @@
   "glass": "hurricane",
   "method": "blend",
   "flavorTags": ["fruity", "citrus"],
+  "shelf": "creamy-frozen",
+  "added": "2026-10-21",
   "photo": "photos/frozen-lemonade.jpg",
   "ingredients": [
     { "name": "fresh lemon juice", "amount": 1, "unit": "oz" },

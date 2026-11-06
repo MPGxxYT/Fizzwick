@@ -5,6 +5,8 @@
   "glass": "highball",
   "method": "build",
   "flavorTags": ["citrus", "bitter"],
+  "shelf": "crisp-bitter",
+  "added": "2026-10-21",
   "photo": "photos/citrus-spritz.jpg",
   "ingredients": [{ "name": "ice", "unit": "fill" }],
   "slots": [

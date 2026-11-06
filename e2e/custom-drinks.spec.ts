@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { closeFilters, openFilters } from './filters.ts'
 
 test('Make a copy saves the Riff as a Custom Drink that works like a House Drink', async ({ page }) => {
   await page.goto('/drinks/cherry-limeade/fizz=soda-water')
@@ -14,7 +15,8 @@ test('Make a copy saves the Riff as a Custom Drink that works like a House Drink
   await expect(page.getByRole('heading', { name: 'Cherry Limeade · soda water' })).toBeVisible()
 
   await page.getByRole('link', { name: 'All drinks' }).click()
-  await page.getByRole('group', { name: 'Show' }).getByRole('button', { name: 'Yours' }).click()
+  await (await openFilters(page)).getByRole('group', { name: 'Show' }).getByRole('button', { name: 'Yours' }).click()
+  await closeFilters(page)
   await expect(page.getByText('1 drink', { exact: true })).toBeVisible()
   const card = page.getByRole('link', { name: /Cherry Limeade · soda water/ })
   await expect(card).toContainText('Yours')
@@ -63,6 +65,7 @@ test('deleting a Custom Drink asks first, then removes it and its Favorites', as
   await sheet.getByRole('button', { name: 'Delete', exact: true }).click()
   await expect(page).toHaveURL(/\/$/)
   await expect(page.getByRole('link', { name: /Cherry Limeade · soda water/ })).toHaveCount(0)
+  await openFilters(page)
   await expect(page.getByRole('group', { name: 'Show' })).toHaveCount(0)
 
   await page.goto('/favorites')
@@ -403,7 +406,7 @@ test('a photo picked in the editor shows on the card, small enough, and can be r
   await save(page)
   await page.goto('/?yours=1')
   await expect(card.locator('img')).toHaveCount(0)
-  await expect(card.locator('svg')).toHaveCount(1)
+  await expect(card.locator('.dl-row-sketch')).toHaveCount(1)
 })
 
 test('a backup restored on a cleared phone gives back the Custom Drinks, photos and Favorites', async ({

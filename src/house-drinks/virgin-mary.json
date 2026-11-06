@@ -5,6 +5,8 @@
   "glass": "highball",
   "method": "build",
   "flavorTags": ["spicy", "savory"],
+  "shelf": "warm-savory",
+  "added": "2026-10-26",
   "photo": "photos/virgin-mary.jpg",
   "ingredients": [
     { "name": "tomato juice", "amount": 4, "unit": "oz" },

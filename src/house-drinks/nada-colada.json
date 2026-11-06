@@ -5,6 +5,8 @@
   "glass": "hurricane",
   "method": "shake",
   "flavorTags": ["creamy", "fruity"],
+  "shelf": "creamy-frozen",
+  "added": "2026-10-26",
   "photo": "photos/nada-colada.jpg",
   "ingredients": [
     { "name": "pineapple juice", "amount": 3, "unit": "oz" },

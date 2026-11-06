@@ -53,6 +53,14 @@ _Avoid_: Bookmark, saved drink
 A label describing how a Drink tastes, such as citrus, herbal, creamy, or spicy.
 _Avoid_: Category, genre
 
+**Shelf**:
+A group on the Drink list, by how a House Drink tastes or is served, such as Fizzy & fruity or Warm & savory. Each House Drink sits on one. Custom Drinks sit on Yours, at the top.
+_Avoid_: Category, section, collection
+
+**New**:
+The mark on the House Drinks added in the latest batch, going by each Drink's added date. It lasts 30 days, or until the next batch takes it over.
+_Avoid_: Recent, fresh, latest
+
 **Dietary Tag**:
 A label on an Option marking caffeine, dairy, nuts, or egg. A Riff shows the Dietary Tags of its current Options.
 _Avoid_: Allergen flag, warning

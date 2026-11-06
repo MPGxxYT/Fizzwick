@@ -36,6 +36,13 @@ describe('House Drink files', () => {
     for (const drink of houseDrinks) expect(isCustomDrinkId(drink.id)).toBe(false)
   })
 
+  test('each Drink sits on a Shelf and says when it was added', () => {
+    for (const drink of houseDrinks) {
+      expect(drink.shelf, drink.id).toBeDefined()
+      expect(drink.added, drink.id).toBeDefined()
+    }
+  })
+
   test('each Drink points at its own photo', () => {
     for (const drink of houseDrinks) expect(drink.photo).toBe(`photos/${drink.id}.jpg`)
   })

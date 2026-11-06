@@ -5,6 +5,8 @@
   "glass": "collins",
   "method": "build",
   "flavorTags": ["fruity"],
+  "shelf": "fizzy-fruity",
+  "added": "2026-10-26",
   "photo": "photos/shirley-temple.jpg",
   "ingredients": [{ "name": "ice", "unit": "fill" }],
   "slots": [

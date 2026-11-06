@@ -7,7 +7,17 @@ export const FORMAT_VERSION = 1
 export const GLASSES = ['collins', 'highball', 'rocks', 'coupe', 'mug', 'hurricane'] as const
 export const METHODS = ['build', 'shake', 'stir', 'blend', 'dry-shake'] as const
 export const FLAVOR_TAGS = ['citrus', 'fruity', 'herbal', 'creamy', 'spicy', 'bitter', 'smoky', 'savory'] as const
-export const DIETARY_TAGS = ['caffeine', 'dairy', 'nuts', 'egg'] as const
+// The Drink list's groups, in the order they show.
+export const SHELVES = [
+  'fizzy-fruity',
+  'crisp-bitter',
+  'smashes',
+  'iced-tea-coolers',
+  'sours-sippers',
+  'creamy-frozen',
+  'warm-savory',
+] as const
+export const DIETARY_TAGS =['caffeine', 'dairy', 'nuts', 'egg'] as const
 export const TOOLS = [
   'jigger',
   'barspoon',
@@ -82,6 +92,11 @@ export const drinkSchema = z.strictObject({
   glass: oneOf(GLASSES, 'glass'),
   method: oneOf(METHODS, 'Method'),
   flavorTags: z.array(oneOf(FLAVOR_TAGS, 'Flavor Tag')).min(1),
+  // The Shelf a House Drink sits on, and the day it shipped, which the Drink
+  // list's New mark goes by. Optional, so older files still parse; a House
+  // Drink test requires both.
+  shelf: oneOf(SHELVES, 'Shelf').optional(),
+  added: z.iso.date({ error: 'must be a date such as "2026-11-05"' }).optional(),
   // House Drinks ship a photo path; a Custom Drink's photo lives on the phone.
   photo: z.string().min(1).optional(),
   // Fixed ingredients, outside any Slot.
@@ -100,5 +115,6 @@ export type Ingredient = Drink['ingredients'][number]
 export type Glass = (typeof GLASSES)[number]
 export type Method = (typeof METHODS)[number]
 export type FlavorTag = (typeof FLAVOR_TAGS)[number]
+export type Shelf = (typeof SHELVES)[number]
 export type DietaryTag = (typeof DIETARY_TAGS)[number]
 export type Tool = (typeof TOOLS)[number]

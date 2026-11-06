@@ -5,6 +5,8 @@
   "glass": "collins",
   "method": "blend",
   "flavorTags": ["creamy", "fruity"],
+  "shelf": "creamy-frozen",
+  "added": "2026-10-26",
   "photo": "photos/mango-lassi.jpg",
   "ingredients": [
     { "name": "cold water", "amount": 2, "unit": "oz" },
