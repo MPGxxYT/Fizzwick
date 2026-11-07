@@ -8,6 +8,7 @@
   "shelf": "sours-sippers",
   "added": "2026-10-21",
   "photo": "photos/spiced-pear.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish and get the froth from shaking." },
   "ingredients": [{ "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" }],
   "slots": [
     {

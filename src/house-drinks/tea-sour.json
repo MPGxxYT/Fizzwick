@@ -8,6 +8,7 @@
   "shelf": "sours-sippers",
   "added": "2026-10-21",
   "photo": "photos/tea-sour.jpg",
+  "sip": { "by": "rim", "why": "so every sip comes through the foam." },
   "ingredients": [
     { "name": "fresh lemon juice", "amount": 0.75, "unit": "oz" },
     { "name": "simple syrup", "amount": 0.75, "unit": "oz" }

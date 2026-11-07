@@ -8,6 +8,7 @@
   "shelf": "crisp-bitter",
   "added": "2026-10-21",
   "photo": "photos/ginger-mule.jpg",
+  "sip": { "by": "straw", "why": "since crushed ice packs in too tight to sip over. Keep it short, so your nose stays near the garnish." },
   "ingredients": [
     { "name": "crushed ice", "unit": "fill" },
     { "name": "fresh lime juice", "amount": 0.5, "unit": "oz" }
@@ -42,7 +43,7 @@
           "id": "muddled-blackberries",
           "label": "Muddled blackberries",
           "phrase": "blackberries",
-          "ingredients": [{ "name": "blackberries", "amount": 4, "unit": "count" }],
+          "ingredients": [{ "name": "blackberries", "amount": 4, "unit": "count", "size": { "each": "thumb-tip size" } }],
           "addSteps": [
             {
               "step": {

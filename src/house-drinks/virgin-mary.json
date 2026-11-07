@@ -8,6 +8,7 @@
   "shelf": "warm-savory",
   "added": "2026-10-26",
   "photo": "photos/virgin-mary.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish as you sip." },
   "ingredients": [
     { "name": "tomato juice", "amount": 4, "unit": "oz" },
     { "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" },

@@ -8,6 +8,7 @@
   "shelf": "fizzy-fruity",
   "added": "2026-10-22",
   "photo": "photos/blueberry-fizz.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish and get the bubbles at the top." },
   "ingredients": [
     { "name": "ice", "unit": "fill" },
     { "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" }
@@ -52,14 +53,14 @@
           "id": "basil",
           "label": "Basil",
           "phrase": "basil leaves",
-          "ingredients": [{ "name": "basil leaves", "amount": 4, "unit": "count" }],
+          "ingredients": [{ "name": "basil leaves", "amount": 4, "unit": "count", "size": { "each": "thumb-length" } }],
           "color": "#3f9d4a"
         },
         {
           "id": "mint",
           "label": "Mint",
           "phrase": "mint leaves",
-          "ingredients": [{ "name": "mint leaves", "amount": 6, "unit": "count" }],
+          "ingredients": [{ "name": "mint leaves", "amount": 6, "unit": "count", "size": { "each": "thumbnail-size" } }],
           "color": "#6fcf6a"
         }
       ]

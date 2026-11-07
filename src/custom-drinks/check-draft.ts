@@ -24,11 +24,14 @@ export function blankDrink(randomId: string): Drink {
   }
 }
 
-const finishIngredient = ({ name, amount, unit, countsAs }: Ingredient): Ingredient => ({
+// A size only means something for a counted thing, so it goes if the unit
+// changes.
+const finishIngredient = ({ name, amount, unit, countsAs, size }: Ingredient): Ingredient => ({
   name: name.trim(),
   ...(measured(unit) ? { amount } : {}),
   unit,
   ...(countsAs ? { countsAs } : {}),
+  ...(size && unit === 'count' ? { size } : {}),
 })
 const measured = (unit: string) => (MEASURED_UNITS as readonly string[]).includes(unit)
 const placeholders = (text: string) => [...text.matchAll(/\{([^}]*)\}/g)].map(([, name]) => name)

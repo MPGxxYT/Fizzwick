@@ -8,6 +8,7 @@
   "shelf": "sours-sippers",
   "added": "2026-10-21",
   "photo": "photos/black-tea-old-fashioned.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish as you sip." },
   "ingredients": [
     { "name": "unsweetened cranberry juice", "amount": 0.5, "unit": "oz" },
     { "name": "alcohol-free aromatic bitters", "amount": 2, "unit": "dash" },

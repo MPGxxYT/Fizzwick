@@ -8,6 +8,7 @@
   "shelf": "iced-tea-coolers",
   "added": "2026-11-06",
   "photo": "photos/hibiscus-cooler.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish and get the bubbles at the top." },
   "ingredients": [
     { "name": "chilled hibiscus tea", "amount": 4, "unit": "oz" },
     { "name": "fresh lime juice", "amount": 0.25, "unit": "oz" },

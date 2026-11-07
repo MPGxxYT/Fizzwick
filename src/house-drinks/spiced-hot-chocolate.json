@@ -8,6 +8,7 @@
   "shelf": "warm-savory",
   "added": "2026-11-06",
   "photo": "photos/spiced-hot-chocolate.jpg",
+  "sip": { "by": "rim", "why": "so you smell the spices. A straw sends the heat straight to your tongue." },
   "ingredients": [
     { "name": "chocolate syrup", "amount": 1, "unit": "oz" },
     { "name": "drops of vanilla extract", "amount": 2, "unit": "count" }

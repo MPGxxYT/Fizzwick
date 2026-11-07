@@ -82,6 +82,17 @@ export function formatIngredient({ name, amount, unit }: Ingredient): { measure:
   }
 }
 
+// The size a counted thing should be, under its name: "Each about
+// thumbnail-size."
+export function sizeNote({ size }: Ingredient): string | undefined {
+  return size && `Each about ${size.each}.`
+}
+
+// How to drink it: "Sip it from the rim, so you smell the mint."
+export function sipLine({ by, why }: { by: 'rim' | 'straw'; why: string }): string {
+  return `Sip it ${by === 'rim' ? 'from the rim' : 'through a straw'}, ${why}`
+}
+
 // The lines the name is set on. One or two words get a line each (Garden /
 // Smash). Longer names get two lines, split where the lines come out closest
 // in length, the shorter one first on a tie (Black Tea / Old Fashioned).

@@ -17,7 +17,7 @@ const PREPPED = {
     'grenadine',
   ],
   'How to cut it': ['wheel', 'wedge'],
-  'How to do it': ['express', 'rim', 'roll'],
+  'How to do it': ['shake', 'fine-strain', 'double-strain', 'express', 'rim', 'roll'],
 }
 
 describe('Bar Terms', () => {

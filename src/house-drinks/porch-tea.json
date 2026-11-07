@@ -8,6 +8,7 @@
   "shelf": "iced-tea-coolers",
   "added": "2026-10-26",
   "photo": "photos/porch-tea.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish as you sip." },
   "ingredients": [{ "name": "ice", "unit": "fill" }],
   "slots": [
     {

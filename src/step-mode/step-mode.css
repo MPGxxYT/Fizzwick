@@ -521,6 +521,11 @@
   animation: sm-cheers-pop 0.6s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--shift, 0s) + 2.45s) both;
 }
 
+.sm-finish-sip {
+  margin: 0.4rem 0 0;
+  animation: sm-fade 0.5s ease-out calc(var(--shift, 0s) + 2.9s) both;
+}
+
 .sm-finish-ready {
   margin: 0.4rem 0 0;
   font-size: 1.15rem;

@@ -8,6 +8,7 @@
   "shelf": "fizzy-fruity",
   "added": "2026-11-06",
   "photo": "photos/cranberry-lime-fizz.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish and get the bubbles at the top." },
   "ingredients": [
     { "name": "fresh lime juice", "amount": 0.25, "unit": "oz" },
     { "name": "ice", "unit": "fill" }

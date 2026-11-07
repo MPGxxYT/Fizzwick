@@ -8,10 +8,11 @@
   "shelf": "warm-savory",
   "added": "2026-11-06",
   "photo": "photos/hot-spiced-cider.jpg",
+  "sip": { "by": "rim", "why": "so you smell the spices. A straw sends the heat straight to your tongue." },
   "ingredients": [
-    { "name": "cinnamon sticks", "amount": 1, "unit": "count" },
+    { "name": "cinnamon sticks", "amount": 1, "unit": "count", "size": { "each": "finger-length" } },
     { "name": "cloves", "amount": 4, "unit": "count" },
-    { "name": "orange slices", "amount": 2, "unit": "count" }
+    { "name": "orange slices", "amount": 2, "unit": "count", "size": { "each": "pencil-thick" } }
   ],
   "slots": [
     {

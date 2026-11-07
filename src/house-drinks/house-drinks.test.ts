@@ -43,6 +43,10 @@ describe('House Drink files', () => {
     }
   })
 
+  test('each Drink says how to sip it, in a sentence', () => {
+    for (const drink of houseDrinks) expect(drink.sip?.why, drink.id).toMatch(/^[a-z].*\.$/)
+  })
+
   test('each Drink points at its own photo', () => {
     for (const drink of houseDrinks) expect(drink.photo).toBe(`photos/${drink.id}.jpg`)
   })

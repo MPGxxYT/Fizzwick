@@ -36,6 +36,16 @@ export const BAR_TERMS: BarTerm[] = [
     forms: ['shake', 'shaken', 'shook'],
     definition:
       'Shaking the ingredients hard with ice in a sealed shaker tin. It chills and mixes the drink, adds a little water, and whips in air.',
+    prep: {
+      heading: 'How to do it',
+      steps: [
+        'Fill the tin about two-thirds full of ice.',
+        'Seal it tight. With two tins, set the small one in at an angle and tap its base once.',
+        'Hold one end in each hand and shake hard for about 10 seconds, until the outside frosts.',
+        'To open two tins, hold the big one and smack its rim with the heel of your hand where they meet.',
+        'Strain right away, since the ice keeps melting into the drink.',
+      ],
+    },
   },
   {
     id: 'stir',
@@ -75,12 +85,31 @@ export const BAR_TERMS: BarTerm[] = [
     name: 'Fine strain',
     kind: 'technique',
     definition: 'Straining through a fine mesh strainer to catch seeds, pulp and chips of ice, so the drink comes out smooth.',
+    prep: {
+      heading: 'How to do it',
+      steps: [
+        'Hold the fine strainer over the glass and pour through it.',
+        'When it slows to drips, press any pulp with a barspoon. Fruit holds a lot of the drink.',
+        "Tap the strainer once on the rim, and you're done.",
+      ],
+    },
   },
   {
     id: 'double-strain',
     name: 'Double strain',
     kind: 'technique',
     definition: "Straining through the shaker's strainer and a fine strainer at the same time, for an extra smooth drink.",
+    prep: {
+      heading: 'How to do it',
+      steps: [
+        'Hold the fine strainer over the glass, and the shaker strainer in place with your index finger.',
+        'Tip the tin firmly, nearly upside down. A slow pour runs down the outside.',
+        'Watch the fine strainer, not the tin. If it fills up, tilt back until it drains.',
+        'When the stream breaks into drips, press the pulp with a barspoon. Fruit holds a lot of the drink.',
+        "Give the tin one sharp flick, and you're done.",
+        "Don't wait for the drips to stop. What comes later is mostly melted ice.",
+      ],
+    },
   },
   {
     id: 'express',

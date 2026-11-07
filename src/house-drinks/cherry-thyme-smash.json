@@ -8,8 +8,9 @@
   "shelf": "smashes",
   "added": "2026-11-06",
   "photo": "photos/cherry-thyme-smash.jpg",
+  "sip": { "by": "straw", "why": "since crushed ice packs in too tight to sip over. Keep it short, so your nose stays near the garnish." },
   "ingredients": [
-    { "name": "fresh cherries, pitted", "amount": 6, "unit": "count" },
+    { "name": "fresh cherries, pitted", "amount": 6, "unit": "count", "size": { "each": "grape-size" } },
     { "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" },
     { "name": "crushed ice", "unit": "fill" },
     { "name": "soda water", "amount": 2, "unit": "oz" }
@@ -24,21 +25,21 @@
           "id": "thyme",
           "label": "Thyme",
           "phrase": "thyme sprigs",
-          "ingredients": [{ "name": "thyme sprigs", "amount": 2, "unit": "count" }],
+          "ingredients": [{ "name": "thyme sprigs", "amount": 2, "unit": "count", "size": { "each": "finger-length" } }],
           "color": "#6b8e4e"
         },
         {
           "id": "basil",
           "label": "Basil",
           "phrase": "basil leaves",
-          "ingredients": [{ "name": "basil leaves", "amount": 2, "unit": "count" }],
+          "ingredients": [{ "name": "basil leaves", "amount": 2, "unit": "count", "size": { "each": "thumb-length" } }],
           "color": "#3f9d4a"
         },
         {
           "id": "mint",
           "label": "Mint",
           "phrase": "mint leaves",
-          "ingredients": [{ "name": "mint leaves", "amount": 6, "unit": "count" }],
+          "ingredients": [{ "name": "mint leaves", "amount": 6, "unit": "count", "size": { "each": "thumbnail-size" } }],
           "color": "#6fcf6a"
         }
       ]
@@ -122,7 +123,7 @@
     },
     {
       "id": "add-soda",
-      "text": "Pour the soda water over the top and stir once with a barspoon.",
+      "text": "Pour the soda water over the top and stir with a barspoon, lifting from the bottom so it mixes in.",
       "tools": ["jigger", "barspoon"]
     },
     {

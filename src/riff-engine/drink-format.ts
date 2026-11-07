@@ -17,6 +17,7 @@ export const SHELVES = [
   'creamy-frozen',
   'warm-savory',
 ] as const
+export const SIP_WAYS = ['rim', 'straw'] as const
 export const DIETARY_TAGS =['caffeine', 'dairy', 'nuts', 'egg'] as const
 export const TOOLS = [
   'jigger',
@@ -50,6 +51,9 @@ const ingredient = z.strictObject({
   // What it counts as on My Bar: a Bar Item ID, "own" or "on-hand". With none,
   // or an ID this version doesn't know, it goes by a suggestion from the name.
   countsAs: z.string().min(1).optional(),
+  // For a counted thing that comes in sizes, such as berries or leaves: the
+  // size one should be, next to something everyone knows ("thumbnail-size").
+  size: z.strictObject({ each: z.string().min(1) }).optional(),
 })
 
 const step = z.strictObject({
@@ -99,6 +103,10 @@ export const drinkSchema = z.strictObject({
   added: z.iso.date({ error: 'must be a date such as "2026-11-05"' }).optional(),
   // House Drinks ship a photo path; a Custom Drink's photo lives on the phone.
   photo: z.string().min(1).optional(),
+  // How to drink it, and why: from the rim to smell the garnish, or through a
+  // straw for crushed ice and fruit. Optional, so older files still parse; a
+  // House Drink test requires it.
+  sip: z.strictObject({ by: oneOf(SIP_WAYS, 'way to sip'), why: z.string().min(1) }).optional(),
   // Fixed ingredients, outside any Slot.
   ingredients: z.array(ingredient),
   slots: z.array(slot).min(1),
@@ -118,3 +126,4 @@ export type FlavorTag = (typeof FLAVOR_TAGS)[number]
 export type Shelf = (typeof SHELVES)[number]
 export type DietaryTag = (typeof DIETARY_TAGS)[number]
 export type Tool = (typeof TOOLS)[number]
+export type SipWay = (typeof SIP_WAYS)[number]

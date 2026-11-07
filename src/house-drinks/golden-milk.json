@@ -8,6 +8,7 @@
   "shelf": "warm-savory",
   "added": "2026-11-06",
   "photo": "photos/golden-milk.jpg",
+  "sip": { "by": "rim", "why": "so you smell the spices. A straw sends the heat straight to your tongue." },
   "ingredients": [
     { "name": "ground turmeric", "amount": 1, "unit": "barspoon" },
     { "name": "ground black pepper", "unit": "to-taste" },

@@ -8,6 +8,7 @@
   "shelf": "iced-tea-coolers",
   "added": "2026-11-05",
   "photo": "photos/peach-iced-tea.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish as you sip." },
   "ingredients": [
     { "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" },
     { "name": "ice", "unit": "fill" }
@@ -52,7 +53,7 @@
           "id": "ripe-peach",
           "label": "Ripe peach",
           "phrase": "peach slices",
-          "ingredients": [{ "name": "ripe peach slices", "amount": 4, "unit": "count" }],
+          "ingredients": [{ "name": "ripe peach slices", "amount": 4, "unit": "count", "size": { "each": "an eighth of a peach" } }],
           "color": "#f6a96b"
         },
         {
