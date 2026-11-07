@@ -8,6 +8,7 @@
   "shelf": "fizzy-fruity",
   "added": "2026-11-06",
   "photo": "photos/grape-fizz.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish and get the bubbles at the top." },
   "ingredients": [
     { "name": "ice", "unit": "fill" },
     { "name": "concord grape juice", "amount": 2, "unit": "oz" },

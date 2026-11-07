@@ -8,6 +8,7 @@
   "shelf": "smashes",
   "added": "2026-11-05",
   "photo": "photos/blackberry-smash.jpg",
+  "sip": { "by": "straw", "why": "since crushed ice packs in too tight to sip over. Keep it short, so your nose stays near the garnish." },
   "ingredients": [
     { "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" },
     { "name": "crushed ice", "unit": "fill" },
@@ -22,14 +23,14 @@
           "id": "fresh-blackberries",
           "label": "Fresh blackberries",
           "phrase": "blackberries",
-          "ingredients": [{ "name": "blackberries", "amount": 8, "unit": "count" }],
+          "ingredients": [{ "name": "blackberries", "amount": 8, "unit": "count", "size": { "each": "thumb-tip size" } }],
           "color": "#3b1f4a"
         },
         {
           "id": "frozen-blackberries",
           "label": "Frozen blackberries, thawed",
           "phrase": "thawed blackberries",
-          "ingredients": [{ "name": "frozen blackberries, thawed", "amount": 8, "unit": "count" }],
+          "ingredients": [{ "name": "frozen blackberries, thawed", "amount": 8, "unit": "count", "size": { "each": "thumb-tip size" } }],
           "color": "#2e1a3d"
         }
       ]
@@ -43,21 +44,21 @@
           "id": "mint",
           "label": "Mint",
           "phrase": "mint leaves",
-          "ingredients": [{ "name": "mint leaves", "amount": 6, "unit": "count" }],
+          "ingredients": [{ "name": "mint leaves", "amount": 6, "unit": "count", "size": { "each": "thumbnail-size" } }],
           "color": "#6fcf6a"
         },
         {
           "id": "sage",
           "label": "Sage",
           "phrase": "sage leaves",
-          "ingredients": [{ "name": "sage leaves", "amount": 3, "unit": "count" }],
+          "ingredients": [{ "name": "sage leaves", "amount": 3, "unit": "count", "size": { "each": "thumb-length" } }],
           "color": "#8aa37b"
         },
         {
           "id": "thyme",
           "label": "Thyme",
           "phrase": "thyme sprigs",
-          "ingredients": [{ "name": "thyme sprigs", "amount": 2, "unit": "count" }],
+          "ingredients": [{ "name": "thyme sprigs", "amount": 2, "unit": "count", "size": { "each": "finger-length" } }],
           "color": "#6b8e4e"
         }
       ]
@@ -141,7 +142,7 @@
     },
     {
       "id": "add-soda",
-      "text": "Pour the soda water over the top and stir once with a barspoon.",
+      "text": "Pour the soda water over the top and stir with a barspoon, lifting from the bottom so it mixes in.",
       "tools": ["jigger", "barspoon"]
     },
     {

@@ -8,6 +8,7 @@
   "shelf": "creamy-frozen",
   "added": "2026-10-26",
   "photo": "photos/nada-colada.jpg",
+  "sip": { "by": "straw", "why": "since crushed ice packs in too tight to sip over. Keep it short, so your nose stays near the garnish." },
   "ingredients": [
     { "name": "pineapple juice", "amount": 3, "unit": "oz" },
     { "name": "fresh lime juice", "amount": 0.5, "unit": "oz" }

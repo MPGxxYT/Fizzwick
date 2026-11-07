@@ -271,6 +271,20 @@
   padding: 0.4rem 0;
 }
 
+.dp-size {
+  display: block;
+  color: var(--dp-soft);
+  font-size: 0.85rem;
+}
+
+/* How to drink it, after the last step. */
+.dp-sip {
+  margin: 1.25rem 0 0;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  background: var(--dp-mint);
+}
+
 .dp-measure {
   color: var(--dp-cherry);
   font-weight: 600;

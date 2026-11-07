@@ -8,6 +8,7 @@
   "shelf": "fizzy-fruity",
   "added": "2026-11-06",
   "photo": "photos/raspberry-lime-rickey.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish and get the bubbles at the top." },
   "ingredients": [
     { "name": "fresh lime juice", "amount": 0.5, "unit": "oz" },
     { "name": "ice", "unit": "fill" }
@@ -30,7 +31,7 @@
           "label": "Fresh raspberries",
           "phrase": "raspberries",
           "ingredients": [
-            { "name": "raspberries", "amount": 6, "unit": "count" },
+            { "name": "raspberries", "amount": 6, "unit": "count", "size": { "each": "fingertip-size" } },
             { "name": "simple syrup", "amount": 0.75, "unit": "oz" }
           ],
           "removeSteps": ["add-base"],

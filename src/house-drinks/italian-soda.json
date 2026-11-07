@@ -8,6 +8,7 @@
   "shelf": "fizzy-fruity",
   "added": "2026-10-26",
   "photo": "photos/italian-soda.jpg",
+  "sip": { "by": "straw", "why": "and stir with it as you go, so the cream mixes in." },
   "ingredients": [{ "name": "ice", "unit": "fill" }],
   "slots": [
     {

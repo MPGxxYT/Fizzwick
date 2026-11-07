@@ -8,6 +8,7 @@
   "shelf": "sours-sippers",
   "added": "2026-11-06",
   "photo": "photos/maple-apple-sour.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish and get the froth from shaking." },
   "ingredients": [
     { "name": "cloudy apple juice", "amount": 2, "unit": "oz" },
     { "name": "fresh lemon juice", "amount": 0.25, "unit": "oz" }

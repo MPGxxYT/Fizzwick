@@ -8,6 +8,7 @@
   "shelf": "sours-sippers",
   "added": "2026-11-06",
   "photo": "photos/pomegranate-sour.jpg",
+  "sip": { "by": "rim", "why": "so every sip comes through the foam." },
   "ingredients": [
     { "name": "pomegranate juice", "amount": 1.5, "unit": "oz" },
     { "name": "fresh lime juice", "amount": 0.25, "unit": "oz" }

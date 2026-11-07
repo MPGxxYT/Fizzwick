@@ -8,6 +8,7 @@
   "shelf": "sours-sippers",
   "added": "2026-10-26",
   "photo": "photos/raspberry-clover.jpg",
+  "sip": { "by": "rim", "why": "so every sip comes through the foam." },
   "ingredients": [
     { "name": "fresh lemon juice", "amount": 0.75, "unit": "oz" },
     { "name": "raspberries on a pick", "amount": 3, "unit": "count" }
@@ -29,7 +30,7 @@
           "label": "Fresh raspberries",
           "phrase": "simple syrup",
           "ingredients": [
-            { "name": "raspberries", "amount": 6, "unit": "count" },
+            { "name": "raspberries", "amount": 6, "unit": "count", "size": { "each": "fingertip-size" } },
             { "name": "simple syrup", "amount": 0.75, "unit": "oz" }
           ],
           "addSteps": [

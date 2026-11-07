@@ -8,6 +8,7 @@
   "shelf": "sours-sippers",
   "added": "2026-10-26",
   "photo": "photos/hibiscus-stir.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish as you sip." },
   "ingredients": [
     { "name": "fresh lime juice", "amount": 0.25, "unit": "oz" },
     { "name": "alcohol-free aromatic bitters", "amount": 2, "unit": "dash" }

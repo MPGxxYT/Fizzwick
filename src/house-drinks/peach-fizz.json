@@ -8,6 +8,7 @@
   "shelf": "fizzy-fruity",
   "added": "2026-11-05",
   "photo": "photos/peach-fizz.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish and get the bubbles at the top." },
   "ingredients": [
     { "name": "ice", "unit": "fill" },
     { "name": "fresh lemon juice", "amount": 0.5, "unit": "oz" }
@@ -21,7 +22,7 @@
           "id": "ripe-peach",
           "label": "Ripe peach",
           "phrase": "peach slices",
-          "ingredients": [{ "name": "ripe peach slices", "amount": 3, "unit": "count" }],
+          "ingredients": [{ "name": "ripe peach slices", "amount": 3, "unit": "count", "size": { "each": "an eighth of a peach" } }],
           "color": "#f6a96b"
         },
         {
@@ -52,21 +53,21 @@
           "id": "basil",
           "label": "Basil",
           "phrase": "basil leaves",
-          "ingredients": [{ "name": "basil leaves", "amount": 2, "unit": "count" }],
+          "ingredients": [{ "name": "basil leaves", "amount": 2, "unit": "count", "size": { "each": "thumb-length" } }],
           "color": "#3f9d4a"
         },
         {
           "id": "mint",
           "label": "Mint",
           "phrase": "mint leaves",
-          "ingredients": [{ "name": "mint leaves", "amount": 6, "unit": "count" }],
+          "ingredients": [{ "name": "mint leaves", "amount": 6, "unit": "count", "size": { "each": "thumbnail-size" } }],
           "color": "#6fcf6a"
         },
         {
           "id": "thyme",
           "label": "Thyme",
           "phrase": "thyme sprigs",
-          "ingredients": [{ "name": "thyme sprigs", "amount": 2, "unit": "count" }],
+          "ingredients": [{ "name": "thyme sprigs", "amount": 2, "unit": "count", "size": { "each": "finger-length" } }],
           "color": "#6b8e4e"
         }
       ]

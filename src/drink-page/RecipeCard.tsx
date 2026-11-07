@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { markBarTerms } from '../bar-terms'
 import { isMakeAhead, MAX_SERVINGS, type Riff } from '../riff-engine'
-import { formatIngredient, TOOL_NAMES } from './format'
+import { formatIngredient, sipLine, sizeNote, TOOL_NAMES } from './format'
 import { TermText } from './TermText'
 
 // The ingredients with a drink count, then the steps. Anything to do ahead
@@ -120,6 +120,7 @@ export function RecipeCard({
       <ul className="dp-ingredients" aria-label="Ingredients">
         {riff.ingredients.map((ingredient, i) => {
           const { measure } = formatIngredient(ingredient)
+          const size = sizeNote(ingredient)
           return (
             <li key={lineKey(lines.ingredients[i], i)} className={lineClass(lines.ingredients[i])}>
               <span className="dp-measure-slot">
@@ -129,6 +130,7 @@ export function RecipeCard({
               </span>
               <span>
                 <TermText segments={marked[ingredientsFrom + i * 2 + 1]} />
+                {size && <span className="dp-size">{size}</span>}
               </span>
             </li>
           )
@@ -159,6 +161,7 @@ export function RecipeCard({
           </li>
         ))}
       </ol>
+      {riff.sip && <p className="dp-sip">{sipLine(riff.sip)}</p>}
     </section>
   )
 }

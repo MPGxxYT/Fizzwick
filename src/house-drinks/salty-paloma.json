@@ -8,6 +8,7 @@
   "shelf": "crisp-bitter",
   "added": "2026-10-26",
   "photo": "photos/salty-paloma.jpg",
+  "sip": { "by": "rim", "why": "so each sip picks up the rim." },
   "ingredients": [
     { "name": "fresh grapefruit juice", "amount": 2, "unit": "oz" },
     { "name": "fresh lime juice", "amount": 0.5, "unit": "oz" },

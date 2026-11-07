@@ -6,6 +6,7 @@ import {
   type Ingredient,
   type Method,
   type Option,
+  type SipWay,
   type Step,
   type Tool,
 } from './drink-format'
@@ -68,6 +69,7 @@ export interface Riff {
   colors: string[]
   isHouseSpec: boolean
   defaultFavoriteName: string
+  sip?: { by: SipWay; why: string }
 }
 
 export const METHOD_TOOLS: Record<Method, Tool[]> = {
@@ -224,6 +226,7 @@ function resolve(drink: Drink, requested: Picks, { servings = 1, units = 'oz', g
     batchNotes,
     dietaryTags: DIETARY_TAGS.filter((tag) => tags.has(tag)),
     colors: options.map((option) => option.color),
+    ...(drink.sip ? { sip: drink.sip } : {}),
     isHouseSpec: drink.slots.every((slot) => picks[slot.id] === drink.houseSpec[slot.id]),
     // Only what differs from the House Spec ("Cherry Limeade · soda water"),
     // so a list of Favorites of one Drink reads as their differences.

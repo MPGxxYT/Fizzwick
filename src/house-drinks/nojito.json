@@ -8,8 +8,9 @@
   "shelf": "smashes",
   "added": "2026-10-21",
   "photo": "photos/nojito.jpg",
+  "sip": { "by": "straw", "why": "since crushed ice packs in too tight to sip over. Keep it short, so your nose stays near the garnish." },
   "ingredients": [
-    { "name": "mint leaves", "amount": 8, "unit": "count" },
+    { "name": "mint leaves", "amount": 8, "unit": "count", "size": { "each": "thumbnail-size" } },
     { "name": "fresh lime juice", "amount": 0.75, "unit": "oz" },
     { "name": "crushed ice", "unit": "fill" },
     { "name": "mint sprig", "amount": 1, "unit": "count" }
@@ -51,7 +52,7 @@
           "id": "muddled-raspberries",
           "label": "Muddled raspberries",
           "phrase": "raspberries",
-          "ingredients": [{ "name": "raspberries", "amount": 4, "unit": "count" }],
+          "ingredients": [{ "name": "raspberries", "amount": 4, "unit": "count", "size": { "each": "fingertip-size" } }],
           "addSteps": [
             {
               "after": "muddle",

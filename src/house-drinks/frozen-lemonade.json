@@ -8,6 +8,7 @@
   "shelf": "creamy-frozen",
   "added": "2026-10-21",
   "photo": "photos/frozen-lemonade.jpg",
+  "sip": { "by": "straw", "why": "since it is too thick to sip from the rim." },
   "ingredients": [
     { "name": "fresh lemon juice", "amount": 1, "unit": "oz" },
     { "name": "ice", "amount": 1, "unit": "cup" }

@@ -2,12 +2,12 @@ import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 
 import { markBarTerms, type Segment } from '../bar-terms'
 import { Bubbles, ColorSpots, IceCubes } from '../drink-page/Ambience'
 import { hasIceInGlass, isFizzy } from '../drink-page/ambience-for'
-import { formatIngredient, glassCount, TOOL_NAMES } from '../drink-page/format'
+import { formatIngredient, glassCount, sipLine, sizeNote, TOOL_NAMES } from '../drink-page/format'
 import { GlassSketch } from '../drink-page/GlassSketch'
 import { TermText } from '../drink-page/TermText'
 import { newFavorite, sameRiff } from '../favorites/favorite'
 import { favoriteId, putFavorite, useFavorites } from '../favorites/store'
-import type { Drink, Riff, RiffStep } from '../riff-engine'
+import type { Drink, Ingredient, Riff, RiffStep } from '../riff-engine'
 import { primeAlarm, soundAlarm } from './alarm'
 import { pickCheers } from './cheers'
 import { finishShow, ICE_SECONDS } from './finish-show'
@@ -306,13 +306,14 @@ function MiseEnPlace({ riff }: { riff: Riff }) {
 
       <h3 id="sm-ingredients-heading">Ingredients</h3>
       <ul className="dp-ingredients sm-ingredients" aria-labelledby="sm-ingredients-heading">
-        {ingredients.map((_ingredient, i) => (
+        {ingredients.map((ingredient, i) => (
           <li key={i}>
             <span className="dp-measure">
               <TermText segments={marked[tools.length + i * 2]} linkToPage={false} />
             </span>
             <span>
               <TermText segments={marked[tools.length + i * 2 + 1]} linkToPage={false} />
+              <SizeNote ingredient={ingredient} />
             </span>
           </li>
         ))}
@@ -324,6 +325,11 @@ function MiseEnPlace({ riff }: { riff: Riff }) {
       ))}
     </section>
   )
+}
+
+function SizeNote({ ingredient }: { ingredient: Ingredient }) {
+  const size = sizeNote(ingredient)
+  return size ? <span className="dp-size">{size}</span> : null
 }
 
 // The phrase the finish showed last, so the next one is different.
@@ -356,6 +362,7 @@ function Finish({ riff, cheers }: { riff: Riff; cheers: string }) {
       <FinishShow riff={riff} show={show} />
       <h2 id="sm-finish-heading">{cheers}</h2>
       <p className="sm-finish-ready">Your {riff.name} is ready.</p>
+      {riff.sip && <p className="sm-finish-sip">{sipLine(riff.sip)}</p>}
       {favorites.status === 'unavailable' || failed ? (
         <p className="sm-lead" role="alert">
           This browser won't keep Favorites.
@@ -506,13 +513,14 @@ function StepItem({
         </h2>
         {step.ingredients.length > 0 && (
           <ul className="dp-ingredients sm-step-amounts" aria-label="How much to use">
-            {step.ingredients.map((_ingredient, i) => (
+            {step.ingredients.map((ingredient, i) => (
               <li key={i}>
                 <span className="dp-measure">
                   <TermText segments={amounts[i * 2]} linkToPage={false} />
                 </span>
                 <span>
                   <TermText segments={amounts[i * 2 + 1]} linkToPage={false} />
+                  <SizeNote ingredient={ingredient} />
                 </span>
               </li>
             ))}

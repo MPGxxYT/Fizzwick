@@ -8,6 +8,7 @@
   "shelf": "iced-tea-coolers",
   "added": "2026-11-06",
   "photo": "photos/cucumber-lime-cooler.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish and get the bubbles at the top." },
   "ingredients": [
     { "name": "thin cucumber slices", "amount": 4, "unit": "count" },
     { "name": "fresh lime juice", "amount": 0.5, "unit": "oz" },
@@ -23,14 +24,14 @@
           "id": "mint",
           "label": "Mint",
           "phrase": "mint leaves",
-          "ingredients": [{ "name": "mint leaves", "amount": 6, "unit": "count" }],
+          "ingredients": [{ "name": "mint leaves", "amount": 6, "unit": "count", "size": { "each": "thumbnail-size" } }],
           "color": "#6fcf6a"
         },
         {
           "id": "basil",
           "label": "Basil",
           "phrase": "basil leaves",
-          "ingredients": [{ "name": "basil leaves", "amount": 2, "unit": "count" }],
+          "ingredients": [{ "name": "basil leaves", "amount": 2, "unit": "count", "size": { "each": "thumb-length" } }],
           "color": "#3f9d4a"
         }
       ]

@@ -8,6 +8,7 @@
   "shelf": "fizzy-fruity",
   "added": "2026-10-26",
   "photo": "photos/shirley-temple.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish and get the bubbles at the top." },
   "ingredients": [{ "name": "ice", "unit": "fill" }],
   "slots": [
     {

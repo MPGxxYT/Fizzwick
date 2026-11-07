@@ -8,6 +8,7 @@
   "shelf": "fizzy-fruity",
   "added": "2026-10-21",
   "photo": "photos/cherry-limeade.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish and get the bubbles at the top." },
   "ingredients": [
     { "name": "ice", "unit": "fill" },
     { "name": "fresh lime juice", "amount": 0.75, "unit": "oz" }
@@ -28,7 +29,7 @@
           "id": "muddled-cherries",
           "label": "Muddled fresh cherries",
           "phrase": "cherries",
-          "ingredients": [{ "name": "fresh cherries, pitted", "amount": 5, "unit": "count" }],
+          "ingredients": [{ "name": "fresh cherries, pitted", "amount": 5, "unit": "count", "size": { "each": "grape-size" } }],
           "removeSteps": ["add-base"],
           "addSteps": [
             {

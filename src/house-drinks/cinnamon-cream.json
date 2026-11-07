@@ -8,6 +8,7 @@
   "shelf": "creamy-frozen",
   "added": "2026-10-21",
   "photo": "photos/cinnamon-cream.jpg",
+  "sip": { "by": "rim", "why": "so you get the froth from shaking." },
   "ingredients": [
     { "name": "cinnamon syrup", "amount": 0.75, "unit": "oz" },
     { "name": "drops of vanilla extract", "amount": 2, "unit": "count" },

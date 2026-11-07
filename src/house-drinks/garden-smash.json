@@ -8,6 +8,7 @@
   "shelf": "smashes",
   "added": "2026-10-21",
   "photo": "photos/garden-smash.jpg",
+  "sip": { "by": "rim", "why": "so you smell the herb sprig." },
   "ingredients": [
     { "name": "cucumber slices", "amount": 3, "unit": "count" },
     { "name": "ice", "unit": "fill" }
@@ -22,7 +23,7 @@
           "label": "Mint",
           "phrase": "mint",
           "ingredients": [
-            { "name": "mint leaves", "amount": 6, "unit": "count" },
+            { "name": "mint leaves", "amount": 6, "unit": "count", "size": { "each": "thumbnail-size" } },
             { "name": "mint sprig, for garnish", "amount": 1, "unit": "count" }
           ],
           "color": "#22c55e"
@@ -32,7 +33,7 @@
           "label": "Basil",
           "phrase": "basil",
           "ingredients": [
-            { "name": "basil leaves", "amount": 4, "unit": "count" },
+            { "name": "basil leaves", "amount": 4, "unit": "count", "size": { "each": "thumb-length" } },
             { "name": "basil sprig, for garnish", "amount": 1, "unit": "count" }
           ],
           "color": "#15803d"
@@ -42,7 +43,7 @@
           "label": "Thyme",
           "phrase": "thyme",
           "ingredients": [
-            { "name": "thyme sprigs", "amount": 2, "unit": "count" },
+            { "name": "thyme sprigs", "amount": 2, "unit": "count", "size": { "each": "finger-length" } },
             { "name": "thyme sprig, for garnish", "amount": 1, "unit": "count" }
           ],
           "color": "#6b8e4e"

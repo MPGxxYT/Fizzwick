@@ -226,6 +226,23 @@ Sugar and sweetness per oz, compared with app simple syrup. Sweetness uses fruct
 - Grapefruit at about 2% means 2 oz matches about 0.75 oz lemon. The Citrus Spritz lemon Option at 0.75 oz with 0.25 extra sweetener is about right (0.82%, 18:1).
 - Blood orange has about 40% of grapefruit's acid if it behaves like orange juice. With tonic it comes out very sweet at about 45:1. Drop the sweetener to 0.25.
 
+## Sizes for counted things
+
+A count of berries or leaves only means something at a known size, and a taster found strawberries and mint varying a lot (2026-11-06). So each counted thing that goes into a drink says the size one should be, next to something everyone knows: "Each about thumbnail-size." Inches and grams were tried first and read as too fussy. The amounts did not change: the sizes describe what the counts already assumed.
+
+| Ingredient | Size | Checked against |
+|---|---|---|
+| Mint leaves | thumbnail-size | USDA: 2 spearmint leaves 0.3 g |
+| Basil, sage leaves | thumb-length | USDA: 5 basil leaves 2.5 g |
+| Thyme, rosemary sprigs, cinnamon sticks | finger-length | |
+| Strawberries | walnut-size | USDA: medium is 1¼ in across, 12 g |
+| Raspberries | fingertip-size | USDA: 10 berries 19 g |
+| Blackberries | thumb-tip size | USDA lists only a cup, 144 g |
+| Sweet cherries | grape-size | USDA: 1 cherry 8.2 g |
+| Peach slices, pineapple chunks, orange slices | an eighth of a peach, bite-size, pencil-thick | |
+
+Blueberries have no size: they vary less than the rest. The comparisons are a working guess. Check them at the next taste test.
+
 ## Evidence
 
 **Book access.** *Liquid Intelligence* and *Good Drinks* could not be read online. The Internet Archive copy of Arnold is borrow-only and its search returned "Item not available". Nothing below comes from a direct reading of either book. *Death & Co* and the *PDT* book were also not read, and I could not confirm their specs. A search result showed a [Kindred Cocktails entry for a Death & Co drink](https://kindredcocktails.com/node/5681) at 0.75 lime and 0.75 simple, but I did not open it.
@@ -276,3 +293,4 @@ Sugar and sweetness per oz, compared with app simple syrup. Sweetness uses fruct
 - USDA SR Legacy: [lemon juice](https://fdc.nal.usda.gov/food-details/167747/nutrients), [lime juice](https://fdc.nal.usda.gov/food-details/168156/nutrients), [honey](https://fdc.nal.usda.gov/food-details/169640/nutrients) (82% sugars, 40.9 fructose, 35.8 glucose), [agave](https://fdc.nal.usda.gov/food-details/170277/nutrients) (68%, 55.6 fructose, 12.4 glucose), [maple](https://fdc.nal.usda.gov/food-details/169661/nutrients) (60%, nearly all sucrose), [grenadine](https://fdc.nal.usda.gov/food-details/168088/nutrients) (46.6% sugars, 66.9% carbs), [white grapefruit juice](https://fdc.nal.usda.gov/food-details/173039/nutrients).
 - Sodas and other juices come from the [SR28 nutrient](https://www.ars.usda.gov/ARSUserFiles/80400525/Data/SR/sr28/asc/NUT_DATA.txt) and [weight](https://www.ars.usda.gov/ARSUserFiles/80400525/Data/SR/sr28/asc/WEIGHT.txt) tables: ginger ale 8.9, tonic 8.8, lemon-lime 10.4, cola 9.9, prepared lemonade 10, all g per 100 g.
 - Sweetness: [Wikipedia on fructose](https://en.wikipedia.org/wiki/Fructose) gives 1.2 to 1.8 times sucrose, citing Hanover and White 1993, which I did not read. It also says relative sweetness falls as temperature rises. Glucose at 74 and fructose at 163 come from an [American Bee Journal review](https://americanbeejournal.mydigitalpublication.com/april-2017-vol-157-no-4/page-395) seen only in a search result. The page would not load.
+- Portion weights: USDA FoodData Central SR Legacy portions for [strawberries](https://fdc.nal.usda.gov/food-details/167762/portions), [raspberries](https://fdc.nal.usda.gov/food-details/167755/portions), [blueberries](https://fdc.nal.usda.gov/food-details/171711/portions), [sweet cherries](https://fdc.nal.usda.gov/food-details/171719/portions), [blackberries](https://fdc.nal.usda.gov/food-details/173946/portions), [spearmint](https://fdc.nal.usda.gov/food-details/173475/portions) and [basil](https://fdc.nal.usda.gov/food-details/172232/portions), read through the FDC API on 2026-11-06.

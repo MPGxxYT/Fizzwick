@@ -8,6 +8,7 @@
   "shelf": "fizzy-fruity",
   "added": "2026-10-26",
   "photo": "photos/lavender-lemon-fizz.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish and get the bubbles at the top." },
   "ingredients": [
     { "name": "fresh lemon juice", "amount": 0.75, "unit": "oz" },
     { "name": "ice", "unit": "fill" }
