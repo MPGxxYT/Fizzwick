@@ -61,6 +61,10 @@ _Avoid_: Category, section, collection
 The mark on the House Drinks added in the latest batch, going by each Drink's added date. It lasts 30 days, or until the next batch takes it over.
 _Avoid_: Recent, fresh, latest
 
+**Holiday**:
+The mark on the House Drinks made for Christmas and the winter holidays, shown in red and white candy cane stripes. It stays all year; the Drinks keep their usual Shelves.
+_Avoid_: Seasonal, Christmas tag, festive
+
 **Dietary Tag**:
 A label on an Option marking caffeine, dairy, nuts, or egg. A Riff shows the Dietary Tags of its current Options.
 _Avoid_: Allergen flag, warning

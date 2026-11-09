@@ -1,0 +1,91 @@
+{
+  "formatVersion": 1,
+  "id": "gingerbread-steamer",
+  "name": "Gingerbread Steamer",
+  "glass": "mug",
+  "method": "build",
+  "flavorTags": ["creamy", "spicy"],
+  "shelf": "warm-savory",
+  "added": "2026-11-09",
+  "photo": "photos/gingerbread-steamer.jpg",
+  "sip": { "by": "rim", "why": "so you smell the spices. A straw sends the heat straight to your tongue." },
+  "occasion": "holiday",
+  "ingredients": [
+    { "name": "ginger syrup", "amount": 0.75, "unit": "oz" },
+    { "name": "molasses", "amount": 1, "unit": "barspoon" },
+    { "name": "ground cinnamon", "unit": "to-taste" }
+  ],
+  "slots": [
+    {
+      "id": "milk",
+      "label": "Milk",
+      "options": [
+        {
+          "id": "whole-milk",
+          "label": "Whole milk",
+          "phrase": "whole milk",
+          "ingredients": [{ "name": "whole milk", "amount": 6, "unit": "oz" }],
+          "dietaryTags": ["dairy"],
+          "color": "#f3e6d3"
+        },
+        {
+          "id": "oat-milk",
+          "label": "Oat milk",
+          "phrase": "oat milk",
+          "ingredients": [{ "name": "oat milk", "amount": 6, "unit": "oz" }],
+          "color": "#e6d4b8"
+        },
+        {
+          "id": "almond-milk",
+          "label": "Almond milk",
+          "phrase": "almond milk",
+          "ingredients": [{ "name": "almond milk", "amount": 6, "unit": "oz" }],
+          "dietaryTags": ["nuts"],
+          "color": "#eadcc6"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "nutmeg",
+          "label": "Grated nutmeg",
+          "phrase": "a little grated nutmeg",
+          "ingredients": [{ "name": "grated nutmeg", "unit": "to-taste" }],
+          "color": "#92400e"
+        },
+        {
+          "id": "cinnamon-stick",
+          "label": "Cinnamon stick",
+          "phrase": "a cinnamon stick to stir with",
+          "ingredients": [{ "name": "cinnamon stick", "amount": 1, "unit": "count" }],
+          "color": "#8b4a24"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "warm-milk",
+      "text": "Warm the {milk} in a small pot over medium heat until it steams, without letting it boil."
+    },
+    {
+      "id": "add-spice",
+      "text": "Take it off the heat and stir in the ginger syrup, molasses and a pinch of ground cinnamon until the molasses dissolves.",
+      "tools": ["jigger", "barspoon"]
+    },
+    { "id": "pour", "text": "Pour into a mug." },
+    {
+      "id": "garnish",
+      "text": "Finish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "milk": "whole-milk",
+    "garnish": "nutmeg"
+  }
+}

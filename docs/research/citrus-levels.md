@@ -94,6 +94,21 @@ Golden Milk and Spiced Hot Chocolate have no acid to balance. Their sweetener is
 
 Tart cherry juice acid is my guess at about 1.2%, the weakest number here. Mulled Cherry sits near Ginger Toddy's 29:1, which is fine as it is. Fructose tastes less sweet as it warms (see Sugar data), so a hot drink can carry more sugar for each gram of acid than a cold one.
 
+### Holiday drinks
+
+Added 2026-11-09, marked Holiday. None is taste tested. The cold ones are written to the same targets as the batches above, and the warm tea to the warm drinks' range.
+
+| Drink | Glass | Citrus, sweetener | Acid | Sugar:acid |
+|---|---|---|---|---|
+| Poinsettia Sparkler | coupe 6, no ice | 1.5 cranberry, 0.5 orange juice, sparkling white grape juice top | about 0.6% | about 24:1 |
+| Cranberry Rosemary Tonic | highball 10 | 0.25 lime, 1.5 cranberry, tonic top | about 0.4% | about 24:1 |
+| Clementine Ginger Fizz | highball 10 | 2 clementine, 0.25 lemon, 0.25 honey syrup, ginger ale top | about 0.55% | about 18:1 |
+| Spiced Orange Tea | mug 6 | 1 orange juice, 0.25 lemon, 0.5 honey | about 0.35% | about 29:1 |
+
+Clementine juice acid is my guess at about 0.8%, the same as orange (Soural 2022), and sparkling white grape juice at 0.6%, the same as Concord. Clementine Ginger Fizz has no soda water Option: without the ginger ale's sugar it would drop to about 10:1. Spiced Orange Tea sits at Ginger Toddy's 29:1, like Mulled Cherry.
+
+Peppermint Hot Chocolate, Gingerbread Steamer, Holiday Nog and Sugar Cookie Shake have no acid to balance. The steamer's 0.75 oz ginger syrup and barspoon of molasses match Chai Steamer's 0.75 oz chai syrup. The Nog uses 0.75 demerara or simple, or 0.5 maple, from the Swaps table.
+
 ## Blueberry Fizz test
 
 The user's tastings below are one person's taste, with simple syrup. The first two were in a 16 oz Collins-style glass, the last in a 10 oz highball. Numbers are my estimates.

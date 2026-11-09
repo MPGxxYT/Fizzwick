@@ -1,0 +1,128 @@
+{
+  "formatVersion": 1,
+  "id": "holiday-nog",
+  "name": "Holiday Nog",
+  "glass": "rocks",
+  "method": "dry-shake",
+  "flavorTags": ["creamy", "spicy"],
+  "shelf": "creamy-frozen",
+  "added": "2026-11-09",
+  "photo": "photos/holiday-nog.jpg",
+  "sip": { "by": "rim", "why": "so you smell the nutmeg on the foam." },
+  "occasion": "holiday",
+  "ingredients": [
+    { "name": "drops of vanilla extract", "amount": 2, "unit": "count" },
+    { "name": "grated nutmeg", "unit": "to-taste" }
+  ],
+  "slots": [
+    {
+      "id": "milk",
+      "label": "Milk",
+      "options": [
+        {
+          "id": "rich",
+          "label": "Milk and half-and-half",
+          "phrase": "whole milk and half-and-half",
+          "ingredients": [
+            { "name": "whole milk", "amount": 2.5, "unit": "oz" },
+            { "name": "half-and-half", "amount": 1, "unit": "oz" }
+          ],
+          "dietaryTags": ["dairy"],
+          "color": "#f6edd4"
+        },
+        {
+          "id": "oat-milk",
+          "label": "Oat milk",
+          "phrase": "oat milk",
+          "ingredients": [{ "name": "oat milk", "amount": 3.5, "unit": "oz" }],
+          "color": "#eadfc8"
+        }
+      ]
+    },
+    {
+      "id": "egg",
+      "label": "Egg",
+      "options": [
+        {
+          "id": "pasteurized-egg",
+          "label": "Pasteurized egg",
+          "phrase": "pasteurized egg",
+          "ingredients": [{ "name": "pasteurized egg", "amount": 1, "unit": "count" }],
+          "dietaryTags": ["egg"],
+          "color": "#f4d58d"
+        },
+        {
+          "id": "no-egg",
+          "label": "No egg",
+          "phrase": "no egg",
+          "ingredients": [],
+          "method": "shake",
+          "color": "#f8f1e3"
+        }
+      ]
+    },
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "demerara-syrup",
+          "label": "Demerara syrup",
+          "phrase": "demerara syrup",
+          "ingredients": [{ "name": "demerara syrup", "amount": 0.75, "unit": "oz" }],
+          "color": "#c08a4a"
+        },
+        {
+          "id": "maple-syrup",
+          "label": "Maple syrup",
+          "phrase": "maple syrup",
+          "ingredients": [{ "name": "maple syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#b45309"
+        },
+        {
+          "id": "simple-syrup",
+          "label": "Simple syrup",
+          "phrase": "simple syrup",
+          "ingredients": [{ "name": "simple syrup", "amount": 0.75, "unit": "oz" }],
+          "color": "#f5f5f4"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "add-base",
+      "text": "Pour the {milk} and {sweetener} into a shaker tin and add the vanilla extract.",
+      "tools": ["jigger", "shaker"]
+    },
+    {
+      "id": "add-egg",
+      "text": "Crack the {egg} into the tin.",
+      "when": { "slot": "egg", "option": "pasteurized-egg" }
+    },
+    {
+      "id": "dry-shake",
+      "text": "Dry shake: seal the tin and shake hard without ice to whip up the egg.",
+      "tools": ["shaker"],
+      "durationSeconds": 15,
+      "when": { "slot": "egg", "option": "pasteurized-egg" }
+    },
+    {
+      "id": "shake",
+      "text": "Fill the tin with ice and shake until it is ice cold.",
+      "tools": ["shaker"],
+      "durationSeconds": 12
+    },
+    {
+      "id": "strain",
+      "text": "Strain into a rocks glass with no ice, so the foam sits on top.",
+      "tools": ["strainer"]
+    },
+    { "id": "garnish", "text": "Grate a little nutmeg over the foam." }
+  ],
+  "houseSpec": {
+    "milk": "rich",
+    "egg": "pasteurized-egg",
+    "sweetener": "demerara-syrup"
+  }
+}

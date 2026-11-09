@@ -18,6 +18,8 @@ export const SHELVES = [
   'warm-savory',
 ] as const
 export const SIP_WAYS = ['rim', 'straw'] as const
+// Times of year a House Drink is made for, each shown as a mark on the list.
+export const OCCASIONS = ['holiday'] as const
 export const DIETARY_TAGS =['caffeine', 'dairy', 'nuts', 'egg'] as const
 export const TOOLS = [
   'jigger',
@@ -107,6 +109,9 @@ export const drinkSchema = z.strictObject({
   // straw for crushed ice and fruit. Optional, so older files still parse; a
   // House Drink test requires it.
   sip: z.strictObject({ by: oneOf(SIP_WAYS, 'way to sip'), why: z.string().min(1) }).optional(),
+  // The time of year it's made for, such as the winter holidays. Most Drinks
+  // have none.
+  occasion: oneOf(OCCASIONS, 'occasion').optional(),
   // Fixed ingredients, outside any Slot.
   ingredients: z.array(ingredient),
   slots: z.array(slot).min(1),
@@ -127,3 +132,4 @@ export type Shelf = (typeof SHELVES)[number]
 export type DietaryTag = (typeof DIETARY_TAGS)[number]
 export type Tool = (typeof TOOLS)[number]
 export type SipWay = (typeof SIP_WAYS)[number]
+export type Occasion = (typeof OCCASIONS)[number]

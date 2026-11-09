@@ -28,7 +28,7 @@ export function suggestTools(text: string): Tool[] {
 // (rooibos, chamomile, hibiscus) have no caffeine; nutmeg isn't a nut.
 const TAG_WORDS: [DietaryTag, RegExp][] = [
   ['caffeine', /\b(coffee|espresso|cold brew|black tea|green tea|lapsang|chai|matcha|earl grey|cola)\b/],
-  ['dairy', /\b(?<!(oat|almond|coconut|soy|rice|cashew) )(milk|cream|yogurt)\b|half-and-half|\bbutter\b|\bcheese\b/],
+  ['dairy', /\b(?<!(oat|almond|coconut|soy|rice|cashew) )(?<!dairy-free [a-z ]*)(milk|cream|yogurt)\b|half-and-half|\bbutter\b|\bcheese\b/],
   ['nuts', /\b(almond|walnut|pecan|hazelnut|cashew|pistachio|peanut|orgeat)/],
   ['egg', /\begg\b/],
 ]

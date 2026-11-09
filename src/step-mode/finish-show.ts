@@ -57,8 +57,10 @@ const GARNISHES: { kind: GarnishKind; word: RegExp; colors: [RegExp, string][]; 
   },
   {
     kind: 'dust',
-    word: /\b(nutmeg|cinnamon|coconut|cardamom)\b(?! stick)/,
+    word: /\b(nutmeg|cinnamon|coconut|cardamom|sprinkles|crushed candy cane)\b(?! stick)/,
     colors: [
+      [/\bcandy cane\b/, '#e8505b'],
+      [/\bsprinkles\b/, '#d6202f'],
       [/\bnutmeg\b/, '#9a6a3f'],
       [/\bcinnamon\b/, '#b45f2c'],
       [/\bcoconut\b/, '#c8955a'],
@@ -82,14 +84,16 @@ const GARNISHES: { kind: GarnishKind; word: RegExp; colors: [RegExp, string][]; 
     colors: [
       [/\bblueberr/, '#4f46e5'],
       [/\braspberr/, '#e11d48'],
+      [/\bcranberr/, '#b3123a'],
       [/\bginger\b/, '#e0a43a'],
     ],
     color: '#e0a43a',
   },
   {
     kind: 'stick',
-    word: /\b(stick|stalk|spear)\b/,
+    word: /\b(stick|stalk|spear|(?<!crushed )candy cane)\b/,
     colors: [
+      [/\bcandy cane\b/, '#d6202f'],
       [/\bcinnamon\b/, '#8b4a24'],
       [/\bcelery\b/, '#86b04f'],
       [/\bpickle\b/, '#5f7d2e'],
@@ -104,6 +108,7 @@ function CITRUS(): [RegExp, string][] {
     [/\blemon\b/, '#fde047'],
     [/\bgrapefruit\b/, '#f87171'],
     [/\borange\b/, '#fb923c'],
+    [/\bclementine\b/, '#fb8c1e'],
     [/\bpineapple\b/, '#facc15'],
   ]
 }

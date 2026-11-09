@@ -343,7 +343,7 @@
   line-height: 1.15;
 }
 
-/* New and Yours, after the name. */
+/* New, Holiday and Yours, after the name. */
 .dl-row-mark {
   padding: 0.05rem 0.5rem;
   border: 1px solid var(--link);
@@ -358,6 +358,16 @@
   border-color: var(--accent);
   background: var(--accent);
   color: #24173b;
+}
+
+/* A candy cane: red and white stripes around a white pill. */
+.dl-row-mark.is-holiday {
+  border: 3px solid transparent;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    repeating-linear-gradient(-45deg, #d6202f 0 4px, #fff 4px 8px) border-box;
+  color: #c0182a;
+  padding: 0 0.45rem;
 }
 
 /* What a found Riff swaps from the House Spec. */

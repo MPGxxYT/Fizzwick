@@ -370,7 +370,7 @@ describe('ingredientChoices', () => {
 
   test('offers no water, one Ice and one Lemons', () => {
     expect(labels.filter((label) => /water$/i.test(label))).toEqual(['Soda water', 'Tonic water'])
-    expect(labels.filter((label) => /\bice\b/i.test(label))).toEqual(['Ice'])
+    expect(labels.filter((label) => /\bice\b(?! cream)/i.test(label))).toEqual(['Ice'])
     expect(labels.filter((label) => /lemon/i.test(label))).toEqual(['Lemon-lime soda', 'Lemons', 'Sparkling lemonade'])
   })
 

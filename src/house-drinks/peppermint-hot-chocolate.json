@@ -1,0 +1,93 @@
+{
+  "formatVersion": 1,
+  "id": "peppermint-hot-chocolate",
+  "name": "Peppermint Hot Chocolate",
+  "glass": "mug",
+  "method": "build",
+  "flavorTags": ["creamy", "herbal"],
+  "shelf": "warm-savory",
+  "added": "2026-11-09",
+  "photo": "photos/peppermint-hot-chocolate.jpg",
+  "sip": { "by": "rim", "why": "so you smell the peppermint. A straw sends the heat straight to your tongue." },
+  "occasion": "holiday",
+  "ingredients": [
+    { "name": "chocolate syrup", "amount": 1, "unit": "oz" },
+    { "name": "drops of peppermint extract", "amount": 2, "unit": "count" }
+  ],
+  "slots": [
+    {
+      "id": "milk",
+      "label": "Milk",
+      "options": [
+        {
+          "id": "whole-milk",
+          "label": "Whole milk",
+          "phrase": "whole milk",
+          "ingredients": [{ "name": "whole milk", "amount": 6, "unit": "oz" }],
+          "dietaryTags": ["dairy"],
+          "color": "#fbfaf5"
+        },
+        {
+          "id": "rich",
+          "label": "Milk and half-and-half",
+          "phrase": "whole milk and half-and-half",
+          "ingredients": [
+            { "name": "whole milk", "amount": 4, "unit": "oz" },
+            { "name": "half-and-half", "amount": 2, "unit": "oz" }
+          ],
+          "dietaryTags": ["dairy"],
+          "color": "#f8f1e3"
+        },
+        {
+          "id": "oat-milk",
+          "label": "Oat milk",
+          "phrase": "oat milk",
+          "ingredients": [{ "name": "oat milk", "amount": 6, "unit": "oz" }],
+          "color": "#eadfc8"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "candy-cane",
+          "label": "Candy cane",
+          "phrase": "a candy cane hooked over the rim, to stir with",
+          "ingredients": [{ "name": "candy cane", "amount": 1, "unit": "count" }],
+          "color": "#d6202f"
+        },
+        {
+          "id": "crushed-candy-cane",
+          "label": "Crushed candy cane",
+          "phrase": "a sprinkle of crushed candy cane",
+          "ingredients": [{ "name": "crushed candy cane", "unit": "to-taste" }],
+          "color": "#e8505b"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "warm-milk",
+      "text": "Warm the {milk} in a small pot over medium heat until it steams, without letting it boil."
+    },
+    {
+      "id": "add-chocolate",
+      "text": "Take it off the heat and stir in the chocolate syrup and peppermint extract until smooth.",
+      "tools": ["jigger", "barspoon"]
+    },
+    { "id": "pour", "text": "Pour into a mug." },
+    {
+      "id": "garnish",
+      "text": "Finish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "milk": "whole-milk",
+    "garnish": "candy-cane"
+  }
+}
