@@ -1,0 +1,90 @@
+{
+  "formatVersion": 1,
+  "id": "sugar-cookie-shake",
+  "name": "Sugar Cookie Shake",
+  "glass": "hurricane",
+  "method": "blend",
+  "flavorTags": ["creamy"],
+  "shelf": "creamy-frozen",
+  "added": "2026-11-09",
+  "photo": "photos/sugar-cookie-shake.jpg",
+  "sip": { "by": "straw", "why": "because a thick shake is hard to drink from the rim." },
+  "occasion": "holiday",
+  "ingredients": [
+    { "name": "drops of vanilla extract", "amount": 3, "unit": "count" },
+    { "name": "ground cinnamon", "unit": "to-taste" }
+  ],
+  "slots": [
+    {
+      "id": "base",
+      "label": "Ice cream and milk",
+      "options": [
+        {
+          "id": "vanilla-ice-cream",
+          "label": "Vanilla ice cream and whole milk",
+          "phrase": "vanilla ice cream and whole milk",
+          "ingredients": [
+            { "name": "vanilla ice cream", "amount": 1.5, "unit": "cup" },
+            { "name": "whole milk", "amount": 3, "unit": "oz" }
+          ],
+          "dietaryTags": ["dairy"],
+          "color": "#fbf6e9"
+        },
+        {
+          "id": "dairy-free",
+          "label": "Dairy-free ice cream and oat milk",
+          "phrase": "dairy-free vanilla ice cream and oat milk",
+          "ingredients": [
+            { "name": "dairy-free vanilla ice cream", "amount": 1.5, "unit": "cup" },
+            { "name": "oat milk", "amount": 3, "unit": "oz" }
+          ],
+          "color": "#efe4cc"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "sprinkles",
+          "label": "Red and green sprinkles",
+          "phrase": "a pinch of red and green sprinkles",
+          "ingredients": [{ "name": "red and green sprinkles", "unit": "to-taste" }],
+          "color": "#d6202f"
+        },
+        {
+          "id": "crushed-candy-cane",
+          "label": "Crushed candy cane",
+          "phrase": "a sprinkle of crushed candy cane",
+          "ingredients": [{ "name": "crushed candy cane", "unit": "to-taste" }],
+          "color": "#e8505b"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "blend-base",
+      "text": "Put the {base}, vanilla extract and a pinch of ground cinnamon in a blender.",
+      "tools": ["jigger", "blender"]
+    },
+    {
+      "id": "blend",
+      "text": "Blend until smooth and thick enough to hold a straw upright.",
+      "tools": ["blender"],
+      "durationSeconds": 20
+    },
+    { "id": "pour", "text": "Pour into a hurricane glass." },
+    {
+      "id": "garnish",
+      "text": "Finish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "base": "vanilla-ice-cream",
+    "garnish": "sprinkles"
+  }
+}

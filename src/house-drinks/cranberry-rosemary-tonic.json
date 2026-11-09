@@ -1,0 +1,88 @@
+{
+  "formatVersion": 1,
+  "id": "cranberry-rosemary-tonic",
+  "name": "Cranberry Rosemary Tonic",
+  "glass": "highball",
+  "method": "build",
+  "flavorTags": ["bitter", "fruity", "herbal"],
+  "shelf": "crisp-bitter",
+  "added": "2026-11-09",
+  "photo": "photos/cranberry-rosemary-tonic.jpg",
+  "sip": { "by": "rim", "why": "so you smell the rosemary and get the bubbles at the top." },
+  "occasion": "holiday",
+  "ingredients": [
+    { "name": "rosemary sprigs", "amount": 2, "unit": "count", "size": { "each": "finger-length" } },
+    { "name": "cranberry juice", "amount": 1.5, "unit": "oz" },
+    { "name": "fresh lime juice", "amount": 0.25, "unit": "oz" },
+    { "name": "ice", "unit": "fill" }
+  ],
+  "slots": [
+    {
+      "id": "tonic",
+      "label": "Tonic",
+      "options": [
+        {
+          "id": "tonic-water",
+          "label": "Tonic water",
+          "phrase": "tonic water",
+          "ingredients": [{ "name": "tonic water", "unit": "top" }],
+          "color": "#eef6f3"
+        },
+        {
+          "id": "elderflower-tonic",
+          "label": "Elderflower tonic",
+          "phrase": "elderflower tonic",
+          "ingredients": [{ "name": "elderflower tonic", "unit": "top" }],
+          "color": "#f4f1dc"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "cranberries",
+          "label": "Cranberries on a pick",
+          "phrase": "fresh cranberries on a pick",
+          "ingredients": [{ "name": "fresh cranberries on a pick", "amount": 3, "unit": "count" }],
+          "color": "#b3123a"
+        },
+        {
+          "id": "lime-wheel",
+          "label": "Lime wheel",
+          "phrase": "a lime wheel",
+          "ingredients": [{ "name": "lime wheel", "amount": 1, "unit": "count" }],
+          "color": "#84cc16"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "slap-rosemary",
+      "text": "Slap the rosemary sprigs between your palms to wake them up, then drop them into a highball glass."
+    },
+    {
+      "id": "add-base",
+      "text": "Pour in the cranberry juice and lime juice.",
+      "tools": ["jigger"]
+    },
+    { "id": "fill-glass", "text": "Fill the glass with ice." },
+    {
+      "id": "top",
+      "text": "Top with {tonic} and stir once with a barspoon.",
+      "tools": ["barspoon"]
+    },
+    {
+      "id": "garnish",
+      "text": "Garnish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "tonic": "tonic-water",
+    "garnish": "cranberries"
+  }
+}

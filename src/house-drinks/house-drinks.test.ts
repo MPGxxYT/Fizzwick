@@ -47,6 +47,19 @@ describe('House Drink files', () => {
     for (const drink of houseDrinks) expect(drink.sip?.why, drink.id).toMatch(/^[a-z].*\.$/)
   })
 
+  test('eight Drinks are marked Holiday', () => {
+    expect(houseDrinks.filter((drink) => drink.occasion === 'holiday').map((drink) => drink.id)).toEqual([
+      'clementine-ginger-fizz',
+      'cranberry-rosemary-tonic',
+      'gingerbread-steamer',
+      'holiday-nog',
+      'peppermint-hot-chocolate',
+      'poinsettia-sparkler',
+      'spiced-orange-tea',
+      'sugar-cookie-shake',
+    ])
+  })
+
   test('each Drink points at its own photo', () => {
     for (const drink of houseDrinks) expect(drink.photo).toBe(`photos/${drink.id}.jpg`)
   })

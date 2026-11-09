@@ -1,0 +1,104 @@
+{
+  "formatVersion": 1,
+  "id": "clementine-ginger-fizz",
+  "name": "Clementine Ginger Fizz",
+  "glass": "highball",
+  "method": "build",
+  "flavorTags": ["citrus", "spicy"],
+  "shelf": "fizzy-fruity",
+  "added": "2026-11-09",
+  "photo": "photos/clementine-ginger-fizz.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish and get the bubbles at the top." },
+  "occasion": "holiday",
+  "ingredients": [
+    { "name": "fresh clementine juice", "amount": 2, "unit": "oz" },
+    { "name": "fresh lemon juice", "amount": 0.25, "unit": "oz" },
+    { "name": "ice", "unit": "fill" }
+  ],
+  "slots": [
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "honey-syrup",
+          "label": "Honey syrup",
+          "phrase": "honey syrup",
+          "ingredients": [{ "name": "honey syrup", "amount": 0.25, "unit": "oz" }],
+          "color": "#e0a43a"
+        },
+        {
+          "id": "simple-syrup",
+          "label": "Simple syrup",
+          "phrase": "simple syrup",
+          "ingredients": [{ "name": "simple syrup", "amount": 0.25, "unit": "oz" }],
+          "color": "#f5f5f4"
+        }
+      ]
+    },
+    {
+      "id": "fizz",
+      "label": "Fizz",
+      "options": [
+        {
+          "id": "ginger-ale",
+          "label": "Ginger ale",
+          "phrase": "ginger ale",
+          "ingredients": [{ "name": "ginger ale", "unit": "top" }],
+          "color": "#f1d38a"
+        },
+        {
+          "id": "ginger-beer",
+          "label": "Ginger beer",
+          "phrase": "ginger beer",
+          "ingredients": [{ "name": "ginger beer", "unit": "top" }],
+          "color": "#e2b866"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "clementine-wheel",
+          "label": "Clementine wheel",
+          "phrase": "a clementine wheel",
+          "ingredients": [{ "name": "clementine wheel", "amount": 1, "unit": "count" }],
+          "color": "#fb8c1e"
+        },
+        {
+          "id": "rosemary-sprig",
+          "label": "Rosemary sprig",
+          "phrase": "a rosemary sprig",
+          "ingredients": [{ "name": "rosemary sprig", "amount": 1, "unit": "count" }],
+          "color": "#6b8f71"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    { "id": "fill-glass", "text": "Fill a highball glass with ice." },
+    {
+      "id": "add-base",
+      "text": "Pour in the clementine juice, lemon juice and {sweetener}, and stir to mix.",
+      "tools": ["jigger", "barspoon"]
+    },
+    {
+      "id": "top",
+      "text": "Top with {fizz} and stir once with a barspoon.",
+      "tools": ["barspoon"]
+    },
+    {
+      "id": "garnish",
+      "text": "Garnish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "sweetener": "honey-syrup",
+    "fizz": "ginger-ale",
+    "garnish": "clementine-wheel"
+  }
+}

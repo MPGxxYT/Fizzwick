@@ -584,6 +584,7 @@ function DrinkRow({
             {drink.name}
           </span>
           {isNew && <span className="dl-row-mark is-new">New</span>}
+          {drink.occasion === 'holiday' && <span className="dl-row-mark is-holiday">Holiday</span>}
           {isCustomDrinkId(drink.id) && <span className="dl-row-mark">Yours</span>}
         </span>
         {swaps.length > 0 && <span className="dl-row-riff">With {swaps.join(', ')}</span>}

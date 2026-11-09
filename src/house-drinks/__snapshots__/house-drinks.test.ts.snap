@@ -108,6 +108,14 @@ exports[`amounts in step mode > each amount is on the expected step 1`] = `
     "rosemary sprig -> garnish-rosemary",
     "simple syrup -> add-base",
   ],
+  "clementine-ginger-fizz": [
+    "clementine wheel -> garnish",
+    "fresh clementine juice -> add-base",
+    "fresh lemon juice -> add-base",
+    "honey syrup -> add-base",
+    "rosemary sprig -> garnish",
+    "simple syrup -> add-base",
+  ],
   "cranberry-lime-fizz": [
     "cranberry juice -> add-base",
     "fresh lime juice -> add-base",
@@ -116,6 +124,13 @@ exports[`amounts in step mode > each amount is on the expected step 1`] = `
     "pomegranate juice -> add-base",
     "rosemary sprig -> garnish",
     "simple syrup -> add-base",
+  ],
+  "cranberry-rosemary-tonic": [
+    "cranberry juice -> add-base",
+    "fresh cranberries on a pick -> garnish",
+    "fresh lime juice -> add-base",
+    "lime wheel -> garnish",
+    "rosemary sprigs -> slap-rosemary",
   ],
   "cucumber-lime-cooler": [
     "agave -> add-base",
@@ -184,6 +199,14 @@ exports[`amounts in step mode > each amount is on the expected step 1`] = `
     "rooibos tea bag -> steep-tea",
     "whole cloves -> garnish",
   ],
+  "gingerbread-steamer": [
+    "almond milk -> warm-milk",
+    "cinnamon stick -> garnish",
+    "ginger syrup -> add-spice",
+    "molasses -> add-spice",
+    "oat milk -> warm-milk",
+    "whole milk -> warm-milk",
+  ],
   "golden-milk": [
     "cinnamon stick -> garnish",
     "coconut milk -> warm-milk",
@@ -229,6 +252,16 @@ exports[`amounts in step mode > each amount is on the expected step 1`] = `
     "lime wheel -> garnish-lime",
     "orange peel -> express-peel",
     "tart cherry juice -> add-base",
+  ],
+  "holiday-nog": [
+    "demerara syrup -> add-base",
+    "drops of vanilla extract -> add-base",
+    "half-and-half -> add-base",
+    "maple syrup -> add-base",
+    "oat milk -> add-base",
+    "pasteurized egg -> add-egg",
+    "simple syrup -> add-base",
+    "whole milk -> add-base",
   ],
   "hot-spiced-cider": [
     "cinnamon stick -> garnish",
@@ -357,6 +390,14 @@ exports[`amounts in step mode > each amount is on the expected step 1`] = `
     "simple syrup -> add-base",
     "thin peach slice -> garnish",
   ],
+  "peppermint-hot-chocolate": [
+    "candy cane -> garnish",
+    "chocolate syrup -> add-chocolate",
+    "drops of peppermint extract -> add-chocolate",
+    "half-and-half -> warm-milk",
+    "oat milk -> warm-milk",
+    "whole milk -> warm-milk",
+  ],
   "pineapple-ginger-fizz": [
     "candied ginger -> garnish",
     "fresh lime juice -> add-juice",
@@ -374,6 +415,13 @@ exports[`amounts in step mode > each amount is on the expected step 1`] = `
     "pineapple wedge -> garnish",
     "simple syrup -> add-base",
     "soda water -> add-soda",
+  ],
+  "poinsettia-sparkler": [
+    "cranberry juice -> add-juice",
+    "fresh cranberries on a pick -> garnish",
+    "fresh orange juice -> add-juice",
+    "orange peel -> garnish",
+    "rosemary sprig -> garnish",
   ],
   "pomegranate-sour": [
     "aquafaba -> add-base",
@@ -433,6 +481,19 @@ exports[`amounts in step mode > each amount is on the expected step 1`] = `
     "oat milk -> warm-milk",
     "whole milk -> warm-milk",
   ],
+  "spiced-orange-tea": [
+    "black tea bag -> add-spices",
+    "cinnamon sticks -> add-spices",
+    "cloves -> add-spices",
+    "fresh lemon juice -> add-base",
+    "fresh orange juice -> add-base",
+    "honey -> add-base",
+    "just-boiled water -> boil-water",
+    "maple syrup -> add-base",
+    "orange peel -> garnish",
+    "orange wheel -> garnish",
+    "rooibos tea bag -> add-spices",
+  ],
   "spiced-pear": [
     "chai syrup -> add-base",
     "cinnamon syrup -> add-base",
@@ -453,6 +514,13 @@ exports[`amounts in step mode > each amount is on the expected step 1`] = `
     "lime wheel -> garnish",
     "mint leaves -> add-herb",
     "simple syrup -> add-base",
+  ],
+  "sugar-cookie-shake": [
+    "dairy-free vanilla ice cream -> blend-base",
+    "drops of vanilla extract -> blend-base",
+    "oat milk -> blend-base",
+    "vanilla ice cream -> blend-base",
+    "whole milk -> blend-base",
   ],
   "tea-sour": [
     "aquafaba -> add-base",

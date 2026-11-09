@@ -1,0 +1,116 @@
+{
+  "formatVersion": 1,
+  "id": "spiced-orange-tea",
+  "name": "Spiced Orange Tea",
+  "glass": "mug",
+  "method": "build",
+  "flavorTags": ["citrus", "spicy"],
+  "shelf": "warm-savory",
+  "added": "2026-11-09",
+  "photo": "photos/spiced-orange-tea.jpg",
+  "sip": { "by": "rim", "why": "so you smell the orange and spices. A straw sends the heat straight to your tongue." },
+  "occasion": "holiday",
+  "ingredients": [
+    { "name": "just-boiled water", "amount": 6, "unit": "oz" },
+    { "name": "cinnamon sticks", "amount": 1, "unit": "count", "size": { "each": "finger-length" } },
+    { "name": "cloves", "amount": 3, "unit": "count" },
+    { "name": "fresh orange juice", "amount": 1, "unit": "oz" },
+    { "name": "fresh lemon juice", "amount": 0.25, "unit": "oz" }
+  ],
+  "slots": [
+    {
+      "id": "tea",
+      "label": "Tea",
+      "options": [
+        {
+          "id": "black-tea",
+          "label": "Black tea",
+          "phrase": "black",
+          "ingredients": [{ "name": "black tea bag", "amount": 1, "unit": "count" }],
+          "dietaryTags": ["caffeine"],
+          "color": "#9a4a1c"
+        },
+        {
+          "id": "rooibos",
+          "label": "Rooibos",
+          "phrase": "rooibos",
+          "ingredients": [{ "name": "rooibos tea bag", "amount": 1, "unit": "count" }],
+          "durations": { "steep": 300 },
+          "color": "#b5562b"
+        }
+      ]
+    },
+    {
+      "id": "sweetener",
+      "label": "Sweetener",
+      "options": [
+        {
+          "id": "honey",
+          "label": "Honey",
+          "phrase": "honey",
+          "ingredients": [{ "name": "honey", "amount": 0.5, "unit": "oz" }],
+          "color": "#e8b04a"
+        },
+        {
+          "id": "maple-syrup",
+          "label": "Maple syrup",
+          "phrase": "maple syrup",
+          "ingredients": [{ "name": "maple syrup", "amount": 0.5, "unit": "oz" }],
+          "color": "#b45309"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "orange-wheel",
+          "label": "Orange wheel",
+          "phrase": "an orange wheel, floating on top",
+          "ingredients": [{ "name": "orange wheel", "amount": 1, "unit": "count" }],
+          "color": "#f97316"
+        },
+        {
+          "id": "orange-peel",
+          "label": "Orange peel",
+          "phrase": "an orange peel, expressed over the top",
+          "ingredients": [{ "name": "orange peel", "amount": 1, "unit": "count" }],
+          "color": "#fb923c"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "add-spices",
+      "text": "Put the {tea} tea bag, cinnamon sticks and cloves in a mug."
+    },
+    {
+      "id": "boil-water",
+      "text": "Boil the kettle and pour the just-boiled water into the mug.",
+      "tools": ["kettle"]
+    },
+    {
+      "id": "steep",
+      "text": "Steep, then lift out the tea bag and fish out the spices with a spoon.",
+      "durationSeconds": 240
+    },
+    {
+      "id": "add-base",
+      "text": "Stir in the orange juice, lemon juice and {sweetener} until the {sweetener} dissolves.",
+      "tools": ["jigger", "barspoon"]
+    },
+    {
+      "id": "garnish",
+      "text": "Finish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "tea": "black-tea",
+    "sweetener": "honey",
+    "garnish": "orange-wheel"
+  }
+}

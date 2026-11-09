@@ -1,0 +1,95 @@
+{
+  "formatVersion": 1,
+  "id": "poinsettia-sparkler",
+  "name": "Poinsettia Sparkler",
+  "glass": "coupe",
+  "method": "build",
+  "flavorTags": ["fruity", "citrus"],
+  "shelf": "fizzy-fruity",
+  "added": "2026-11-09",
+  "photo": "photos/poinsettia-sparkler.jpg",
+  "sip": { "by": "rim", "why": "so you smell the garnish and get the bubbles at the top." },
+  "occasion": "holiday",
+  "ingredients": [
+    { "name": "cranberry juice", "amount": 1.5, "unit": "oz" },
+    { "name": "fresh orange juice", "amount": 0.5, "unit": "oz" }
+  ],
+  "slots": [
+    {
+      "id": "fizz",
+      "label": "Fizz",
+      "options": [
+        {
+          "id": "sparkling-white-grape-juice",
+          "label": "Sparkling white grape juice",
+          "phrase": "sparkling white grape juice",
+          "ingredients": [{ "name": "sparkling white grape juice", "unit": "top" }],
+          "color": "#f3e9b5"
+        },
+        {
+          "id": "sparkling-apple-cider",
+          "label": "Sparkling apple cider",
+          "phrase": "sparkling apple cider",
+          "ingredients": [{ "name": "sparkling apple cider", "unit": "top" }],
+          "color": "#e9c46a"
+        },
+        {
+          "id": "ginger-ale",
+          "label": "Ginger ale",
+          "phrase": "ginger ale",
+          "ingredients": [{ "name": "ginger ale", "unit": "top" }],
+          "color": "#f1d38a"
+        }
+      ]
+    },
+    {
+      "id": "garnish",
+      "label": "Garnish",
+      "optional": true,
+      "options": [
+        {
+          "id": "cranberries",
+          "label": "Cranberries on a pick",
+          "phrase": "fresh cranberries on a pick, laid across the rim",
+          "ingredients": [{ "name": "fresh cranberries on a pick", "amount": 3, "unit": "count" }],
+          "color": "#b3123a"
+        },
+        {
+          "id": "orange-peel",
+          "label": "Orange peel",
+          "phrase": "an orange peel, expressed over the top",
+          "ingredients": [{ "name": "orange peel", "amount": 1, "unit": "count" }],
+          "color": "#fb923c"
+        },
+        {
+          "id": "rosemary-sprig",
+          "label": "Rosemary sprig",
+          "phrase": "a rosemary sprig",
+          "ingredients": [{ "name": "rosemary sprig", "amount": 1, "unit": "count" }],
+          "color": "#6b8f71"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    { "id": "chill-glass", "text": "Chill a coupe in the freezer for a few minutes." },
+    {
+      "id": "add-juice",
+      "text": "Pour the cranberry juice and orange juice into the coupe.",
+      "tools": ["jigger"]
+    },
+    {
+      "id": "top",
+      "text": "Top slowly with chilled {fizz}, tilting the glass so it keeps its bubbles."
+    },
+    {
+      "id": "garnish",
+      "text": "Finish with {garnish}.",
+      "when": { "slot": "garnish" }
+    }
+  ],
+  "houseSpec": {
+    "fizz": "sparkling-white-grape-juice",
+    "garnish": "cranberries"
+  }
+}
